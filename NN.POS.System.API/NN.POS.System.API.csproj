@@ -5,11 +5,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>D:\Projects\NN.POS.System\NN.POS.System.API\NN.POS.System.Api.xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0-preview.5.23302.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <ProjectReference Include="..\NN.POS.System.Application\NN.POS.System.Application.csproj" />
+    <ProjectReference Include="..\NN.POS.System.Core\NN.POS.System.Core.csproj" />
+    <ProjectReference Include="..\NN.POS.System.Infrastructure\NN.POS.System.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
