@@ -2,15 +2,19 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using NN.POS.System.Core;
+using NN.POS.System.Core.Entities.Users;
 using NN.POS.System.Core.Exceptions.Middleware;
+using NN.POS.System.Core.IRepositories.Users;
 using NN.POS.System.Core.Middleware;
 using NN.POS.System.Core.Middleware.Logging;
+using NN.POS.System.Infrastructure.Repositories.Users;
 using NN.POS.System.Infrastructure.Swagger;
 using NN.POS.System.Infrastructure.Swagger.CustomizeHeader;
 using NN.POS.System.Infrastructure.Swagger.RequestExamples;
@@ -43,6 +47,9 @@ public static class Extensions
     }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddTransient<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
+        services.AddTransient<ITokenProvider, TokenProvider>();
+
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddSqlServerDatabase<DataDbContext>()

@@ -9,10 +9,8 @@
   <ItemGroup>
     <Folder Include="Commons\" />
     <Folder Include="Constants\" />
-    <Folder Include="Dtos\" />
-    <Folder Include="Entities\" />
+    <Folder Include="Entities\Users\" />
     <Folder Include="Enums\" />
-    <Folder Include="IRepositories\" />
     <Folder Include="IServices\" />
     <Folder Include="Utils\" />
   </ItemGroup>
@@ -20,8 +18,13 @@
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.7" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-preview.5.23280.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NN.POS.System.Common\NN.POS.System.Common.csproj" />
   </ItemGroup>
 
 </Project>
