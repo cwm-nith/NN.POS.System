@@ -19,7 +19,7 @@ public class UserControllerController : BaseApiController
     /// Get test data example with no auth
     /// </summary>
     /// <returns></returns>
-
+    [AllowAnonymous]
     [HttpGet]
     public ActionResult Get()
     {
