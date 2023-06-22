@@ -1,11 +1,11 @@
-using NN.POS.System.Infrastructure;
-using NN.POS.System.Application;
+using NN.POS.System.API.App;
+using NN.POS.System.API.Infra;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddInfrastructure(builder.Configuration)
     .AddRegistrationMediatR();

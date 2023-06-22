@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NN.POS.System.Application.Commands.Users;
-using NN.POS.System.Core.Exceptions.Users;
+using NN.POS.System.API.App.Commands.Users;
+using NN.POS.System.API.Core.Dtos.Users;
+using NN.POS.System.API.Core.Exceptions.Users;
 
 namespace NN.POS.System.API.Controllers.V1;
 
@@ -32,9 +33,11 @@ public class UserControllerController : BaseApiController
     }
     [AllowAnonymous]
     [HttpPost]
-    public async Task<ActionResult> CreateUser()
+    public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto body)
     {
-        var data = await _mediator.Send(new CreateUserCommand("Hello", 20));
+        var cmd = new CreateUserCommand(name: body.Name, username: body.Username, password: body.Password,
+            email: body.Email, updatedAt: DateTime.UtcNow);
+        var data = await _mediator.Send(cmd);
         return Ok(data);
     }
 }
