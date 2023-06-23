@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.IdentityModel.Tokens;
-using NN.POS.System.API.App;
 using NN.POS.System.API.Core;
 using NN.POS.System.API.Core.Entities.Users;
 using NN.POS.System.API.Core.Exceptions.Middleware;
@@ -15,7 +13,6 @@ using NN.POS.System.API.Core.Middleware.Logging;
 using NN.POS.System.API.Infra.Repositories.Users;
 using NN.POS.System.API.Infra.Swagger;
 using NN.POS.System.API.Infra.Swagger.CustomizeHeader;
-using NN.POS.System.API.Infra.Swagger.RequestExamples;
 using NN.POS.System.API.Infra.Tables;
 
 namespace NN.POS.System.API.Infra;
@@ -57,23 +54,14 @@ public static class Extensions
             .AddDataDbRepositories()
             .AddJwtAuth(configuration)
             .AddDataDbRepositories()
-            .AddApiVersioning(setup =>
-            {
-                setup.DefaultApiVersion = new ApiVersion(1, 0);
-                setup.AssumeDefaultVersionWhenUnspecified = true;
-                setup.ReportApiVersions = true;
-            })
-            .AddVersionedApiExplorer(setup =>
-            {
-                setup.GroupNameFormat = "'v'VVV";
-                setup.SubstituteApiVersionInUrl = true;
-            })
-            .AddSwagger<AuthorizationHeaderParameterOperationFilter>("NN.POS.System.Api.xml")
-            .AddSwaggerExample()
             .Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.All;
             });
+        if (settings.Swagger.IsEnable)
+        {
+            services.AddSwagger<AuthorizationHeaderParameterOperationFilter>("NN.POS.System.Api.xml");
+        }
         return services;
     }
 

@@ -1,4 +1,5 @@
 using NN.POS.System.API.App;
+using NN.POS.System.API.Core;
 using NN.POS.System.API.Infra;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,8 @@ builder.Services.AddInfrastructure(builder.Configuration)
     .AddRegistrationMediatR();
 var app = builder.Build();
 
-app.UseCustomSwagger();
+var settings = app.Services.GetService<AppSettings>();
+if(settings?.Swagger.IsEnable ?? false) app.UseCustomSwagger();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.System.API.App.Commands.Users;
 using NN.POS.System.API.Core.Dtos.Users;
-using NN.POS.System.API.Core.Exceptions.Users;
 
 namespace NN.POS.System.API.Controllers.V1;
 
+[ApiVersion("1")]
 public class UserControllerController : BaseApiController
 {
     private readonly IMediator _mediator;
