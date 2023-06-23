@@ -4,6 +4,13 @@ public class AppSettings
 {
     public Database Database { get; set; } = new();
     public JwtSetting Jwt { get; set; } = new();
+    public SwaggerSetting Swagger { get; set; } = new();
+}
+
+public class SwaggerSetting
+{
+    public string? Name { get; set; }
+    public bool IsEnable { get; set; }
 }
 
 public class JwtSetting

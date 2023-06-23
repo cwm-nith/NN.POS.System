@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Folder Include="App\Queries\" />
+    <Folder Include="Controllers\V2\" />
     <Folder Include="Core\Commons\" />
     <Folder Include="Core\Constants\" />
     <Folder Include="Core\Enums\" />
