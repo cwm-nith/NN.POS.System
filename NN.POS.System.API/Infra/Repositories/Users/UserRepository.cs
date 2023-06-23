@@ -25,19 +25,26 @@ public class UserRepository : IUserRepository
         return user?.ToEntity();
     }
 
-    public Task<UserEntity> GetByUserNameAsync(string username)
+    public async Task<UserEntity?> GetByUserNameAsync(string username)
     {
-        throw new NotImplementedException();
+        var user = await _readDbRepository.FirstOrDefaultAsync(i => i.Username == username);
+        return user?.ToEntity();
     }
 
-    public Task<UserEntity> GetByUserEmailAsync(string email)
+    public async Task<UserEntity?> GetByUserEmailAsync(string email)
     {
-        throw new NotImplementedException();
+        var user = await _readDbRepository.FirstOrDefaultAsync(i => i.Email == email);
+        return user?.ToEntity();
     }
 
     public Task<PagedResult<UserEntity>> GetUsersAsync(Expression<Func<UserEntity, bool>> predicate)
     {
         throw new NotImplementedException();
+    }
+
+    public Task<bool> HasUserAsync()
+    {
+        return _readDbRepository.ExistsAsync(i => true);
     }
 
     public async Task<UserEntity> CreateUserAsync(UserEntity user)

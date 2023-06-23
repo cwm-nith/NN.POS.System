@@ -105,6 +105,7 @@ public static class Extensions
         .UseAllForwardedHeaders()
         .UseLogUserIdMiddleware();
 
+        _ = app.InitUser();
         return app;
     }
 
@@ -120,5 +121,20 @@ public static class Extensions
     private static IApplicationBuilder UseLogUserIdMiddleware(this IApplicationBuilder builder)
     {
         return builder.UseMiddleware<LogUserIdMiddleware>();
+    }
+
+    private static async Task<WebApplication> InitUser(this WebApplication app)
+    {
+        var userRepository = app.Services.GetService<IUserRepository>();
+        var passHasher = app.Services.GetService<IPasswordHasher<UserEntity>>();
+        if (userRepository is null || passHasher is null) return app;
+        var isHasUser = await userRepository.HasUserAsync();
+        if (isHasUser) return app;
+
+        var uEntity = new UserEntity(name: "ADMIN", username: "ADMIN", email: "admin@gmail.com", lastLogin: null,
+            createdAt: DateTime.UtcNow, updatedAt: DateTime.UtcNow);
+        uEntity.SetPassword("Admin123", passHasher);
+        _ = await userRepository.CreateUserAsync(uEntity);
+        return app;
     }
 }

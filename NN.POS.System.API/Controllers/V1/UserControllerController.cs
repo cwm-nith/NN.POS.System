@@ -20,11 +20,11 @@ public class UserControllerController : BaseApiController
     /// Get test data example with no auth
     /// </summary>
     /// <returns></returns>
-    [AllowAnonymous]
+
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public ActionResult Get()
     {
-        throw new UserNotFoundException(Guid.NewGuid());
         return Ok(new
         {
             Name = "Hello",
@@ -40,4 +40,14 @@ public class UserControllerController : BaseApiController
         var data = await _mediator.Send(cmd);
         return Ok(data);
     }
+
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto r)
+    {
+        var cmd = new LoginCommand(r.Username, r.Password);
+        var user = await _mediator.Send(cmd);
+        return Ok(user);
+    }
+
 }
