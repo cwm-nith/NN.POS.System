@@ -38,7 +38,7 @@ public static class Extensions
     public static async Task<PagedResult<T>> PaginateAsync<T>(this IQueryable<T> collection,
         Expression<Func<T, bool>> condition, int resultsPerPage = 10, CancellationToken cancellation = default)
     {
-        int page = 1;
+        const int page = 1;
         if (resultsPerPage <= 0)
         {
             resultsPerPage = 10;
