@@ -57,5 +57,8 @@ public static class UserExtensions
             password: t.Password,
             email: t.Email,
             updatedAt: t.UpdatedAt
-        );
+        )
+        {
+            CreatedAt = t.CreatedAt,
+        };
 }
