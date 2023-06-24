@@ -1,24 +1,25 @@
+using NN.POS.System.API.App;
+using NN.POS.System.API.Core;
+using NN.POS.System.API.Infra;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
+builder.Services.AddInfrastructure(builder.Configuration)
+    .AddRegistrationMediatR();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+var settings = app.Services.GetService<AppSettings>();
+if(settings?.Swagger.IsEnable ?? false) app.UseCustomSwagger();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseInfrastructure();
 
 app.MapControllers();
 
