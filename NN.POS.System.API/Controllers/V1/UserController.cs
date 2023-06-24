@@ -25,6 +25,11 @@ public class UserController : BaseApiController
 
     [Authorize(Roles = "Admin,read-user")]
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesDefaultResponseType]
     public async Task<ActionResult<PagedResult<UserDto>>> Get([FromQuery] PagedQuery q)
     {
         var query = new GetUserQuery()
@@ -35,8 +40,29 @@ public class UserController : BaseApiController
         var data = await _mediator.Send(query);
         return Ok(data);
     }
+
+    [Authorize(Roles = "Admin,read-user")]
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<UserDto>> GetUserBy(int id)
+    {
+        var query = new GetUserByIdQuery(id);
+        var data = await _mediator.Send(query);
+        return Ok(data);
+    }
+
     [Authorize(Roles = "Admin,write-user")]
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
     public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto body)
     {
         var cmd = new CreateUserCommand(name: body.Name, username: body.Username, password: body.Password,
