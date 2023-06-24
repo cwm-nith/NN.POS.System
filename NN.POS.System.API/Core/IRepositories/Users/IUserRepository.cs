@@ -10,7 +10,7 @@ public interface IUserRepository
     Task<UserEntity?> GetByIdAsync(int id, CancellationToken cancellation = default);
     Task<UserEntity?> GetByUserNameAsync(string username, CancellationToken cancellation = default);
     Task<UserEntity?> GetByUserEmailAsync(string email, CancellationToken cancellation = default);
-    Task<PagedResult<UserEntity>> GetUsersAsync(Expression<Func<UserTable, bool>> predicate, PagedQuery q, CancellationToken cancellation = default);
+    Task<PagedResult<UserEntity>> GetUsersAsync(Expression<Func<UserTable, bool>> predicate, IPagedQuery q, CancellationToken cancellation = default);
     Task<bool> HasUserAsync(CancellationToken cancellation = default);
     Task<bool> IsUserExistedAsync(int id, CancellationToken cancellation = default);
 
