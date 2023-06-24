@@ -114,4 +114,18 @@ public class UserController : BaseApiController
         var data = await _mediator.Send(cmd);
         return Ok(data);
     }
+
+    [Authorize(Roles = "Admin,write-user")]
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<bool>> DeleteUser(int id)
+    {
+        var cmd = new DeleteUserCommand(id);
+        var data = await _mediator.Send(cmd);
+        return Ok(data);
+    }
 }
