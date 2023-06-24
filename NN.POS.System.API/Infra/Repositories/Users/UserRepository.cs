@@ -37,7 +37,7 @@ public class UserRepository : IUserRepository
         return user?.ToEntity();
     }
 
-    public async Task<PagedResult<UserEntity>> GetUsersAsync(Expression<Func<UserTable, bool>> predicate, PagedQuery q, CancellationToken cancellation = default)
+    public async Task<PagedResult<UserEntity>> GetUsersAsync(Expression<Func<UserTable, bool>> predicate, IPagedQuery q, CancellationToken cancellation = default)
     {
         var data = await _readDbRepository.BrowseAsync(predicate, q, cancellation);
         return data.Map(i => i.ToEntity());

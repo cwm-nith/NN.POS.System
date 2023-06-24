@@ -4,9 +4,9 @@
         <name>NN.POS.System.API</name>
     </assembly>
     <members>
-        <member name="M:NN.POS.System.API.Controllers.V1.UserControllerController.Get">
+        <member name="M:NN.POS.System.API.Controllers.V1.UserController.Get(NN.POS.System.API.Commons.Pagination.PagedQuery)">
             <summary>
-            Get test data example with no auth
+            Get all users
             </summary>
             <returns></returns>
         </member>
