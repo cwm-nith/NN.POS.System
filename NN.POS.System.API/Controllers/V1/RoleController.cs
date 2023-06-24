@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.System.API.App.Commands.Roles;
+using NN.POS.System.API.App.Queries.Roles;
+using NN.POS.System.API.Commons.Pagination;
 using NN.POS.System.API.Core.Dtos.Roles;
 
 namespace NN.POS.System.API.Controllers.V1;
@@ -16,6 +18,7 @@ public class RoleController : BaseApiController
         _mediator = mediator;
     }
 
+    [Authorize(Roles = "Admin, read-role")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -23,9 +26,14 @@ public class RoleController : BaseApiController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesDefaultResponseType]
-    public ActionResult Get()
+    public async Task<ActionResult<PagedResult<RoleDto>>> Get([FromQuery] PagedQuery r)
     {
-        return Ok(new {Id = 10});
+        var q = new GetRoleQuery()
+        {
+            Results = r.Results,
+            Page = r.Page,
+        };
+        return Ok(await _mediator.Send(q));
     }
 
     [Authorize(Roles = "Admin,write-role")]
