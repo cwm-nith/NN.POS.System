@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.IdentityModel.Tokens;
 using NN.POS.System.API.Core;
+using NN.POS.System.API.Core.Entities.Roles;
 using NN.POS.System.API.Core.Entities.Users;
 using NN.POS.System.API.Core.Exceptions.Middleware;
+using NN.POS.System.API.Core.Exceptions.Roles;
+using NN.POS.System.API.Core.Exceptions.Users;
+using NN.POS.System.API.Core.IRepositories.Roles;
 using NN.POS.System.API.Core.IRepositories.Users;
 using NN.POS.System.API.Core.Middleware;
 using NN.POS.System.API.Core.Middleware.Logging;
@@ -34,7 +38,7 @@ public static class Extensions
                     ValidAudience = jwtSetting.Audience,
                     ValidIssuer = jwtSetting.Site,
                     IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.SigningKey ?? "")),
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.SigningKey)),
                     ValidateLifetime = false
                 };
             });
@@ -53,7 +57,6 @@ public static class Extensions
         services.AddSqlServerDatabase<DataDbContext>()
             .AddDataDbRepositories()
             .AddJwtAuth(configuration)
-            .AddDataDbRepositories()
             .Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.All;
@@ -106,23 +109,60 @@ public static class Extensions
         return builder.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All });
     }
 
-    private static IApplicationBuilder UseLogUserIdMiddleware(this IApplicationBuilder builder)
+    private static void UseLogUserIdMiddleware(this IApplicationBuilder builder)
     {
-        return builder.UseMiddleware<LogUserIdMiddleware>();
+        builder.UseMiddleware<LogUserIdMiddleware>();
     }
 
     private static async Task<WebApplication> InitUser(this WebApplication app)
     {
         var userRepository = app.Services.GetService<IUserRepository>();
+        var userRoleRepository = app.Services.GetService<IUserRoleRepository>();
+        var roleRepository = app.Services.GetService<IRoleRepository>();
         var passHasher = app.Services.GetService<IPasswordHasher<UserEntity>>();
-        if (userRepository is null || passHasher is null) return app;
-        var isHasUser = await userRepository.HasUserAsync();
-        if (isHasUser) return app;
+        if (userRepository is null || passHasher is null || roleRepository is null || userRoleRepository is null) return app;
+        
+        var isHasRole = await roleRepository.IsHasRoleAsync();
+        var userId = 0;
+        var roleId = 0;
+        if (!isHasRole)
+        {
+            var roleEn = new RoleEntity("Admin", DateTime.UtcNow, DateTime.Now)
+            {
+                DisplayName = "Administrator",
+                Description = "These role can perform any operations"
+            };
+            var role = await roleRepository.CreateRoleAsync(roleEn);
+            roleId = role.Id;
+        }
 
-        var uEntity = new UserEntity(name: "ADMIN", username: "ADMIN", email: "admin@gmail.com", lastLogin: null,
-            createdAt: DateTime.UtcNow, updatedAt: DateTime.UtcNow);
-        uEntity.SetPassword("Admin123", passHasher);
-        _ = await userRepository.CreateUserAsync(uEntity);
+        var isHasUser = await userRepository.HasUserAsync();
+        if (!isHasUser)
+        {
+            var uEntity = new UserEntity(name: "ADMIN", username: "ADMIN", email: "admin@gmail.com", lastLogin: null,
+                createdAt: DateTime.UtcNow, updatedAt: DateTime.UtcNow);
+            uEntity.SetPassword("Admin123", passHasher);
+            var user = await userRepository.CreateUserAsync(uEntity);
+            userId = user.Id;
+        }
+
+        if (userId == 0 || roleId == 0)
+        {
+
+            var role = await roleRepository.GetRoleByNameAsync("Admin");
+            if (role is not null)
+                roleId = role.Id;
+            else
+                throw new RoleNotFoundException("Admin");
+
+            var user = await userRepository.GetByUserNameAsync("ADMIN");
+            if (user is not null)
+                userId = user.Id;
+            else
+                throw new UserNotFoundException("ADMIN");
+        }
+
+        await userRoleRepository.AddRoleToUserAsync(userId: userId, roleId: roleId);
         return app;
     }
 }

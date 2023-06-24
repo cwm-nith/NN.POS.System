@@ -1,6 +1,6 @@
 ﻿namespace NN.POS.System.API.Core.Dtos.Users;
 
-public class UserDto : BaseDto
+public class UserDto : IBaseDto
 {
     public int Id { get; set; }
     public string Name { get; set; }

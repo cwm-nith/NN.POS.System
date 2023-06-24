@@ -7,22 +7,22 @@ public interface IReadDbRepository<T> where T : BaseTable
 {
     DataDbContext Context { get; }
 
-    Task<T?> FirstOrDefaultAsync(Guid id);
+    Task<T?> FirstOrDefaultAsync(Guid id, CancellationToken cancellation = default);
 
-    Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+    Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation = default);
 
-    Task<IEnumerable<T>> WhereAsync(Expression<Func<T, bool>> predicate);
+    Task<IEnumerable<T>> WhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation = default);
 
-    Task<int> CountAsync(Expression<Func<T, bool>> predicate);
+    Task<int> CountAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation = default);
 
     Task<PagedResult<T>> BrowseAsync<TQuery>(Expression<Func<T, bool>> predicate,
-        TQuery query) where TQuery : IPagedQuery;
+        TQuery query, CancellationToken cancellation = default) where TQuery : IPagedQuery;
     Task<PagedResult<T>> BrowseAsync<TQuery>(Expression<Func<T, bool>> predicate,
         Expression<Func<T, object>> order,
-        TQuery query) where TQuery : IPagedQuery;
+        TQuery query, CancellationToken cancellation = default) where TQuery : IPagedQuery;
 
     Task<PagedResult<T>> BrowseDescAsync<TQuery>(Expression<Func<T, bool>> predicate,
         Expression<Func<T, object>> order,
-        TQuery query) where TQuery : IPagedQuery;
-    Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+        TQuery query, CancellationToken cancellation = default) where TQuery : IPagedQuery;
+    Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation = default);
 }
