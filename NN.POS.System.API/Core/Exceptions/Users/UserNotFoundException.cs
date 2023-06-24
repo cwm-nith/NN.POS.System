@@ -8,4 +8,14 @@ public class UserNotFoundException : BaseException
     {
         
     }
+
+    public UserNotFoundException(string name) : base($"User with name \"{name}\" not found!")
+    {
+
+    }
+
+    public UserNotFoundException() : base()
+    {
+
+    }
 }

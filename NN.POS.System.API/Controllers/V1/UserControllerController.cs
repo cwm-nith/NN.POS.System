@@ -21,7 +21,7 @@ public class UserControllerController : BaseApiController
     /// </summary>
     /// <returns></returns>
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,read-user")]
     [HttpGet]
     public ActionResult Get()
     {
@@ -31,7 +31,7 @@ public class UserControllerController : BaseApiController
             Id = 2
         });
     }
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin,write-user")]
     [HttpPost]
     public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto body)
     {
@@ -40,14 +40,4 @@ public class UserControllerController : BaseApiController
         var data = await _mediator.Send(cmd);
         return Ok(data);
     }
-
-    [AllowAnonymous]
-    [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto r)
-    {
-        var cmd = new LoginCommand(r.Username, r.Password);
-        var user = await _mediator.Send(cmd);
-        return Ok(user);
-    }
-
 }

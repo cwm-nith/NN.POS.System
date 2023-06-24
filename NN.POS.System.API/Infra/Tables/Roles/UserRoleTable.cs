@@ -2,16 +2,18 @@
 
 namespace NN.POS.System.API.Infra.Tables.Roles;
 
-public class UserRole : BaseTable
+[Table("user_roles")]
+public class UserRoleTable : BaseTable
 {
     [Column("user_id")]
-    public Guid UserId { get; set; }
+    public int UserId { get; set; }
 
     [Column("role_id")]
-    public Guid RoleId { get; set; }
+    public int RoleId { get; set; }
 
-    public UserRole(Guid userId, Guid roleId)
+    public UserRoleTable(int id, int userId, int roleId)
     {
+        Id = id;
         UserId = userId;
         RoleId = roleId;
     }

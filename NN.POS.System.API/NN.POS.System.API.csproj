@@ -15,12 +15,16 @@
     <Folder Include="Controllers\V2\" />
     <Folder Include="Core\Commons\" />
     <Folder Include="Core\Constants\" />
+    <Folder Include="Core\Entities\Roles\" />
     <Folder Include="Core\Enums\" />
+    <Folder Include="Core\Exceptions\Roles\" />
+    <Folder Include="Core\IRepositories\Roles\" />
     <Folder Include="Core\IServices\" />
     <Folder Include="Core\Utils\" />
     <Folder Include="Infra\DbConfigs\" />
     <Folder Include="Infra\Options\" />
     <Folder Include="Infra\QueryHandlers\" />
+    <Folder Include="Infra\Repositories\Roles\" />
     <Folder Include="Infra\Services\" />
   </ItemGroup>
 

@@ -3,7 +3,7 @@ using NN.POS.System.API.Core.Exceptions.Users;
 
 namespace NN.POS.System.API.Core.Entities.Users;
 
-public class UserEntity : BaseEntity
+public class UserEntity : IBaseEntity
 {
     public int Id { get; set; }
     public string Name { get; set; }

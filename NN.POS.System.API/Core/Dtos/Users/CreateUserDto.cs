@@ -2,7 +2,7 @@
 
 namespace NN.POS.System.API.Core.Dtos.Users;
 
-public class CreateUserDto : BaseDto
+public class CreateUserDto : IBaseDto
 {
     [Required]
     public string Name { get; set; } = string.Empty;
