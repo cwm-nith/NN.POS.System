@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="App\Commands\Roles\Handlers\" />
+    <Folder Include="App\Queries\Roles\" />
     <Folder Include="App\Queries\Users\" />
     <Folder Include="Controllers\V2\" />
     <Folder Include="Core\Commons\" />
