@@ -64,13 +64,27 @@ public class UserController : BaseApiController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<UserDto>> GetUserByName(string username)
+    public async Task<ActionResult<UserDto>> GetUserByUsername(string username)
     {
         var query = new GetUserByNameQuery(username);
         var data = await _mediator.Send(query);
         return Ok(data);
     }
 
+    [Authorize(Roles = "Admin,read-user")]
+    [HttpGet("{email}/email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
+    {
+        var query = new GetUserByEmailQuery(email);
+        var data = await _mediator.Send(query);
+        return Ok(data);
+    }
 
     [Authorize(Roles = "Admin,write-user")]
     [HttpPost]
