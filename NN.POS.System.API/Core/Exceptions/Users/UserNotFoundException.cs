@@ -9,7 +9,9 @@ public class UserNotFoundException : BaseException
         
     }
 
-    public UserNotFoundException(string name) : base($"User with name \"{name}\" not found!")
+    public UserNotFoundException(string username, bool isEmail = false) : base(!isEmail
+        ? $"User with username \"{username}\" not found!"
+        : $"User with email \"{username}\" not found!")
     {
 
     }
