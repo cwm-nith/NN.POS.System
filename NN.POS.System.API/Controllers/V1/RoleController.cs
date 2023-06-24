@@ -47,4 +47,26 @@ public class RoleController : BaseApiController
         var data = await _mediator.Send(cmd);
         return Ok(data);
     }
+
+    [Authorize(Roles = "Admin,write-role")]
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<RoleDto>> CreateRole(int id, [FromBody] UpdateRoleDto b)
+    {
+        var cmd = new UpdateRoleCommand(id, b.Name)
+        {
+            Description = b.Description,
+            DisplayName = b.DisplayName,
+        };
+
+        var data = await _mediator.Send(cmd);
+        return Ok(data);
+    }
+
+
 }
