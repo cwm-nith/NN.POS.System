@@ -23,7 +23,6 @@
     <Folder Include="Core\Utils\" />
     <Folder Include="Infra\DbConfigs\" />
     <Folder Include="Infra\Options\" />
-    <Folder Include="Infra\QueryHandlers\Users\" />
     <Folder Include="Infra\Repositories\Roles\" />
     <Folder Include="Infra\Services\" />
   </ItemGroup>
