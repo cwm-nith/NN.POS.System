@@ -15,7 +15,7 @@ public class UserTable : BaseTable
     [Column("password")]
     public string Password { get; set; }
 
-    [Column("email")]
+    [Column("email")] 
     public string Email { get; set; }
 
     [Column("created_at")]
