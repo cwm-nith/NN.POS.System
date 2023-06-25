@@ -9,7 +9,7 @@ namespace NN.POS.System.API.Core.IRepositories.BusinessPartners;
 public interface IBusinessPartnerRepository
 {
     Task<BusinessPartnerEntity> CreateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default);
-    Task<BusinessPartnerEntity> UpdateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default);
+    Task UpdateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellation = default);
 
     Task<BusinessPartnerEntity> GetByIdAsync(int id, CancellationToken cancellation = default);

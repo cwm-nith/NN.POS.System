@@ -41,4 +41,29 @@ public class BusinessPartnerController : BaseApiController
         var data = await _mediator.Send(cmd);
         return Ok(data);
     }
+
+    [Authorize(Roles = "Admin, read-business-partner")]
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<BusinessPartnerDto>> UpdateAsync([FromBody] UpdateBusinessPartnerDto dto)
+    {
+        var cmd = new UpdateBusinessPartnerCommand()
+        {
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            PhoneNumber = dto.PhoneNumber,
+            ContactType = dto.ContactType,
+            Address = dto.Address,
+            BusinessType = dto.BusinessType,
+            Email = dto.Email,
+            Id = dto.Id,
+        };
+        var data = await _mediator.Send(cmd);
+        return Ok(data);
+    }
 }

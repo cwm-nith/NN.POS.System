@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using NN.POS.System.API.Commons.Pagination;
 using NN.POS.System.API.Core.Entities.BusinessPartners;
+using NN.POS.System.API.Core.Exceptions.BusinessPartners;
 using NN.POS.System.API.Core.IRepositories.BusinessPartners;
 using NN.POS.System.API.Infra.Tables;
 using NN.POS.System.API.Infra.Tables.BusinessPartners;
@@ -25,9 +26,9 @@ public class BusinessPartnerRepository : IBusinessPartnerRepository
         return bus.ToEntity();
     }
 
-    public Task<BusinessPartnerEntity> UpdateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default)
+    public Task UpdateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
+        return _writeDbRepository.UpdateAsync(entity.ToTable(), cancellation);
     }
 
     public Task<bool> DeleteAsync(int id, CancellationToken cancellation = default)
@@ -35,9 +36,10 @@ public class BusinessPartnerRepository : IBusinessPartnerRepository
         throw new NotImplementedException();
     }
 
-    public Task<BusinessPartnerEntity> GetByIdAsync(int id, CancellationToken cancellation = default)
+    public async Task<BusinessPartnerEntity> GetByIdAsync(int id, CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
+        var data = await _readDbRepository.FirstOrDefaultAsync(i => i.Id == id, cancellation) ?? throw new BusinessPartnerNotFoundException(id);
+        return data.ToEntity();
     }
 
     public Task<int> GetCountAsync(CancellationToken cancellation = default)
