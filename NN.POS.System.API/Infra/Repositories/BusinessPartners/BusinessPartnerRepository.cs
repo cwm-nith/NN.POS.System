@@ -47,8 +47,9 @@ public class BusinessPartnerRepository : IBusinessPartnerRepository
         throw new NotImplementedException();
     }
 
-    public Task<PagedResult<BusinessPartnerEntity>> GetAllAsync(Expression<Func<BusinessPartnerTable, bool>> predicate, PagedQuery q, CancellationToken cancellation = default)
+    public async Task<PagedResult<BusinessPartnerEntity>> GetAllAsync(Expression<Func<BusinessPartnerTable, bool>> predicate, PagedQuery q, CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
+        var data = await _readDbRepository.BrowseAsync(predicate, q, cancellation);
+        return data.Map(i => i.ToEntity());
     }
 }

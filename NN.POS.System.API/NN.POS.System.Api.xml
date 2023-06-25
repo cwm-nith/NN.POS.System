@@ -10,5 +10,15 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="P:NN.POS.System.API.Core.Dtos.BusinessPartners.GetBusinessPartnerDto.BusinessType">
+            <summary>
+            0: None, 1: Individual, 2: Business
+            </summary>
+        </member>
+        <member name="P:NN.POS.System.API.Core.Dtos.BusinessPartners.GetBusinessPartnerDto.ContactType">
+            <summary>
+            0: None, 1: Supplier, 2: Customer, 3: SupplierCustomer
+            </summary>
+        </member>
     </members>
 </doc>

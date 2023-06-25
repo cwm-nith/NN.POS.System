@@ -2,6 +2,6 @@
 
 public interface IPagedQuery
 {
-    int Page { get; }
-    int Results { get; }
+    int Page { get; set; }
+    int Results { get; set; }
 }
