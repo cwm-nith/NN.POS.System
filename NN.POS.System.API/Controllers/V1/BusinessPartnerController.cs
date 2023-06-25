@@ -54,6 +54,21 @@ public class BusinessPartnerController : BaseApiController
         return Ok(data);
     }
 
+    [Authorize(Roles = "Admin, read-business-partner")]
+    [HttpGet("count")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<BusinessPartnerDto>> GetCount()
+    {
+        var q = new GetBusinessPartnerCountQuery();
+        var data = await _mediator.Send(q);
+        return Ok(data);
+    }
+
     [Authorize(Roles = "Admin, write-business-partner")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -95,6 +110,21 @@ public class BusinessPartnerController : BaseApiController
             Email = dto.Email,
             Id = dto.Id,
         };
+        var data = await _mediator.Send(cmd);
+        return Ok(data);
+    }
+
+    [Authorize(Roles = "Admin, write-business-partner")]
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<bool>> DeleteAsync(int id)
+    {
+        var cmd = new DeleteBusinessPartnerCommand(id);
         var data = await _mediator.Send(cmd);
         return Ok(data);
     }
