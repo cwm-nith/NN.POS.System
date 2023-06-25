@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using NN.POS.System.API.Commons.Pagination;
 using NN.POS.System.API.Core.Entities.BusinessPartners;
 using NN.POS.System.API.Core.Exceptions.BusinessPartners;
@@ -31,9 +32,10 @@ public class BusinessPartnerRepository : IBusinessPartnerRepository
         return _writeDbRepository.UpdateAsync(entity.ToTable(), cancellation);
     }
 
-    public Task<bool> DeleteAsync(int id, CancellationToken cancellation = default)
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
+        var num = await _writeDbRepository.DeleteAsync(id, cancellation);
+        return num > 0;
     }
 
     public async Task<BusinessPartnerEntity> GetByIdAsync(int id, CancellationToken cancellation = default)
@@ -44,7 +46,7 @@ public class BusinessPartnerRepository : IBusinessPartnerRepository
 
     public Task<int> GetCountAsync(CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
+        return _readDbRepository.Context.BusinessPartners!.CountAsync(cancellation);
     }
 
     public async Task<PagedResult<BusinessPartnerEntity>> GetAllAsync(Expression<Func<BusinessPartnerTable, bool>> predicate, PagedQuery q, CancellationToken cancellation = default)
