@@ -60,4 +60,19 @@ public class UserRoleController : BaseApiController
         var data = await _mediator.Send(q);
         return Ok(data);
     }
+
+    [Authorize(Roles = "Admin, write-role")]
+    [HttpDelete("{userId:int}/{roleId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<bool>> RemoveUserRole(int userId, int roleId)
+    {
+        var q = new RemoveUserRoleCommand(userId, roleId);
+        var data = await _mediator.Send(q);
+        return Ok(data);
+    }
 }
