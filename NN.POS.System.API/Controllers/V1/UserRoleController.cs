@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NN.POS.System.API.App.Commands.UserRoles;
 using NN.POS.System.API.App.Queries.UserRoles;
 using NN.POS.System.API.Core.Dtos.Roles;
 
@@ -41,6 +42,21 @@ public class UserRoleController : BaseApiController
     public async Task<ActionResult<List<UserRoleDto>>> GetAllUserRoles(int userId)
     {
         var q = new GetAllUserRoleByUserIdQuery(userId);
+        var data = await _mediator.Send(q);
+        return Ok(data);
+    }
+
+    [Authorize(Roles = "Admin, write-role")]
+    [HttpPost("{userId:int}/{roleId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<bool>> AddRoleToUser(int userId, int roleId)
+    {
+        var q = new AddRoleToUserCommand(userId, roleId);
         var data = await _mediator.Send(q);
         return Ok(data);
     }
