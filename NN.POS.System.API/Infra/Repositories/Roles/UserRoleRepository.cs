@@ -64,4 +64,28 @@ public class UserRoleRepository : IUserRoleRepository
 
         return data;
     }
+
+    public async Task<List<UserRoleDto>> GetAllUserRolesAsync(int userId, CancellationToken cancellation = default)
+    {
+        var context = _readDbRepository.Context;
+        var data = await (from role in context.Roles!
+                          join userRole in context.UserRoles!.Where(i => i.UserId == userId) on role.Id equals userRole.RoleId into g
+                          from ur in g.DefaultIfEmpty()
+                          select new UserRoleDto(
+                              ur != null ? ur.Id : 0,
+                              ur != null ? ur.UserId : userId,
+                              role.Id,
+                              role.Name,
+                              role.CreatedAt,
+                              role.UpdatedAt
+                          )
+                          {
+                              IsInRole = ur != null,
+                              DisplayName = role.DisplayName,
+                              Description = role.Description,
+                          })
+            .ToListAsync(cancellation);
+
+        return data;
+    }
 }
