@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.System.API.App.Commands.BusinessPartners;
+using NN.POS.System.API.App.Queries.BusinessPartners;
+using NN.POS.System.API.Commons.Pagination;
 using NN.POS.System.API.Core.Dtos.BusinessPartners;
 
 namespace NN.POS.System.API.Controllers.V1;
@@ -16,13 +18,28 @@ public class BusinessPartnerController : BaseApiController
         _mediator = mediator;
     }
 
+    [Authorize(Roles = "Admin, read-business-partner")]
     [HttpGet]
-    public ActionResult Get()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<PagedResult<BusinessPartnerDto>>> Get([FromQuery] GetBusinessPartnerDto dto)
     {
-        return Ok("Hello");
+        var q = new GetBusinessPartnerQuery()
+        {
+            Results = dto.Results,
+            ContactType = dto.ContactType,
+            BusinessType = dto.BusinessType,
+            Page = dto.Page,
+        };
+        var data = await _mediator.Send(q);
+        return Ok(data);
     }
 
-    [Authorize(Roles = "Admin, read-business-partner")]
+    [Authorize(Roles = "Admin, write-business-partner")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -42,7 +59,7 @@ public class BusinessPartnerController : BaseApiController
         return Ok(data);
     }
 
-    [Authorize(Roles = "Admin, read-business-partner")]
+    [Authorize(Roles = "Admin, write-business-partner")]
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
