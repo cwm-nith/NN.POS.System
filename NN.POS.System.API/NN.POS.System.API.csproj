@@ -13,6 +13,8 @@
   <ItemGroup>
     <Folder Include="App\Commands\BusinessPartners\Handlers\" />
     <Folder Include="App\Queries\BusinessPartners\" />
+    <Folder Include="App\Commands\UserRoles\Handlers\" />
+    <Folder Include="App\Queries\UserRoles\" />
     <Folder Include="App\Queries\Users\" />
     <Folder Include="Controllers\V2\" />
     <Folder Include="Core\Commons\" />
@@ -29,6 +31,7 @@
     <Folder Include="Infra\DbConfigs\" />
     <Folder Include="Infra\Options\" />
     <Folder Include="Infra\QueryHandlers\BusinessPartners\" />
+    <Folder Include="Infra\QueryHandlers\UserRoles\" />
     <Folder Include="Infra\QueryHandlers\Roles\" />
     <Folder Include="Infra\Repositories\BusinessPartners\" />
     <Folder Include="Infra\Repositories\Roles\" />
