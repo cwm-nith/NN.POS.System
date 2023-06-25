@@ -42,6 +42,11 @@ public class UserRoleRepository : IUserRoleRepository
         return _readDbRepository.ExistsAsync(i => i.RoleId == roleId && i.UserId == userId, cancellation);
     }
 
+    public Task<bool> RemoveUserRoleAsync(int userId, int roleId, CancellationToken cancellation = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<List<UserRoleDto>> GetUserRolesAsync(int userId, CancellationToken cancellation = default)
     {
         var context = _readDbRepository.Context;
