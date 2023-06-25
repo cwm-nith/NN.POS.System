@@ -64,13 +64,29 @@ public class RoleController : BaseApiController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<RoleDto>> CreateRole(int id, [FromBody] UpdateRoleDto b)
+    public async Task<ActionResult<RoleDto>> UpdateRole(int id, [FromBody] UpdateRoleDto b)
     {
         var cmd = new UpdateRoleCommand(id, b.Name)
         {
             Description = b.Description,
             DisplayName = b.DisplayName,
         };
+
+        var data = await _mediator.Send(cmd);
+        return Ok(data);
+    }
+
+    [Authorize(Roles = "Admin,write-role")]
+    [HttpPost("create-many")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<RoleDto>> CreateMany([FromBody] List<CreateRoleDto> b)
+    {
+        var cmd = new CreateRoleManyCommand(b);
 
         var data = await _mediator.Send(cmd);
         return Ok(data);
