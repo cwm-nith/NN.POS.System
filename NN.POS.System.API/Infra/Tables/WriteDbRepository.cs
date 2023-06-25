@@ -39,9 +39,20 @@ public class WriteDbRepository<TTable> : IWriteDbRepository<TTable> where TTable
     {
         try
         {
-            Context.Entry(entities).State = EntityState.Modified;
-            Context.Set<TTable>().UpdateRange(entities);
-            await Context.SaveChangesAsync(cancellation);
+            var strategy = Context.Database.CreateExecutionStrategy();
+            await strategy.Execute(async () =>
+            {
+                await using var t = await Context.Database.BeginTransactionAsync(cancellation);
+                foreach (var entity in entities)
+                {
+                    Context.Entry(entity).State = EntityState.Modified;
+                    Context.Set<TTable>().Update(entity);
+                    await Context.SaveChangesAsync(cancellation);
+                }
+
+                await t.CommitAsync(cancellation);
+            });
+            return true;
         }
         catch (Exception ex)
         {
