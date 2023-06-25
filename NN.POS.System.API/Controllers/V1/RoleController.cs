@@ -92,5 +92,20 @@ public class RoleController : BaseApiController
         return Ok(data);
     }
 
+    [Authorize(Roles = "Admin,write-role")]
+    [HttpPut("update-many")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<RoleDto>> UpdateMany([FromBody] List<UpdateRoleDto> b)
+    {
+        var cmd = new UpdateRoleManyCommand(b);
+
+        var data = await _mediator.Send(cmd);
+        return Ok(data);
+    }
 
 }
