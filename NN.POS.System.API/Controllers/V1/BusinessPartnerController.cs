@@ -39,6 +39,21 @@ public class BusinessPartnerController : BaseApiController
         return Ok(data);
     }
 
+    [Authorize(Roles = "Admin, read-business-partner")]
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<BusinessPartnerDto>> GetById(int id)
+    {
+        var q = new GetBusinessPartnerByIdQuery(id);
+        var data = await _mediator.Send(q);
+        return Ok(data);
+    }
+
     [Authorize(Roles = "Admin, write-business-partner")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
