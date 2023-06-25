@@ -19,10 +19,10 @@ public class BusinessPartnerRepository : IBusinessPartnerRepository
         _writeDbRepository = writeDbRepository;
     }
 
-    public Task<BusinessPartnerEntity> CreateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default)
+    public async Task<BusinessPartnerEntity> CreateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default)
     {
-        throw new NotImplementedException();
-        //var bus = await _writeDbRepository.AddAsync(entity);
+        var bus = await _writeDbRepository.AddAsync(entity.ToTable(), cancellation);
+        return bus.ToEntity();
     }
 
     public Task<BusinessPartnerEntity> UpdateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default)

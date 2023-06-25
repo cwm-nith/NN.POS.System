@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NN.POS.System.API.Core.IRepositories.BusinessPartners;
 using NN.POS.System.API.Core.IRepositories.Roles;
 using NN.POS.System.API.Core.IRepositories.Users;
+using NN.POS.System.API.Infra.Repositories.BusinessPartners;
 using NN.POS.System.API.Infra.Repositories.Roles;
 using NN.POS.System.API.Infra.Repositories.Users;
+using NN.POS.System.API.Infra.Tables.BusinessPartners;
 using NN.POS.System.API.Infra.Tables.Roles;
 using NN.POS.System.API.Infra.Tables.User;
 
@@ -15,6 +18,7 @@ public static class Extensions
         services.AddPostgresRepository<UserTable>();
         services.AddPostgresRepository<RoleTable>();
         services.AddPostgresRepository<UserRoleTable>();
+        services.AddPostgresRepository<BusinessPartnerTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
@@ -26,6 +30,7 @@ public static class Extensions
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IUserRoleRepository, UserRoleRepository>();
+        services.AddTransient<IBusinessPartnerRepository, BusinessPartnerRepository>();
         return services;
     }
 
