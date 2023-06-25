@@ -1,0 +1,32 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using NN.POS.System.API.App.Queries.UserRoles;
+using NN.POS.System.API.Core.Dtos.Roles;
+
+namespace NN.POS.System.API.Controllers.V1;
+
+public class UserRoleController : BaseApiController
+{
+    private readonly IMediator _mediator;
+
+    public UserRoleController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [Authorize(Roles = "Admin, read-role")]
+    [HttpGet("{userId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<List<UserRoleDto>>> GetUserRole(int userId)
+    {
+        var q = new GetUserRoleByUserIdQuery(userId);
+        var data = await _mediator.Send(q);
+        return Ok(data);
+    }
+}
