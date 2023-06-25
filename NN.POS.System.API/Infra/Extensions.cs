@@ -127,7 +127,7 @@ public static class Extensions
         var roleId = 0;
         if (!isHasRole)
         {
-            var roleEn = new RoleEntity("Admin", DateTime.UtcNow, DateTime.Now)
+            var roleEn = new RoleEntity("Admin", DateTime.UtcNow, DateTime.UtcNow)
             {
                 DisplayName = "Administrator",
                 Description = "These role can perform any operations"
