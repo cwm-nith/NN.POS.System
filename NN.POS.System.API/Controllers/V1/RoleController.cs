@@ -100,9 +100,25 @@ public class RoleController : BaseApiController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<RoleDto>> UpdateMany([FromBody] List<UpdateRoleDto> b)
+    public async Task<ActionResult<bool>> UpdateMany([FromBody] List<UpdateRoleDto> b)
     {
         var cmd = new UpdateRoleManyCommand(b);
+
+        var data = await _mediator.Send(cmd);
+        return Ok(data);
+    }
+
+    [Authorize(Roles = "Admin,write-role")]
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<bool>> DeleteMany(int id)
+    {
+        var cmd = new DeleteRoleByIdCommand(id);
 
         var data = await _mediator.Send(cmd);
         return Ok(data);
