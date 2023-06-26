@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using NN.POS.System.API.Commons.Pagination;
+using NN.POS.System.Common.Pagination;
 
 namespace NN.POS.System.API.Infra.Tables;
 

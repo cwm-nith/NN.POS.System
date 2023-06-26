@@ -1,4 +1,4 @@
-﻿namespace NN.POS.System.API.Core.Dtos.Users;
+﻿namespace NN.POS.System.Model.Dtos.Users;
 
 public class UserDto : IBaseDto
 {

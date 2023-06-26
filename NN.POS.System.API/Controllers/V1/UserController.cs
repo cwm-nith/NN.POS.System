@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.System.API.App.Commands.Users;
 using NN.POS.System.API.App.Queries.Users;
-using NN.POS.System.API.Commons.Pagination;
-using NN.POS.System.API.Core.Dtos.Users;
+using NN.POS.System.Common.Pagination;
+using NN.POS.System.Model.Dtos.Users;
 
 namespace NN.POS.System.API.Controllers.V1;
 

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NN.POS.System.API.Core.Dtos.Roles;
 using NN.POS.System.API.Core.Exceptions.Roles;
 using NN.POS.System.API.Core.Exceptions.UserRoles;
 using NN.POS.System.API.Core.Exceptions.Users;
 using NN.POS.System.API.Core.IRepositories.Roles;
 using NN.POS.System.API.Infra.Tables;
 using NN.POS.System.API.Infra.Tables.Roles;
+using NN.POS.System.Model.Dtos.Roles;
 
 namespace NN.POS.System.API.Infra.Repositories.Roles;
 

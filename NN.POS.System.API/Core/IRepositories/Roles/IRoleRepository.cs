@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using NN.POS.System.API.Commons.Pagination;
+using NN.POS.System.Common.Pagination;
 using NN.POS.System.API.Core.Entities.Roles;
 using NN.POS.System.API.Infra.Tables.Roles;
 

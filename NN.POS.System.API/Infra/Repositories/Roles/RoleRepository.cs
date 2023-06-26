@@ -1,10 +1,10 @@
 ﻿using System.Linq.Expressions;
-using NN.POS.System.API.Commons.Pagination;
 using NN.POS.System.API.Core.Entities.Roles;
 using NN.POS.System.API.Core.Exceptions.Roles;
 using NN.POS.System.API.Core.IRepositories.Roles;
 using NN.POS.System.API.Infra.Tables;
 using NN.POS.System.API.Infra.Tables.Roles;
+using NN.POS.System.Common.Pagination;
 
 namespace NN.POS.System.API.Infra.Repositories.Roles;
 

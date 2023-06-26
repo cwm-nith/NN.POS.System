@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using NN.POS.System.API.Core.Dtos.BusinessPartners;
 using NN.POS.System.API.Core.Entities.BusinessPartners;
 using NN.POS.System.API.Core.IRepositories.BusinessPartners;
 using NN.POS.System.API.Infra.Tables.BusinessPartners;
+using NN.POS.System.Model.Dtos.BusinessPartners;
 
 namespace NN.POS.System.API.App.Commands.BusinessPartners.Handlers;
 
@@ -19,7 +19,7 @@ public class UpdateBusinessPartnerCommandHandler : IRequestHandler<UpdateBusines
     {
         var busEntity = await _businessPartnerRepository.GetByIdAsync(r.Id, cancellationToken);
 
-        var entity = new BusinessPartnerEntity(
+        BusinessPartnerEntity entity = new (
             id: r.Id,
             firstName: r.FirstName ?? busEntity.FirstName,
             lastName: r.LastName ?? busEntity.LastName,

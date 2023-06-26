@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.System.API.App.Commands.UserRoles;
 using NN.POS.System.API.App.Queries.UserRoles;
-using NN.POS.System.API.Core.Dtos.Roles;
+using NN.POS.System.Model.Dtos.Roles;
 
 namespace NN.POS.System.API.Controllers.V1;
 
