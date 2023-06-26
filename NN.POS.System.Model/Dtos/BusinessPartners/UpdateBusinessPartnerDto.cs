@@ -1,6 +1,6 @@
-﻿using NN.POS.System.API.Core.Enums;
+﻿using NN.POS.System.Model.Enums;
 
-namespace NN.POS.System.API.Core.Dtos.BusinessPartners;
+namespace NN.POS.System.Model.Dtos.BusinessPartners;
 
 public class UpdateBusinessPartnerDto : IBaseDto
 {

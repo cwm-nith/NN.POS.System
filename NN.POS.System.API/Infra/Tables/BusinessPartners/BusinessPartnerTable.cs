@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using NN.POS.System.API.Core.Enums;
+using NN.POS.System.Model.Enums;
 
 namespace NN.POS.System.API.Infra.Tables.BusinessPartners;
 

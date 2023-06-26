@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
-using NN.POS.System.API.Commons.Pagination;
 using NN.POS.System.API.Core.Entities.Users;
 using NN.POS.System.API.Core.IRepositories.Users;
 using NN.POS.System.API.Infra.Tables;
 using NN.POS.System.API.Infra.Tables.User;
+using NN.POS.System.Common.Pagination;
 
 namespace NN.POS.System.API.Infra.Repositories.Users;
 

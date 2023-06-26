@@ -1,4 +1,4 @@
-﻿namespace NN.POS.System.API.Commons.Pagination;
+﻿namespace NN.POS.System.Common.Pagination;
 
 public interface IPagedQuery
 {

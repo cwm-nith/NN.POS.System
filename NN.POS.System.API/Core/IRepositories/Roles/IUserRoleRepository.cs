@@ -1,4 +1,4 @@
-﻿using NN.POS.System.API.Core.Dtos.Roles;
+﻿using NN.POS.System.Model.Dtos.Roles;
 
 namespace NN.POS.System.API.Core.IRepositories.Roles;
 
