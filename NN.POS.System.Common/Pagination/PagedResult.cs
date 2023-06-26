@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace NN.POS.System.API.Commons.Pagination;
+namespace NN.POS.System.Common.Pagination;
 
 public class PagedResult : PagedResultBase
 {

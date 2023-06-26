@@ -1,4 +1,4 @@
-﻿namespace NN.POS.System.API.Core.Enums;
+﻿namespace NN.POS.System.Model.Enums;
 
 public class BusinessPartnerEnum
 {

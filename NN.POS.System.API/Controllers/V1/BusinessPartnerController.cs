@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.System.API.App.Commands.BusinessPartners;
 using NN.POS.System.API.App.Queries.BusinessPartners;
-using NN.POS.System.API.Commons.Pagination;
-using NN.POS.System.API.Core.Dtos.BusinessPartners;
+using NN.POS.System.Common.Pagination;
+using NN.POS.System.Model.Dtos.BusinessPartners;
 
 namespace NN.POS.System.API.Controllers.V1;
 

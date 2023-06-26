@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
-namespace NN.POS.System.API.Commons.Pagination;
+namespace NN.POS.System.Common.Pagination;
 
 public static class Extensions
 {

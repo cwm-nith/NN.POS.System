@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NN.POS.System.API.Core.Dtos.Roles;
+namespace NN.POS.System.Model.Dtos.Roles;
 
 public class CreateRoleDto : IBaseDto
 {

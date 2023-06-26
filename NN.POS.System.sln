@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NN.POS.System.Model", "NN.POS.System.Model\NN.POS.System.Model.csproj", "{9DEEE1C7-1BC7-4431-91B5-912746587ED8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NN.POS.System.Common", "NN.POS.System.Common\NN.POS.System.Common.csproj", "{78BC6FF9-28FF-4637-929D-4E059F1BCA6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +26,14 @@ Global
 		{D2A39079-42E8-4728-80F6-4977CFD1BE78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2A39079-42E8-4728-80F6-4977CFD1BE78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2A39079-42E8-4728-80F6-4977CFD1BE78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DEEE1C7-1BC7-4431-91B5-912746587ED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DEEE1C7-1BC7-4431-91B5-912746587ED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DEEE1C7-1BC7-4431-91B5-912746587ED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DEEE1C7-1BC7-4431-91B5-912746587ED8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78BC6FF9-28FF-4637-929D-4E059F1BCA6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78BC6FF9-28FF-4637-929D-4E059F1BCA6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78BC6FF9-28FF-4637-929D-4E059F1BCA6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78BC6FF9-28FF-4637-929D-4E059F1BCA6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
