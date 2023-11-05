@@ -24,6 +24,5 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserD
 
         var updatedUser = await _userRepository.UpdateUserAsync(user, cancellationToken);
         return updatedUser.ToDto();
-
     }
 }

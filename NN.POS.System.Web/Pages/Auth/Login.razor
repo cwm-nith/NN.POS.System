@@ -1,32 +1,33 @@
 ﻿@page "/login"
 @using NN.POS.System.Model.Dtos.Users
+@using NN.POS.System.Web.Providers
 @using NN.POS.System.Web.Validations.Auth
 
 
-<div class="ma-6 d-flex justify-center">
-    <MudChip Color="Color.Primary">
-        <h3>User Registration Form</h3>
 
+<div class="ma-6 d-flex justify-center">
+    <MudChip Color="Color.Primary" Class="d-flex justify-center">
+        Login
     </MudChip>
 </div>
 <div class="ma-6 d-flex justify-center">
     <MudCard Width="500px">
-        <MudForm Model="loginModel" @ref="form" Validation="loginValidator.ValidateValue">
+        <MudForm Model="_loginModel" @ref="_form" Validation="_loginValidator.ValidateValue">
             <MudCardContent>
-                @if (!string.IsNullOrEmpty(APIErrorMessages))
+                @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
                     <MudChip Class="d-flex justify-center" Color="Color.Error">
-                        <p>@APIErrorMessages</p>
+                        <p>@_apiErrorMessages</p>
 
                     </MudChip>
                 }
 
-                <MudTextField @bind-Value="loginModel.Username"
-                              For="@(() => loginModel.Username)"
+                <MudTextField @bind-Value="_loginModel.Username"
+                              For="@(() => _loginModel.Username)"
                               Immediate="true"
-                              Label="Email" />
-                <MudTextField @bind-Value="loginModel.Password"
-                              For="@(() => loginModel.Password)"
+                              Label="Username" />
+                <MudTextField @bind-Value="_loginModel.Password"
+                              For="@(() => _loginModel.Password)"
                               Immediate="true"
                               Label="Password" InputType="InputType.Password" />
 
@@ -39,51 +40,46 @@
 </div>
 
 @code {
-    LoginDto loginModel = new LoginDto();
+    readonly LoginDto _loginModel = new();
 
-    LoginValidation loginValidator = new LoginValidation();
+    readonly LoginValidation _loginValidator = new();
 
-    MudForm form;
+    MudForm? _form;
 
-    string APIErrorMessages;
+    string? _apiErrorMessages;
 
     private async Task LoginAsync()
     {
-        await form.Validate();
-        if (form.IsValid)
+        await _form?.Validate()!;
+        if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(loginModel);
+            var jsonPayload = JsonSerializer.Serialize(_loginModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
-            var httpClient = _httpClientFactory.CreateClient(AppConstants.HttpClientName);
-            var response = await httpClient.PostAsync("auth/login", requestContent);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}auth/login", requestContent);
 
-    //        if (response.StatusCode == HttpStatusCode.BadRequest)
-    //        {
-    //            var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, List<string>>>();
-    //            if (errors.Count > 0)
-    //            {
-    //                foreach (var item in errors)
-    //                {
-    //                    foreach (var errorMessage in item.Value)
-    //                    {
-    //                        APIErrorMessages = $"{APIErrorMessages} | {errorMessage}";
-    //                    }
-    //                }
-    //            }
-    //        }
-    //        else if (response.StatusCode == HttpStatusCode.OK)
-    //        {
-    ////_navigationManager.NavigateTo("/registration-confirmation");
-    //            var tokenResponse = await response.Content.ReadFromJsonAsync<JwtTokenResponseVm>();
-    //            await _localStorageService.SetItemAsync<string>("jwt-access-token", tokenResponse.AccessToken);
-    //            (_authStateProvider as CustomAuthProvider).NotifyAuthState();
-    //            _navigationManager.NavigateTo("/fetchdata");
-    //        }
-    //        else
-    //        {
-    //            APIErrorMessages = "Login Failed Plase try after some time";
-
-    //        }
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                case HttpStatusCode.Unauthorized:
+                {
+                    var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                    _apiErrorMessages = errors?["message"];
+                    break;
+                }
+                case HttpStatusCode.OK:
+                {
+                    //_navigationManager.NavigateTo("/registration-confirmation");
+                    var tokenResponse = await response.Content.ReadFromJsonAsync<UserDto>();
+                    await LocalStorageService.SetItemAsync("jwt-access-token", tokenResponse?.Token);
+                    (AuthStateProvider as CustomAuthProvider)?.NotifyAuthState();
+                    NavigationManager.NavigateTo("/");
+                    break;
+                }
+                default:
+                    _apiErrorMessages = "Login Failed Please try after some time";
+                    break;
+            }
         }
     }
 }

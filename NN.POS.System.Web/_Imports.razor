@@ -3,6 +3,7 @@
 @using global::System.Text.Json
 @using global::System.Text
 @using global::System.Net.Mime
+@using global::System.Net
 
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
@@ -16,10 +17,12 @@
 @using FluentValidation
 @using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Components.Authorization
+@using NN.POS.System.Web.AppSettings
 @using NN.POS.System.Web.Constants
 
 
-@inject IHttpClientFactory _httpClientFactory
-@inject ILocalStorageService _localStorageService
-@inject AuthenticationStateProvider _authStateProvider
-@inject NavigationManager _navigationManager
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+@inject Setting Setting

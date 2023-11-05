@@ -13,7 +13,9 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var settings = new Setting();
+
 builder.Configuration.GetSection("Setting").Bind(settings);
+builder.Services.AddSingleton(settings);
 
 builder.Services.AddHttpClient(AppConstants.HttpClientName, options =>
 {

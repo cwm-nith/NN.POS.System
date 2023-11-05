@@ -2,7 +2,7 @@
 
 public static class AppDataSetting
 {
-    public static readonly Dictionary<string, string> ClientHeaders = new()
+    public static Dictionary<string, string> ClientHeaders => new()
     {
         { "F9adySc", "Android" },
         { "dNawd36", "iOS" },

@@ -22,7 +22,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserD
         var entity = new UserEntity(name: r.Name, username: r.Username, email: r.Email, lastLogin: null,
             createdAt: DateTime.UtcNow, updatedAt: DateTime.UtcNow);
         entity.SetPassword(r.Password, _passwordHasher);
-        var user = await _userRepository.CreateUserAsync(entity);
+        var user = await _userRepository.CreateUserAsync(entity, cancellationToken);
         return user.ToDto();
     }
 }

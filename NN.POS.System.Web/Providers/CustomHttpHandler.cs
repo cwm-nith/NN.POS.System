@@ -1,18 +1,24 @@
 ﻿using Blazored.LocalStorage;
+using NN.POS.System.Web.AppSettings;
 
 namespace NN.POS.System.Web.Providers;
 
 public class CustomHttpHandler : DelegatingHandler
 {
     private readonly ILocalStorageService _localStorageService;
-    public CustomHttpHandler(ILocalStorageService localStorageService)
+    private readonly Setting _setting;
+    public CustomHttpHandler(ILocalStorageService localStorageService, Setting setting)
     {
         _localStorageService = localStorageService;
+        _setting = setting;
     }
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        if (request.RequestUri != null && (request.RequestUri.AbsolutePath.ToLower().Contains("login") ||
-                                           request.RequestUri.AbsolutePath.ToLower().Contains("register")))
+        
+        request.Headers.Add("X-Client", _setting.Code);
+        
+        if (request.RequestUri != null && (request.RequestUri.AbsolutePath.Contains("login", StringComparison.CurrentCultureIgnoreCase) ||
+                                           request.RequestUri.AbsolutePath.Contains("register", StringComparison.CurrentCultureIgnoreCase)))
         {
             return await base.SendAsync(request, cancellationToken);
         }
