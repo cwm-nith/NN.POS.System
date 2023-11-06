@@ -69,9 +69,8 @@
                 }
                 case HttpStatusCode.OK:
                 {
-                    //_navigationManager.NavigateTo("/registration-confirmation");
                     var tokenResponse = await response.Content.ReadFromJsonAsync<UserDto>();
-                    await LocalStorageService.SetItemAsync("jwt-access-token", tokenResponse?.Token);
+                    await LocalStorageService.SetItemAsync("jat", tokenResponse?.Token);
                     (AuthStateProvider as CustomAuthProvider)?.NotifyAuthState();
                     NavigationManager.NavigateTo("/");
                     break;
