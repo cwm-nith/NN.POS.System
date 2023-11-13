@@ -6,6 +6,6 @@ public abstract class TestExample : IExamplesProvider<object>
 {
     public object GetExamples()
     {
-        return "";
+        throw new NotImplementedException();
     }
 }

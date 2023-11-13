@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
+    <PackageReference Include="FluentValidation" Version="11.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.0-rc.2.23480.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0-rc.2.23480.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-rc.2.23480.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="MudBlazor" Version="6.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NN.POS.System.Common\NN.POS.System.Common.csproj" />
+    <ProjectReference Include="..\NN.POS.System.Model\NN.POS.System.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AppSettings\" />
+    <Folder Include="Providers\" />
+    <Folder Include="Validations\Auth\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Contents\login.png" />
+    <None Include="wwwroot\Contents\LoginPage.jpg" />
+  </ItemGroup>
+
+</Project>
