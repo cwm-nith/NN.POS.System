@@ -1,43 +1,65 @@
-﻿@page "/login"
+﻿@layout UnAuthLayout
+@page "/"
+@page "/login"
 @using NN.POS.System.Model.Dtos.Users
 @using NN.POS.System.Web.Providers
 @using NN.POS.System.Web.Validations.Auth
 
+<MudPaper Height="80vh" Width="90%" Class="m-0 p-0">
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudContainer Class="pt-3 d-flex flex-column justify-center align-center w-100">
+            <MudText Typo="Typo.h5" Class="font-weight-bold"><b>NN POS System</b></MudText>
+            <MudText Typo="Typo.subtitle1">Make Your Business Easier, Grow and Success</MudText>
+        </MudContainer>
+        <MudContainer Class="mt-5" />
+        <MudGrid Class="mt-5">
+            <MudHidden Breakpoint="Breakpoint.Sm" Invert="true">
+                <MudItem lg="1" sm="0"/>
+            </MudHidden>
+            <MudItem sm="12" md="5" Class="mt-5">
+                <MudForm Model="_loginModel" @ref="_form" Validation="_loginValidator.ValidateValue">
+                    <MudCard Class="p-5">
+                        <MudText Typo="Typo.h5" Class="font-weight-bold text-center">
+                            <b>Login</b>
+                        </MudText>
+                        <br />
+                        @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                        {
+                            <MudChip Class="d-flex justify-center" Color="Color.Error">
+                                <p>@_apiErrorMessages</p>
+                            </MudChip>
+                        }
 
+                        <MudTextField @bind-Value="_loginModel.Username"
+                                      For="@(() => _loginModel.Username)"
+                                      Immediate="true"
+                                      Label="Username"/>
 
-<div class="ma-6 d-flex justify-center">
-    <MudChip Color="Color.Primary" Class="d-flex justify-center">
-        Login
-    </MudChip>
-</div>
-<div class="ma-6 d-flex justify-center">
-    <MudCard Width="500px">
-        <MudForm Model="_loginModel" @ref="_form" Validation="_loginValidator.ValidateValue">
-            <MudCardContent>
-                @if (!string.IsNullOrEmpty(_apiErrorMessages))
-                {
-                    <MudChip Class="d-flex justify-center" Color="Color.Error">
-                        <p>@_apiErrorMessages</p>
+                        <MudTextField @bind-Value="_loginModel.Password"
+                                      For="@(() => _loginModel.Password)"
+                                      Immediate="true"
+                                      Label="Password" InputType="InputType.Password"/>
+                        <MudCardActions Class="d-flex justify-content-center">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="LoginAsync">Login</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudForm>
+            </MudItem>
+            <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="false">
+                <MudItem lg="1" sm="0"/>
+                <MudItem sm="12" md="4" Class="">
+                    <MudImage
+                        Alt="NN POS System"
+                        Src="/Contents/LoginPage.jpg"
+                        ObjectFit="ObjectFit.Contain"
+                        Height="300"
+                        Width="300"/>
+                </MudItem>
+            </MudHidden>
+        </MudGrid> 
+    </MudContainer>
+</MudPaper>
 
-                    </MudChip>
-                }
-
-                <MudTextField @bind-Value="_loginModel.Username"
-                              For="@(() => _loginModel.Username)"
-                              Immediate="true"
-                              Label="Username" />
-                <MudTextField @bind-Value="_loginModel.Password"
-                              For="@(() => _loginModel.Password)"
-                              Immediate="true"
-                              Label="Password" InputType="InputType.Password" />
-
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="LoginAsync">Login</MudButton>
-            </MudCardActions>
-        </MudForm>
-    </MudCard>
-</div>
 
 @code {
     readonly LoginDto _loginModel = new();
@@ -72,7 +94,7 @@
                     var tokenResponse = await response.Content.ReadFromJsonAsync<UserDto>();
                     await LocalStorageService.SetItemAsync("jat", tokenResponse?.Token);
                     (AuthStateProvider as CustomAuthProvider)?.NotifyAuthState();
-                    NavigationManager.NavigateTo("/");
+                    NavigationManager.NavigateTo("/dashboard");
                     break;
                 }
                 default:

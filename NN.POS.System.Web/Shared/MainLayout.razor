@@ -19,12 +19,16 @@
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
         <AuthorizeView>
+            <NotAuthorized>
+                <LoginRedirect/>
+            </NotAuthorized>
             <Authorized>
                 <MudDrawerHeader>
                     <MudText Typo="Typo.h6">NN POS System</MudText>
                 </MudDrawerHeader>
                 <NavMenu/>
             </Authorized>
+
         </AuthorizeView> 
     </MudDrawer>
     <MudMainContent>
