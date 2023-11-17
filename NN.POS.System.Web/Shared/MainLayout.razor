@@ -10,7 +10,9 @@
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudDrawerHeader>
-            <MudText Typo="Typo.h6">NN POS System</MudText>
+            <MudButton Variant="Variant.Text" OnClick="ToDashboard">
+                <MudText Typo="Typo.h6" Class="mt-1 text-white">NN POS System</MudText>
+            </MudButton>
         </MudDrawerHeader>
         <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
@@ -30,56 +32,28 @@
     </MudMainContent>
 </MudLayout>
 
-@* <MudLayout>
-    <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" 
-                       Color="Color.Inherit" Edge="Edge.Start"
-                       OnClick="@(_ => DrawerToggle())" />
-        <MudSpacer />
-        <AuthorizeView>
-            <Authorized>
-                <MudText Typo="Typo.h6">@UserDisplayName(context.User.Claims.ToList())</MudText>
-            </Authorized>
-        </AuthorizeView>
-    </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
-        <AuthorizeView>
-            <NotAuthorized>
-                <LoginRedirect/>
-            </NotAuthorized>
-            <Authorized>
-                <MudDrawerHeader>
-                    <MudText Typo="Typo.h6">NN POS System</MudText>
-                </MudDrawerHeader>
-                <NavMenu/>
-            </Authorized>
+@code {
 
-        </AuthorizeView> 
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer>
-            @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout> *@
+    private void ToDashboard()
+    {
+        NavigationManager.NavigateTo(RouteName.Dashboard);
+    }
 
-@code{
-    
     bool _drawerOpen = true;
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
-    } 
-    
+    }
+
     private static string UserDisplayName(IReadOnlyCollection<Claim> claims)
     {
         var firstName = claims.Where(c => c.Type == "nameid")
             .Select(x => x.Value).FirstOrDefault();
-        
+
         var lastName = claims.Where(c => c.Type == "userId")
             .Select(c => c.Value).FirstOrDefault();
-        
-        if(!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
+
+        if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
         {
             return $"{firstName}  {lastName}";
         }

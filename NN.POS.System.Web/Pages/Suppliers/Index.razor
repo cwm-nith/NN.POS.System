@@ -1,0 +1,19 @@
+﻿@page "/suppliers"
+
+<MudContainer Class="p-3">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4" Elevation="0">
+        <MudLink Href="@RouteName.CreateSupplier">
+            <MudButton
+                Variant="Variant.Filled"
+                StartIcon="@Icons.Material.Filled.AddCircle"
+                Color="Color.Primary">
+                Delete
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+    <MudText Typo="Typo.h1">suppliers</MudText>
+</MudContainer>
+
+@code {
+    
+}
