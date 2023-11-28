@@ -3,6 +3,7 @@ using NN.POS.System.Common.Pagination;
 using NN.POS.System.Model.Dtos.BusinessPartners;
 using NN.POS.System.Web.Constants;
 using System.Net.Http.Json;
+using NN.POS.System.Web.Pages.Suppliers.Dialogs;
 
 namespace NN.POS.System.Web.Pages.Suppliers;
 
@@ -25,5 +26,17 @@ public partial class Index
     protected void GoToUpdatePage(int id)
     {
         NavigationManager.NavigateTo($"{RouteName.UpdateSupplier}/{id}");
+    }
+
+    private void DeleteUser(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog>
+        {
+            { x => x.Id, id}
+        };
+
+        var options = new DialogOptions() { CloseButton = true};
+
+        Dialog.Show<DeleteDialog>("Delete", parameters, options);
     }
 }
