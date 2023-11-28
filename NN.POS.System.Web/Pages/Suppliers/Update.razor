@@ -2,6 +2,8 @@
 @using NN.POS.System.Model.Dtos.BusinessPartners
 @using NN.POS.System.Web.Validations.Contacts
 @using static NN.POS.System.Model.Enums.BusinessPartnerEnum
+@using JsonSerializer = global::System.Text.Json.JsonSerializer
+@using Newtonsoft.Json
 
 <MudContainer Class="p-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
@@ -116,13 +118,15 @@
     [Parameter]
     public int Id { get; set; }
 
-    readonly CreateBusinessPartnerDto _supplyModel = new();
+    private CreateBusinessPartnerDto _supplyModel = new();
 
     readonly CreateSupplyValidator _supplyValidator = new();
 
     MudForm? _form;
 
     string? _apiErrorMessages;
+
+
 
     private async Task CreateSupplyAsync()
     {
@@ -156,4 +160,12 @@
 
         }
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var data = await httpClient.GetFromJsonAsync<BusinessPartnerDto>($"{Setting.PrefixEndpoint}BusinessPartner/{Id}");
+        Console.WriteLine(JsonConvert.SerializeObject(data));
+    }
+
 }

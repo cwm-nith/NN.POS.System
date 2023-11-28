@@ -13,21 +13,18 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable Items="@_suppliers"
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<BusinessPartnerDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
-              Striped="true"
-              Filter="new Func<BusinessPartnerDto, bool>(FilterFunc1)">
+              Striped="true">
 
         <ToolBarContent>
             <MudText Typo="Typo.h6">Suppliers</MudText>
-            <MudSpacer />
-            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <HeaderContent>
             <MudTh>Id</MudTh>
             <MudTh>First Name</MudTh>
-            <MudTh>Last Name</MudTh> 
+            <MudTh>Last Name</MudTh>
             <MudTh>Phone Number</MudTh>
             <MudTh>Email</MudTh>
             <MudTh>Actions</MudTh>
