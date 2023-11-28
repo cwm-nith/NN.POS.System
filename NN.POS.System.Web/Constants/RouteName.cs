@@ -8,5 +8,5 @@ public static class RouteName
 
     public static string Supplier => "/suppliers";
     public static string CreateSupplier => "/suppliers/create-supplier";
-    public static string UpdateSupplier => "/update-supplier";
+    public static string UpdateSupplier => "/suppliers/update-supplier";
 }

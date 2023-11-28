@@ -1,4 +1,4 @@
-﻿@page "/suppliers/create-supplier"
+﻿@page "/suppliers/update-supplier/{Id:int}"
 @using NN.POS.System.Model.Dtos.BusinessPartners
 @using NN.POS.System.Web.Validations.Contacts
 @using static NN.POS.System.Model.Enums.BusinessPartnerEnum
@@ -112,6 +112,9 @@
 </MudContainer>
 
 @code {
+
+    [Parameter]
+    public int Id { get; set; }
 
     readonly CreateBusinessPartnerDto _supplyModel = new();
 

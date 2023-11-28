@@ -1,47 +1,57 @@
 ﻿@page "/suppliers"
 @using NN.POS.System.Model.Dtos.BusinessPartners
 
-<MudPaper Class="d-flex flex-row flex-grow-1 gap-4" Elevation="0">
-    <MudLink Href="@RouteName.CreateSupplier">
-        <MudButton Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.AddCircle"
-                   Color="Color.Primary">
-            Create
-        </MudButton>
-    </MudLink>
-</MudPaper>
+<MudContainer Class="mt-2">
 
-<MudContainer>
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<BusinessPartnerDto>>>(ServerReload))"
-              Dense="true" Hover="true" @ref="Table">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.CreateSupplier">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       Color="Color.Primary">
+                Create
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+
+    <MudTable Items="@_suppliers"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              Filter="new Func<BusinessPartnerDto, bool>(FilterFunc1)">
+
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Periodic Elements</MudText>
-            @*  <MudSpacer />
-            <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
-            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+            <MudText Typo="Typo.h6">Suppliers</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="nr_field" T="BusinessPartnerDto">Nr</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="sign_field" T="BusinessPartnerDto">Sign</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="name_field" T="BusinessPartnerDto">Name</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="position_field" T="BusinessPartnerDto">Position</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="mass_field" T="BusinessPartnerDto">Molar mass</MudTableSortLabel></MudTh>
+            <MudTh>Id</MudTh>
+            <MudTh>First Name</MudTh>
+            <MudTh>Last Name</MudTh> 
+            <MudTh>Phone Number</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr">@context.Id</MudTd>
-            <MudTd DataLabel="Sign">@context.FirstName</MudTd>
-            <MudTd DataLabel="Name">@context.LastName</MudTd>
-            <MudTd DataLabel="Position">@context.PhoneNumber</MudTd>
-            <MudTd DataLabel="Molar mass">@context.Email</MudTd>
-        </RowTemplate>
-        <NoRecordsContent>
-            <MudText>No matching records found</MudText>
-        </NoRecordsContent>
-        <LoadingContent>
-            <MudText>Loading...</MudText>
-        </LoadingContent>
-        <PagerContent>
-            <MudTablePager />
-        </PagerContent>
-    </MudTable>
-</MudContainer>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+                <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+                <MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+                <MudTd DataLabel="Email">@context.Email</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
