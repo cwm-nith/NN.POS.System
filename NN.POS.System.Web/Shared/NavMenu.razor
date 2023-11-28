@@ -1,5 +1,26 @@
 ﻿<MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
+    <MudNavGroup Title="Contacts" Expanded='$"/{_section}" == RouteName.Supplier'>
+        <MudNavLink Href="@RouteName.Supplier">Suppliers</MudNavLink>
+        @* <MudNavLink Href="/security">Security</MudNavLink> *@
+    </MudNavGroup>
 </MudNavMenu>
+
+@code
+{
+
+    string? _section;
+
+    protected override void OnInitialized()
+    {
+        Refresh();
+        base.OnInitialized();
+    }
+
+    public void Refresh()
+    {
+        _section = NavigationManager.GetSection();
+        Console.WriteLine(_section);
+        StateHasChanged();
+    }
+
+}

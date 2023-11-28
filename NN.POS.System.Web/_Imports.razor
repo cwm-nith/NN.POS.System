@@ -11,6 +11,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using System
 @using Microsoft.JSInterop
 @using NN.POS.System.Web
 @using NN.POS.System.Web.Shared
@@ -21,6 +22,7 @@
 @using NN.POS.System.Web.AppSettings
 @using NN.POS.System.Web.Constants
 @using NN.POS.System.Web.Components
+@using NN.POS.System.Web.Extensions
 
 
 @inject IHttpClientFactory HttpClientFactory
@@ -28,3 +30,4 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 @inject Setting Setting
+@inject IDialogService Dialog

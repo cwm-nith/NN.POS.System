@@ -16,10 +16,20 @@ public static class Extensions
     public static async Task<PagedResult<T>> PaginateAsync<T>(this IQueryable<T> collection,
         int page = 1, int resultsPerPage = 10, CancellationToken cancellation = default)
     {
-        if (page <= 0)
+
+        switch (page)
         {
-            page = 1;
+            case -1:
+            {
+                var allData = await collection.ToListAsync(cancellation);
+
+                return PagedResult.Create(allData, 1, allData.Count, 1, allData.Count);
+            }
+            case <= 0:
+                page = 1;
+                break;
         }
+
         if (resultsPerPage <= 0)
         {
             resultsPerPage = 10;

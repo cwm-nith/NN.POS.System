@@ -15,7 +15,7 @@ public class UpdateBusinessPartnerDto : IBaseDto
 
     public string? Address { get; set; }
 
-    public BusinessPartnerEnum.ContactType? ContactType { get; set; }
+    public BusinessPartnerEnum.ContactType ContactType { get; set; }
 
-    public BusinessPartnerEnum.BusinessType? BusinessType { get; set; }
+    public BusinessPartnerEnum.BusinessType BusinessType { get; set; }
 }

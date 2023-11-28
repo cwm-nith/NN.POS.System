@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
 using Microsoft.OpenApi.Models;
 using NN.POS.System.API.Infra.Options;
 using NN.POS.System.API.Infra.Swagger.RequestExamples;
@@ -36,7 +36,7 @@ public static class Extensions
 
             var filePath = Path.Combine(AppContext.BaseDirectory, docFileName);
             c.IncludeXmlComments(filePath);
-            c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); 
+            c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
         });
         services.AddSwaggerExamplesFromAssemblyOf<TestExample>();
         return services;
@@ -52,12 +52,12 @@ public static class Extensions
                 setup.AssumeDefaultVersionWhenUnspecified = true;
                 setup.ReportApiVersions = true;
             })
-            .AddVersionedApiExplorer(setup =>
+            .AddApiExplorer(setup =>
             {
                 setup.GroupNameFormat = "'v'VVV";
                 setup.SubstituteApiVersionInUrl = true;
-            })
-            .AddSwaggerExample();
+            });
+        services.AddSwaggerExample();
         // Register the Swagger generator, defining 1 or more Swagger documents
         services.AddSwaggerGen(c =>
         {

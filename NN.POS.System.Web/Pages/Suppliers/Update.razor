@@ -1,0 +1,179 @@
+﻿@page "/suppliers/update-supplier/{Id:int}"
+@using NN.POS.System.Model.Dtos.BusinessPartners
+@using NN.POS.System.Web.Validations.Contacts
+@using static NN.POS.System.Model.Enums.BusinessPartnerEnum
+@using Newtonsoft.Json
+
+<MudContainer Class="p-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.Supplier">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Color="Color.Primary">
+                Back
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+    <MudCard>
+        <MudForm Model="_supplyModel" Validation="_supplyValidator.ValidateValue" @ref="_form">
+            <MudCardContent>
+                <MudContainer Class="text-center">
+                    <MudChip Color="Color.Primary" Class="p-4">
+                        <MudText Typo="Typo.h6">Update Supply</MudText>
+                    </MudChip>
+                </MudContainer>
+                <MudDivider Class="mt-2" />
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12">
+                        <MudTextField @bind-Value="_supplyModel.FirstName"
+                                      For="@(() => _supplyModel.FirstName)"
+                                      Immediate="true"
+                                      Label="Last name" />
+
+
+                    </MudItem>
+                    <MudItem lg="5" sm="12">
+                        <MudTextField @bind-Value="_supplyModel.LastName"
+                                      For="@(() => _supplyModel.LastName)"
+                                      Immediate="true"
+                                      Label="Last name" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12">
+                        <MudTextField @bind-Value="_supplyModel.Email"
+                                      For="@(() => _supplyModel.Email)"
+                                      Immediate="true"
+                                      Label="Email" />
+
+
+                    </MudItem>
+                    <MudItem lg="5" sm="12">
+                        <MudTextField @bind-Value="_supplyModel.PhoneNumber"
+                                      For="@(() => _supplyModel.PhoneNumber)"
+                                      Immediate="true"
+                                      Label="Phone number" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12">
+                        <MudSelect T="BusinessType" @bind-Value="_supplyModel.BusinessType" For="@(() => _supplyModel.BusinessType)">
+                            @foreach (BusinessType option in Enum.GetValues(typeof(BusinessType)))
+                            {
+                                <MudSelectItem T="BusinessType" Value="option" />
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem lg="5" sm="12">
+                        <MudSelect @bind-Value="_supplyModel.ContactType" For="@(() => _supplyModel.ContactType)">
+                            <MudSelectItem Value="ContactType.Supplier" />
+                        </MudSelect>
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="10" sm="12">
+                        <MudTextField @bind-Value="_supplyModel.Address"
+                                      For="@(() => _supplyModel.Address)"
+                                      Immediate="true"
+                                      Label="Address" />
+                    </MudItem>
+                </MudGrid>
+
+                @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                {
+                    <MudChip Class="d-flex justify-center" Color="Color.Error">
+                        <p>@_apiErrorMessages</p>
+                    </MudChip>
+                }
+
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudGrid>
+                    <MudItem sm="0" lg="9"></MudItem>
+                    <MudItem sm="12" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="UpdateSupplyAsync">
+                            Save
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</MudContainer>
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private UpdateBusinessPartnerDto _supplyModel = new();
+
+    readonly UpdateSupplyValidator _supplyValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+
+
+    private async Task UpdateSupplyAsync()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonConvert.SerializeObject(_supplyModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+            var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}BusinessPartner", requestContent);
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                case HttpStatusCode.Unauthorized:
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                        _apiErrorMessages = errors?["message"];
+                        NavigationManager.NavigateTo(RouteName.Login);
+                        break;
+                    }
+                case HttpStatusCode.OK:
+                    {
+                        NavigationManager.NavigateTo(RouteName.Supplier);
+                        break;
+                    }
+                default:
+                    _apiErrorMessages = "Login Failed Please try after some time";
+                    break;
+            }
+
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var data = await httpClient.GetFromJsonAsync<BusinessPartnerDto>($"{Setting.PrefixEndpoint}BusinessPartner/{Id}");
+
+        _supplyModel = new UpdateBusinessPartnerDto
+            {
+                Address = data?.Address,
+                BusinessType = data?.BusinessType ?? BusinessType.None,
+                LastName = data?.LastName,
+                ContactType = data?.ContactType ?? ContactType.None,
+                Email = data?.Email,
+                FirstName = data?.FirstName,
+                Id = data?.Id ?? 0,
+                PhoneNumber = data?.PhoneNumber
+            };
+        Console.WriteLine(JsonConvert.SerializeObject(data));
+    }
+
+}
