@@ -17,18 +17,18 @@
         <MudForm Model="_supplyModel" Validation="_supplyValidator.ValidateValue" @ref="_form">
             <MudCardContent>
                 <MudContainer Class="text-center">
-                    <MudChip Color="Color.Primary" Class="p-4">      
+                    <MudChip Color="Color.Primary" Class="p-4">
                         <MudText Typo="Typo.h6">Create New Supply</MudText>
                     </MudChip>
                 </MudContainer>
-                <MudDivider Class="mt-2"/>
+                <MudDivider Class="mt-2" />
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12">
                         <MudTextField @bind-Value="_supplyModel.FirstName"
                                       For="@(() => _supplyModel.FirstName)"
                                       Immediate="true"
-                                      Label="Last name"/>
+                                      Label="Last name" />
 
 
                     </MudItem>
@@ -36,7 +36,7 @@
                         <MudTextField @bind-Value="_supplyModel.LastName"
                                       For="@(() => _supplyModel.LastName)"
                                       Immediate="true"
-                                      Label="Last name"/>
+                                      Label="Last name" />
                     </MudItem>
                 </MudGrid>
 
@@ -45,7 +45,7 @@
                         <MudTextField @bind-Value="_supplyModel.Email"
                                       For="@(() => _supplyModel.Email)"
                                       Immediate="true"
-                                      Label="Email"/>
+                                      Label="Email" />
 
 
                     </MudItem>
@@ -53,25 +53,22 @@
                         <MudTextField @bind-Value="_supplyModel.PhoneNumber"
                                       For="@(() => _supplyModel.PhoneNumber)"
                                       Immediate="true"
-                                      Label="Phone number"/>
+                                      Label="Phone number" />
                     </MudItem>
                 </MudGrid>
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12">
-                        <MudSelect @bind-Value="_supplyModel.BusinessType" For="@(() => _supplyModel.BusinessType)">
+                        <MudSelect @bind-Value="_supplyModel.BusinessType" For="@(() => _supplyModel.BusinessType)" Label="Business Type">
                             @foreach (BusinessType option in Enum.GetValues(typeof(BusinessType)))
                             {
-                                <MudSelectItem Value="option"/>
+                                <MudSelectItem Value="option" />
                             }
                         </MudSelect>
                     </MudItem>
                     <MudItem lg="5" sm="12">
-                        <MudSelect @bind-Value="_supplyModel.ContactType" For="@(() => _supplyModel.ContactType)">
-                            @foreach (ContactType option in Enum.GetValues(typeof(ContactType)))
-                            {
-                                <MudSelectItem Value="option"/>
-                            }
+                        <MudSelect ReadOnly="true" @bind-Value="_supplyModel.ContactType" For="@(() => _supplyModel.ContactType)" Label="Contact Type">
+                            <MudSelectItem Value="ContactType.Supplier" />
                         </MudSelect>
                     </MudItem>
                 </MudGrid>
@@ -81,7 +78,7 @@
                         <MudTextField @bind-Value="_supplyModel.Address"
                                       For="@(() => _supplyModel.Address)"
                                       Immediate="true"
-                                      Label="Address"/>
+                                      Label="Address" />
                     </MudItem>
                 </MudGrid>
 
@@ -94,7 +91,7 @@
 
             </MudCardContent>
 
-            <MudCardActions >
+            <MudCardActions>
                 <MudGrid>
                     <MudItem sm="0" lg="9"></MudItem>
                     <MudItem sm="12" lg="3">
@@ -113,7 +110,10 @@
 
 @code {
 
-    readonly CreateBusinessPartnerDto _supplyModel = new();
+    readonly CreateBusinessPartnerDto _supplyModel = new()
+    {
+        ContactType = ContactType.Supplier
+    };
 
     readonly CreateSupplyValidator _supplyValidator = new();
 
@@ -123,7 +123,7 @@
 
     private async Task CreateSupplyAsync()
     {
-         await _form?.Validate()!;
+        await _form?.Validate()!;
         if (_form.IsValid)
         {
             var jsonPayload = JsonSerializer.Serialize(_supplyModel);

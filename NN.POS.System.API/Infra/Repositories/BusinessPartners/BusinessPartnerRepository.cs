@@ -51,7 +51,7 @@ public class BusinessPartnerRepository : IBusinessPartnerRepository
 
     public async Task<PagedResult<BusinessPartnerEntity>> GetAllAsync(Expression<Func<BusinessPartnerTable, bool>> predicate, PagedQuery q, CancellationToken cancellation = default)
     {
-        var data = await _readDbRepository.BrowseAsync(predicate, q, cancellation);
+        var data = await _readDbRepository.BrowseAsync(predicate, o => o.CreatedAt, q, cancellation);
         return data.Map(i => i.ToEntity());
     }
 }
