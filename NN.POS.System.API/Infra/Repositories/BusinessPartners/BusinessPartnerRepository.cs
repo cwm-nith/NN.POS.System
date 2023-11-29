@@ -9,49 +9,40 @@ using NN.POS.System.Common.Pagination;
 
 namespace NN.POS.System.API.Infra.Repositories.BusinessPartners;
 
-public class BusinessPartnerRepository : IBusinessPartnerRepository
+public class BusinessPartnerRepository(IReadDbRepository<BusinessPartnerTable> readDbRepository,
+    IWriteDbRepository<BusinessPartnerTable> writeDbRepository) : IBusinessPartnerRepository
 {
-    private readonly IWriteDbRepository<BusinessPartnerTable> _writeDbRepository;
-    private readonly IReadDbRepository<BusinessPartnerTable> _readDbRepository;
-
-    public BusinessPartnerRepository(IReadDbRepository<BusinessPartnerTable> readDbRepository,
-        IWriteDbRepository<BusinessPartnerTable> writeDbRepository)
-    {
-        _readDbRepository = readDbRepository;
-        _writeDbRepository = writeDbRepository;
-    }
-
     public async Task<BusinessPartnerEntity> CreateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default)
     {
-        var bus = await _writeDbRepository.AddAsync(entity.ToTable(), cancellation);
+        var bus = await writeDbRepository.AddAsync(entity.ToTable(), cancellation);
         return bus.ToEntity();
     }
 
-    public Task UpdateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default)
+    public async Task UpdateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default)
     {
-        return _writeDbRepository.UpdateAsync(entity.ToTable(), cancellation);
+        await writeDbRepository.UpdateAsync(entity.ToTable(), cancellation);
     }
 
     public async Task<bool> DeleteAsync(int id, CancellationToken cancellation = default)
     {
-        var num = await _writeDbRepository.DeleteAsync(id, cancellation);
+        var num = await writeDbRepository.DeleteAsync(id, cancellation);
         return num > 0;
     }
 
     public async Task<BusinessPartnerEntity> GetByIdAsync(int id, CancellationToken cancellation = default)
     {
-        var data = await _readDbRepository.FirstOrDefaultAsync(i => i.Id == id, cancellation) ?? throw new BusinessPartnerNotFoundException(id);
+        var data = await readDbRepository.FirstOrDefaultAsync(i => i.Id == id, cancellation) ?? throw new BusinessPartnerNotFoundException(id);
         return data.ToEntity();
     }
 
-    public Task<int> GetCountAsync(CancellationToken cancellation = default)
+    public async Task<int> GetCountAsync(CancellationToken cancellation = default)
     {
-        return _readDbRepository.Context.BusinessPartners!.CountAsync(cancellation);
+        return await readDbRepository.Context.BusinessPartners!.CountAsync(cancellation);
     }
 
     public async Task<PagedResult<BusinessPartnerEntity>> GetAllAsync(Expression<Func<BusinessPartnerTable, bool>> predicate, PagedQuery q, CancellationToken cancellation = default)
     {
-        var data = await _readDbRepository.BrowseAsync(predicate, o => o.CreatedAt, q, cancellation);
+        var data = await readDbRepository.BrowseAsync(predicate, o => o.CreatedAt, q, cancellation);
         return data.Map(i => i.ToEntity());
     }
 }

@@ -7,18 +7,11 @@ using NN.POS.System.Model.Dtos.Users;
 
 namespace NN.POS.System.API.Infra.QueryHandlers.Users;
 
-public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
+public class GetUserByIdQueryHandler(IUserRepository userRepository) : IRequestHandler<GetUserByIdQuery, UserDto>
 {
-    private readonly IUserRepository _userRepository;
-
-    public GetUserByIdQueryHandler(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(request.Id, cancellationToken);
+        var user = await userRepository.GetByIdAsync(request.Id, cancellationToken);
         return user == null ? throw new UserNotFoundException(request.Id) : user.ToDto();
     }
 }

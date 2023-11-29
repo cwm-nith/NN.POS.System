@@ -34,7 +34,7 @@ public static class Extensions
         return services;
     }
 
-    private static IServiceCollection AddPostgresRepository<TTable>(this IServiceCollection services)
+    private static void AddPostgresRepository<TTable>(this IServiceCollection services)
       where TTable : BaseTable
     {
         var logger = services.BuildServiceProvider().GetService<ILogger<WriteDbRepository<TTable>>>();
@@ -48,7 +48,5 @@ public static class Extensions
             var context = services.BuildServiceProvider().GetRequiredService<DataDbContext>();
             return new WriteDbRepository<TTable>(context, logger);
         });
-
-        return services;
     }
 }

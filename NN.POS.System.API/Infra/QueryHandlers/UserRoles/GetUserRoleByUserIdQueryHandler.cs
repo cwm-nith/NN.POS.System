@@ -5,17 +5,10 @@ using NN.POS.System.Model.Dtos.Roles;
 
 namespace NN.POS.System.API.Infra.QueryHandlers.UserRoles;
 
-public class GetUserRoleByUserIdQueryHandler : IRequestHandler<GetUserRoleByUserIdQuery, List<UserRoleDto>>
+public class GetUserRoleByUserIdQueryHandler(IUserRoleRepository userRoleRepository) : IRequestHandler<GetUserRoleByUserIdQuery, List<UserRoleDto>>
 {
-    private readonly IUserRoleRepository _userRoleRepository;
-
-    public GetUserRoleByUserIdQueryHandler(IUserRoleRepository userRoleRepository)
+    public async Task<List<UserRoleDto>> Handle(GetUserRoleByUserIdQuery request, CancellationToken cancellationToken)
     {
-        _userRoleRepository = userRoleRepository;
-    }
-
-    public Task<List<UserRoleDto>> Handle(GetUserRoleByUserIdQuery request, CancellationToken cancellationToken)
-    {
-        return _userRoleRepository.GetUserRolesAsync(request.UserId, cancellationToken);
+        return await userRoleRepository.GetUserRolesAsync(request.UserId, cancellationToken);
     }
 }

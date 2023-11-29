@@ -1,26 +1,14 @@
 ﻿using NN.POS.System.API.Core.Exceptions;
-using NN.POS.System.API.Core.Exceptions.Middleware;
 
 namespace NN.POS.System.API.Core.Middleware;
-public sealed class AuthorizationRequestHandlerMiddleware
+public sealed class AuthorizationRequestHandlerMiddleware(RequestDelegate next, ILogger logger)
 {
-    private readonly ILogger<ErrorHandlerMiddleware> _logger;
-    private readonly RequestDelegate _next;
-
-    public AuthorizationRequestHandlerMiddleware(
-        RequestDelegate next,
-        ILogger<ErrorHandlerMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
     public Task Invoke(HttpContext context)
     {
         var path = context.Request.Path.Value;
         if (path != null && path.Contains("api/webhook/"))
         {
-            return _next(context);
+            return next(context);
         }
 
         var clientHeader = context.Request.Headers["X-Client"].ToString();
@@ -30,7 +18,7 @@ public sealed class AuthorizationRequestHandlerMiddleware
             throw new UnAuthorizedRequestException();
         }
 
-        _logger.LogInformation("Requested Client {@Client}", client);
-        return _next(context);
+        logger.LogInformation("Requested Client {@Client}", client);
+        return next(context);
     }
 }

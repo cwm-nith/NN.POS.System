@@ -7,13 +7,13 @@ namespace NN.POS.System.API.Infra.Tables.BusinessPartners;
 public class BusinessPartnerTable : BaseTable
 {
     [Column("first_name")]
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = string.Empty;
 
-    [Column("last_name")]
-    public string LastName { get; set; }
+    [Column("last_name")] 
+    public string LastName { get; set; } = string.Empty;
 
-    [Column("phone_number")]
-    public string PhoneNumber { get; set; }
+    [Column("phone_number")] 
+    public string PhoneNumber { get; set; } = string.Empty;
 
     [Column("email")]
     public string? Email { get; set; }
@@ -32,16 +32,4 @@ public class BusinessPartnerTable : BaseTable
 
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; }
-
-    public BusinessPartnerTable(int id, string firstName, string lastName, string phoneNumber,
-        BusinessPartnerEnum.ContactType contactType, BusinessPartnerEnum.BusinessType businessType, DateTime updatedAt)
-    {
-        Id = id;
-        FirstName = firstName;
-        LastName = lastName;
-        PhoneNumber = phoneNumber;
-        ContactType = contactType;
-        BusinessType = businessType;
-        UpdatedAt = updatedAt;
-    }
 }

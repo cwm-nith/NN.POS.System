@@ -43,17 +43,18 @@ public static class ExtensionsHelpers
         Func<TLeft, TRight, TResult> resultSelector
     )
     {
-
+        var enumerable = leftItems.ToList();
+        var rights = rightItems.ToList();
         var leftJoin =
-            from left in leftItems
-            join right in rightItems
+            from left in enumerable
+            join right in rights
                 on leftKeySelector(left) equals rightKeySelector(right) into temp
             from right in temp.DefaultIfEmpty()
             select resultSelector(left, right);
 
         var rightJoin =
-            from right in rightItems
-            join left in leftItems
+            from right in rights
+            join left in enumerable
                 on rightKeySelector(right) equals leftKeySelector(left) into temp
             from left in temp.DefaultIfEmpty()
             select resultSelector(left, right);
@@ -81,7 +82,7 @@ public static class ExtensionsHelpers
     public static TModel GetOptions<TModel>(this IConfiguration configuration, string section) where TModel : new()
     {
         var model = new TModel();
-        configuration?.GetSection(section).Bind(model);
+        configuration.GetSection(section).Bind(model);
 
         return model;
     }

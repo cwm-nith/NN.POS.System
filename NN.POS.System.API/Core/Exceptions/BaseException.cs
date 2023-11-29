@@ -1,5 +1,4 @@
-﻿#pragma warning disable S3925
-namespace NN.POS.System.API.Core.Exceptions;
+﻿namespace NN.POS.System.API.Core.Exceptions;
 
 public abstract class BaseException : Exception
 {

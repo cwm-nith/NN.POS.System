@@ -6,18 +6,11 @@ using NN.POS.System.Model.Dtos.BusinessPartners;
 
 namespace NN.POS.System.API.Infra.QueryHandlers.BusinessPartners;
 
-public class GetBusinessPartnerByIdQueryHandler : IRequestHandler<GetBusinessPartnerByIdQuery, BusinessPartnerDto>
+public class GetBusinessPartnerByIdQueryHandler(IBusinessPartnerRepository businessPartnerRepository) : IRequestHandler<GetBusinessPartnerByIdQuery, BusinessPartnerDto>
 {
-    private readonly IBusinessPartnerRepository _businessPartnerRepository;
-
-    public GetBusinessPartnerByIdQueryHandler(IBusinessPartnerRepository businessPartnerRepository)
-    {
-        _businessPartnerRepository = businessPartnerRepository;
-    }
-
     public async Task<BusinessPartnerDto> Handle(GetBusinessPartnerByIdQuery request, CancellationToken cancellationToken)
     {
-        var data = await _businessPartnerRepository.GetByIdAsync(request.Id, cancellationToken);
+        var data = await businessPartnerRepository.GetByIdAsync(request.Id, cancellationToken);
         return data.ToDto();
     }
 }

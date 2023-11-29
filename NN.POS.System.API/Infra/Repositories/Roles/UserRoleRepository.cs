@@ -26,15 +26,20 @@ public class UserRoleRepository(
 
         if (await UserRoleExistedAsync(userId, roleId, cancellation)) throw new UserRoleAlreadyExistedException(userId, roleId);
 
-        var role = new UserRoleTable(0, userId, roleId);
+        var role = new UserRoleTable
+        {
+            Id = 0,
+            UserId = userId, 
+            RoleId = roleId
+        };
 
         await writeDbRepository.AddAsync(role, cancellation);
         return true;
     }
 
-    public Task<bool> UserRoleExistedAsync(int userId, int roleId, CancellationToken cancellation = default)
+    public async Task<bool> UserRoleExistedAsync(int userId, int roleId, CancellationToken cancellation = default)
     {
-        return readDbRepository.ExistsAsync(i => i.RoleId == roleId && i.UserId == userId, cancellation);
+        return await readDbRepository.ExistsAsync(i => i.RoleId == roleId && i.UserId == userId, cancellation);
     }
 
     public async Task<bool> RemoveUserRoleAsync(int userId, int roleId, CancellationToken cancellation = default)
@@ -57,17 +62,16 @@ public class UserRoleRepository(
         var data = await (from userRole in context.UserRoles!
                           join role in context.Roles! on userRole.RoleId equals role.Id
                           where userRole.UserId == userId
-                          select new UserRoleDto(
-                                  userRole.Id,
-                                  userId,
-                                  role.Id,
-                                  role.Name,
-                                  role.CreatedAt,
-                                  role.UpdatedAt
-                                  )
+                          select new UserRoleDto
                           {
+                              Id = userRole.Id,
+                              UserId = userId,
+                              RoleId = role.Id,
+                              Name = role.Name,
+                              CreatedAt = role.CreatedAt,
+                              UpdatedAt = role.UpdatedAt,
                               DisplayName = role.DisplayName,
-                              Description = role.Description,
+                              Description = role.Description
                           })
             .ToListAsync(cancellation);
 
@@ -80,16 +84,15 @@ public class UserRoleRepository(
         var data = await (from role in context.Roles!
                           join userRole in context.UserRoles!.Where(i => i.UserId == userId) on role.Id equals userRole.RoleId into g
                           from ur in g.DefaultIfEmpty()
-                          select new UserRoleDto(
-                              ur != null ? ur.Id : 0,
-                              ur != null ? ur.UserId : userId,
-                              role.Id,
-                              role.Name,
-                              role.CreatedAt,
-                              role.UpdatedAt
-                          )
+                          select new UserRoleDto
                           {
+                              UserId = ur != null ? ur.UserId : userId,
+                              Id = ur != null ? ur.Id : 0,
                               IsInRole = ur != null,
+                              RoleId = role.Id,
+                              Name = role.Name,
+                              CreatedAt = role.CreatedAt,
+                              UpdatedAt = role.UpdatedAt,
                               DisplayName = role.DisplayName,
                               Description = role.Description,
                           })

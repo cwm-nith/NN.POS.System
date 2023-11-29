@@ -7,18 +7,11 @@ using NN.POS.System.Model.Dtos.Users;
 
 namespace NN.POS.System.API.Infra.QueryHandlers.Users;
 
-public class GetUserByEmailQueryHandler : IRequestHandler<GetUserByEmailQuery, UserDto>
+public class GetUserByEmailQueryHandler(IUserRepository userRepository) : IRequestHandler<GetUserByEmailQuery, UserDto>
 {
-    private readonly IUserRepository _userRepository;
-
-    public GetUserByEmailQueryHandler(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     public async Task<UserDto> Handle(GetUserByEmailQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByUserEmailAsync(request.Email, cancellationToken);
+        var user = await userRepository.GetByUserEmailAsync(request.Email, cancellationToken);
         return user != null ? user.ToDto() : throw new UserNotFoundException(request.Email, true);
     }
 }

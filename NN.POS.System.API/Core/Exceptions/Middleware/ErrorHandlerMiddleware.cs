@@ -3,22 +3,13 @@ using Newtonsoft.Json.Serialization;
 
 namespace NN.POS.System.API.Core.Exceptions.Middleware;
 
-public class ErrorHandlerMiddleware
+public class ErrorHandlerMiddleware(RequestDelegate next, ILogger logger)
 {
-    private readonly ILogger<ErrorHandlerMiddleware> _logger;
-    private readonly RequestDelegate _next;
-
-    public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
     public async Task Invoke(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception exception)
         {
@@ -32,7 +23,7 @@ public class ErrorHandlerMiddleware
                 code = baseException.Code;
             }
 
-            _logger.LogError(exception, $"{exception.Message}{{@AdditionalData}}", additionalData);
+            logger.LogError(exception, "{Message}{AdditionalData}", exception.Message, additionalData);
             await HandleErrorAsync(context, exception, statusCode, code);
         }
     }

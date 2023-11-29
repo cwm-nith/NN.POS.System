@@ -4,24 +4,21 @@ using NN.POS.System.API.Core.IRepositories.Roles;
 
 namespace NN.POS.System.API.App.Commands.Roles.Handlers;
 
-public class UpdateRoleManyCommandHandler : IRequestHandler<UpdateRoleManyCommand, bool>
+public class UpdateRoleManyCommandHandler(IRoleRepository roleRepository) : IRequestHandler<UpdateRoleManyCommand, bool>
 {
-    private readonly IRoleRepository _roleRepository;
-
-    public UpdateRoleManyCommandHandler(IRoleRepository roleRepository)
-    {
-        _roleRepository = roleRepository;
-    }
-
-    public Task<bool> Handle(UpdateRoleManyCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(UpdateRoleManyCommand request, CancellationToken cancellationToken)
     {
         var roleEntities = request.Roles
-            .Select(i => new RoleEntity(i.Name ?? "", i.CreatedAt, DateTime.UtcNow)
+            .Select(i => new RoleEntity
             {
                 Id = i.Id,
+                Name = i.Name ?? "",
+                CreatedAt = i.CreatedAt,
+                UpdatedAt = DateTime.UtcNow,
+
                 Description = i.Description,
                 DisplayName = i.DisplayName,
             }).ToList();
-        return _roleRepository.UpdateRoleManyAsync(roleEntities, cancellationToken);
+        return await roleRepository.UpdateRoleManyAsync(roleEntities, cancellationToken);
     }
 }

@@ -3,17 +3,10 @@ using NN.POS.System.API.Core.IRepositories.BusinessPartners;
 
 namespace NN.POS.System.API.App.Commands.BusinessPartners.Handlers;
 
-public class DeleteBusinessPartnerCommandHandler : IRequestHandler<DeleteBusinessPartnerCommand, bool>
+public class DeleteBusinessPartnerCommandHandler(IBusinessPartnerRepository businessPartnerRepository) : IRequestHandler<DeleteBusinessPartnerCommand, bool>
 {
-    private readonly IBusinessPartnerRepository _businessPartnerRepository;
-
-    public DeleteBusinessPartnerCommandHandler(IBusinessPartnerRepository businessPartnerRepository)
+    public async Task<bool> Handle(DeleteBusinessPartnerCommand request, CancellationToken cancellationToken)
     {
-        _businessPartnerRepository = businessPartnerRepository;
-    }
-
-    public Task<bool> Handle(DeleteBusinessPartnerCommand request, CancellationToken cancellationToken)
-    {
-        return _businessPartnerRepository.DeleteAsync(request.Id, cancellationToken);
+        return await businessPartnerRepository.DeleteAsync(request.Id, cancellationToken);
     }
 }
