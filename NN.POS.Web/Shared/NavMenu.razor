@@ -1,0 +1,28 @@
+﻿@using NN.POS.Web.Extensions
+@using NN.POS.Web.Constants
+<MudNavMenu>
+    <MudNavGroup Title="Contacts" Expanded='$"/{_section}" == RouteName.Supplier'>
+        <MudNavLink Href="@RouteName.Supplier">Suppliers</MudNavLink>
+        @* <MudNavLink Href="/security">Security</MudNavLink> *@
+    </MudNavGroup>
+</MudNavMenu>
+
+@code
+{
+
+    string? _section;
+
+    protected override void OnInitialized()
+    {
+        Refresh();
+        base.OnInitialized();
+    }
+
+    public void Refresh()
+    {
+        _section = NavigationManager.GetSection();
+        Console.WriteLine(_section);
+        StateHasChanged();
+    }
+
+}
