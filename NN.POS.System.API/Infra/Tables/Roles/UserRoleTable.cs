@@ -10,11 +10,4 @@ public class UserRoleTable : BaseTable
 
     [Column("role_id")]
     public int RoleId { get; set; }
-
-    public UserRoleTable(int id, int userId, int roleId)
-    {
-        Id = id;
-        UserId = userId;
-        RoleId = roleId;
-    }
 }

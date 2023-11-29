@@ -6,59 +6,54 @@ namespace NN.POS.System.API.Infra.Tables.User;
 public static class UserExtensions
 {
     public static UserDto ToDto(this UserEntity t, string? token = null) =>
-        new(
-            id: t.Id,
-            name: t.Name,
-            username: t.Username,
-            email: t.Email,
-            lastLogin: t.LastLogin,
-            createdAt: t.CreatedAt,
-            updatedAt: t.UpdatedAt
-        )
+        new()
         {
-            Token = t.Token ?? token
+            Token = t.Token ?? token,
+            Id = t.Id,
+            Name = t.Name,
+            Username = t.Username,
+            Email = t.Email,
+            LastLogin = t.LastLogin,
+            CreatedAt = t.CreatedAt,
+            UpdatedAt = t.UpdatedAt
         };
 
     public static UserEntity ToEntity(this UserTable t, string? token = null) =>
-        new(
-            name: t.Name,
-            username: t.Username,
-            email: t.Email,
-            lastLogin: null,
-            createdAt: t.CreatedAt,
-            updatedAt: t.UpdatedAt
-        )
+        new()
         {
-
+            Name = t.Name,
+            Username = t.Username,
+            Email = t.Email,
+            LastLogin = null,
+            CreatedAt = t.CreatedAt,
+            UpdatedAt = t.UpdatedAt,
             Id = t.Id,
             Password = t.Password,
             Token = token
         };
 
     public static UserEntity ToEntity(this UserDto t, string? token = null) =>
-        new(
-            name: t.Name,
-            username: t.Username,
-            email: t.Email,
-            lastLogin: null,
-            createdAt: t.CreatedAt,
-            updatedAt: t.UpdatedAt
-        )
+        new()
         {
             Id = t.Id,
-            Token = t.Token ?? token
+            Token = t.Token ?? token,
+            Name = t.Name,
+            Username = t.Username,
+            Email = t.Email,
+            LastLogin = null,
+            CreatedAt = t.CreatedAt,
+            UpdatedAt = t.UpdatedAt
         };
 
     public static UserTable ToTable(this UserEntity t) =>
-        new(
-            id: t.Id,
-            name: t.Name,
-            username: t.Username,
-            password: t.Password,
-            email: t.Email,
-            updatedAt: t.UpdatedAt
-        )
+        new()
         {
-            CreatedAt = t.CreatedAt,
+            Id = t.Id,
+            Name = t.Name,
+            Username = t.Username,
+            Password = t.Password,
+            Email = t.Email,
+            UpdatedAt = t.UpdatedAt,
+            CreatedAt = t.CreatedAt
         };
 }

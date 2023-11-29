@@ -11,8 +11,15 @@ public class CreateUserCommandHandler(IUserRepository userRepository, IPasswordH
 {
     public async Task<UserDto> Handle(CreateUserCommand r, CancellationToken cancellationToken)
     {
-        var entity = new UserEntity(name: r.Name, username: r.Username, email: r.Email, lastLogin: null,
-            createdAt: DateTime.UtcNow, updatedAt: DateTime.UtcNow);
+        var entity = new UserEntity
+        {
+            Name = r.Name,
+            Username = r.Username,
+            Email = r.Email,
+            LastLogin = null,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
         entity.SetPassword(r.Password, passwordHasher);
         var user = await userRepository.CreateUserAsync(entity, cancellationToken);
         return user.ToDto();

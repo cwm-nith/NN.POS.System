@@ -6,7 +6,7 @@ namespace NN.POS.System.API.Infra.Tables.Roles;
 public class RoleTable : BaseTable
 {
     [Column("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Column("display_name")]
     public string? DisplayName { get; set; }
@@ -20,10 +20,4 @@ public class RoleTable : BaseTable
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; }
 
-    public RoleTable(int id, string name, DateTime updatedAt)
-    {
-        Id = id;
-        Name = name;
-        UpdatedAt = updatedAt;
-    }
 }

@@ -3,16 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NN.POS.System.API.Infra.Tables;
 
-public class WriteDbRepository<TTable> : IWriteDbRepository<TTable> where TTable : BaseTable
+public class WriteDbRepository<TTable>(DataDbContext context, ILogger? logger) : IWriteDbRepository<TTable> where TTable : BaseTable
 {
-    private readonly ILogger<WriteDbRepository<TTable>>? _logger;
-    public WriteDbRepository(DataDbContext context, ILogger<WriteDbRepository<TTable>>? logger)
-    {
-        Context = context;
-        _logger = logger;
-    }
-
-    public DataDbContext Context { get; }
+    public DataDbContext Context => context;
     public async Task<TTable> AddAsync(TTable entity, CancellationToken cancellation = default)
     {
         Context.Set<TTable>().Add(entity);
@@ -56,7 +49,7 @@ public class WriteDbRepository<TTable> : IWriteDbRepository<TTable> where TTable
         }
         catch (Exception ex)
         {
-            _logger?.LogDebug(ex.Message);
+            logger?.LogDebug("{Message}", ex.Message);
         }
         return false;
     }

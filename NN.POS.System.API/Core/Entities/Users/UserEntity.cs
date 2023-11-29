@@ -6,25 +6,14 @@ namespace NN.POS.System.API.Core.Entities.Users;
 public class UserEntity : IBaseEntity
 {
     public int Id { get; set; }
-    public string Name { get; set; }
-    public string Username { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
     public string? Token { get; set; }
     public DateTime? LastLogin { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-
-    public UserEntity(string name, string username, string email, DateTime? lastLogin,
-        DateTime createdAt, DateTime updatedAt)
-    {
-        Name = name;
-        Username = username;
-        Email = email;
-        LastLogin = lastLogin;
-        CreatedAt = createdAt;
-        UpdatedAt = updatedAt;
-    }
 
     public void SetPassword(string pass, IPasswordHasher<UserEntity> passwordHasher)
     {

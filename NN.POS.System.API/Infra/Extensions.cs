@@ -3,7 +3,6 @@ using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.IdentityModel.Tokens;
 using NN.POS.System.API.Core;
 using NN.POS.System.API.Core.Entities.Roles;
@@ -128,8 +127,11 @@ public static class Extensions
         var roleId = 0;
         if (!isHasRole)
         {
-            var roleEn = new RoleEntity("Admin", DateTime.UtcNow, DateTime.UtcNow)
+            var roleEn = new RoleEntity 
             {
+                Name = "Admin", 
+                CreatedAt = DateTime.UtcNow, 
+                UpdatedAt = DateTime.UtcNow,
                 DisplayName = "Administrator",
                 Description = "These role can perform any operations"
             };
@@ -140,8 +142,15 @@ public static class Extensions
         var isHasUser = await userRepository.HasUserAsync();
         if (!isHasUser)
         {
-            var uEntity = new UserEntity(name: "ADMIN", username: "ADMIN", email: "admin@gmail.com", lastLogin: null,
-                createdAt: DateTime.UtcNow, updatedAt: DateTime.UtcNow);
+            var uEntity = new UserEntity
+            {
+                Name = "ADMIN",
+                Username = "ADMIN",
+                Email = "admin@gmail.com",
+                LastLogin = null,
+                CreatedAt = DateTime.UtcNow, 
+                UpdatedAt = DateTime.UtcNow
+            };
             uEntity.SetPassword("Admin123", passHasher);
             var user = await userRepository.CreateUserAsync(uEntity);
             userId = user.Id;

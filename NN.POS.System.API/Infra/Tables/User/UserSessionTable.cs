@@ -9,10 +9,4 @@ public class UserSessionTable : BaseTable
 
     [Column("last_login")]
     public DateTime LastLogin { get; set; }
-
-    public UserSessionTable(Guid userId, DateTime lastLogin)
-    {
-        UserId = userId;
-        LastLogin = lastLogin;
-    }
 }

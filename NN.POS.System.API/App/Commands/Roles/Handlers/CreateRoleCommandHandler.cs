@@ -10,10 +10,14 @@ public class CreateRoleCommandHandler(IRoleRepository roleRepository) : IRequest
 {
     public async Task<RoleDto> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
-        var roleEn = new RoleEntity(request.Name, DateTime.UtcNow, DateTime.UtcNow)
+        var roleEn = new RoleEntity
         {
+            Name = request.Name,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+
             DisplayName = request.DisplayName,
-            Description = request.Description,
+            Description = request.Description
         };
         var role = await roleRepository.CreateRoleAsync(roleEn, cancellationToken);
         return role.ToDto();

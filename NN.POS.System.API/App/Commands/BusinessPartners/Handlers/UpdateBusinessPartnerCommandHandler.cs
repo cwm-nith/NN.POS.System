@@ -12,19 +12,18 @@ public class UpdateBusinessPartnerCommandHandler(IBusinessPartnerRepository busi
     {
         var busEntity = await businessPartnerRepository.GetByIdAsync(r.Id, cancellationToken);
 
-        BusinessPartnerEntity entity = new (
-            id: r.Id,
-            firstName: r.FirstName ?? busEntity.FirstName,
-            lastName: r.LastName ?? busEntity.LastName,
-            phoneNumber:r.PhoneNumber ?? busEntity.PhoneNumber,
-            contactType: r.ContactType ?? busEntity.ContactType,
-            businessType: r.BusinessType ?? busEntity.BusinessType,
-            createdAt: busEntity.CreatedAt,
-            updatedAt: DateTime.UtcNow
-            )
+        BusinessPartnerEntity entity = new ()
         {
             Address = r.Address ?? busEntity.Address,
             Email = r.Email ?? busEntity.Email,
+            Id = r.Id,
+            FirstName = r.FirstName ?? busEntity.FirstName,
+            LastName = r.LastName ?? busEntity.LastName,
+            PhoneNumber = r.PhoneNumber ?? busEntity.PhoneNumber,
+            ContactType = r.ContactType ?? busEntity.ContactType,
+            BusinessType = r.BusinessType ?? busEntity.BusinessType,
+            CreatedAt = busEntity.CreatedAt,
+            UpdatedAt = DateTime.UtcNow
         };
         await businessPartnerRepository.UpdateAsync(entity, cancellationToken);
         return entity.ToDto();

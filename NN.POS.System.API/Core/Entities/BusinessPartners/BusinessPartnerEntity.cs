@@ -5,11 +5,11 @@ namespace NN.POS.System.API.Core.Entities.BusinessPartners;
 public class BusinessPartnerEntity : IBaseEntity
 {
     public int Id { get; set; }
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = string.Empty;
 
-    public string LastName { get; set; }
+    public string LastName { get; set; } = string.Empty;
 
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = string.Empty;
 
     public string? Email { get; set; }
 
@@ -22,18 +22,4 @@ public class BusinessPartnerEntity : IBaseEntity
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
-
-    public BusinessPartnerEntity(int id, string firstName, string lastName, string phoneNumber,
-        BusinessPartnerEnum.ContactType contactType, BusinessPartnerEnum.BusinessType businessType, DateTime createdAt,
-        DateTime updatedAt)
-    {
-        Id = id;
-        FirstName = firstName;
-        LastName = lastName;
-        PhoneNumber = phoneNumber;
-        ContactType = contactType;
-        BusinessType = businessType;
-        CreatedAt = createdAt;
-        UpdatedAt = updatedAt;
-    }
 }

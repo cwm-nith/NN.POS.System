@@ -4,18 +4,14 @@ using NN.POS.System.Common.Pagination;
 
 namespace NN.POS.System.API.Infra.Tables;
 
-public class ReadDbRepository<TTable> : IReadDbRepository<TTable> where TTable : BaseTable
+public class ReadDbRepository<TTable>(DataDbContext context) : IReadDbRepository<TTable> where TTable : BaseTable
 {
-    public ReadDbRepository(DataDbContext context)
-    {
-        Context = context;
-    }
+    public DataDbContext Context => context;
 
-    public DataDbContext Context { get; }
     public Task<TTable?> FirstOrDefaultAsync(Guid id, CancellationToken cancellation = default)
     {
         return Context.Set<TTable>()
-            .FindAsync(new object?[] { id, cancellation }, cancellationToken: cancellation)
+            .FindAsync(new object[] { id, cancellation }, cancellationToken: cancellation)
             .AsTask();
     }
 

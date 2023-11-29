@@ -1,20 +1,7 @@
-﻿using NN.POS.System.API.Core.Exceptions.Middleware;
+﻿namespace NN.POS.System.API.Core.Middleware;
 
-namespace NN.POS.System.API.Core.Middleware;
-
-public class LogMiddleware
+public class LogMiddleware(RequestDelegate next, ILogger logger)
 {
-    private readonly ILogger<ErrorHandlerMiddleware> _logger;
-    private readonly RequestDelegate _next;
-
-    public LogMiddleware(
-        RequestDelegate next,
-        ILogger<ErrorHandlerMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
     public async Task Invoke(HttpContext context)
     {
         var clientId = context.Request.Headers["X-ClientId"].ToString();
@@ -22,8 +9,8 @@ public class LogMiddleware
         var userId = context.User.Identity?.Name;
 
 
-        _logger.LogInformation("Requested from ip: {@IP}, client id: {@ClientId}, user id: {@UserId}", clientIp, clientId,
+        logger.LogInformation("Requested from ip: {@IP}, client id: {@ClientId}, user id: {@UserId}", clientIp, clientId,
             userId ?? string.Empty);
-        await _next(context);
+        await next(context);
     }
 }

@@ -9,8 +9,12 @@ public class CreateRoleManyCommandHandler(IRoleRepository roleRepository) : IReq
     public Task<bool> Handle(CreateRoleManyCommand request, CancellationToken cancellationToken)
     {
         var roleEntities = request.Roles.Select(i =>
-            new RoleEntity(i.Name, DateTime.UtcNow, DateTime.UtcNow)
+            new RoleEntity
             {
+                Name = i.Name, 
+                CreatedAt = DateTime.UtcNow, 
+                UpdatedAt = DateTime.UtcNow,
+
                 Description = i.Description,
                 DisplayName = i.DisplayName
             }).ToList();
