@@ -3,17 +3,10 @@ using NN.POS.System.API.Core.IRepositories.Roles;
 
 namespace NN.POS.System.API.App.Commands.UserRoles.Handlers;
 
-public class RemoveUserRoleCommandHandler : IRequestHandler<RemoveUserRoleCommand, bool>
+public class RemoveUserRoleCommandHandler(IUserRoleRepository repository) : IRequestHandler<RemoveUserRoleCommand, bool>
 {
-    private readonly IUserRoleRepository _repository;
-
-    public RemoveUserRoleCommandHandler(IUserRoleRepository repository)
+    public async Task<bool> Handle(RemoveUserRoleCommand request, CancellationToken cancellationToken)
     {
-        _repository = repository;
-    }
-
-    public Task<bool> Handle(RemoveUserRoleCommand request, CancellationToken cancellationToken)
-    {
-        return _repository.RemoveUserRoleAsync(request.UserId, request.RoleId, cancellationToken);
+        return await repository.RemoveUserRoleAsync(request.UserId, request.RoleId, cancellationToken);
     }
 }

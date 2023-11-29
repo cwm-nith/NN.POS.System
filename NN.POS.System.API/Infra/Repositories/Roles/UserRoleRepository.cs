@@ -32,9 +32,9 @@ public class UserRoleRepository(
         return true;
     }
 
-    public Task<bool> UserRoleExistedAsync(int userId, int roleId, CancellationToken cancellation = default)
+    public async Task<bool> UserRoleExistedAsync(int userId, int roleId, CancellationToken cancellation = default)
     {
-        return readDbRepository.ExistsAsync(i => i.RoleId == roleId && i.UserId == userId, cancellation);
+        return await readDbRepository.ExistsAsync(i => i.RoleId == roleId && i.UserId == userId, cancellation);
     }
 
     public async Task<bool> RemoveUserRoleAsync(int userId, int roleId, CancellationToken cancellation = default)

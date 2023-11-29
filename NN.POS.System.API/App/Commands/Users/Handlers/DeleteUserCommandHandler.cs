@@ -3,17 +3,10 @@ using NN.POS.System.API.Core.IRepositories.Users;
 
 namespace NN.POS.System.API.App.Commands.Users.Handlers;
 
-public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, bool>
+public class DeleteUserCommandHandler(IUserRepository userRepository) : IRequestHandler<DeleteUserCommand, bool>
 {
-    private readonly IUserRepository _userRepository;
-
-    public DeleteUserCommandHandler(IUserRepository userRepository)
+    public async Task<bool> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
-        _userRepository = userRepository;
-    }
-
-    public Task<bool> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
-    {
-        return _userRepository.DeleteUserAsync(request.Id, cancellationToken);
+        return await userRepository.DeleteUserAsync(request.Id, cancellationToken);
     }
 }

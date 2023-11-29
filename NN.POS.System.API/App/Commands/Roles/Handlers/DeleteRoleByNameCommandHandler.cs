@@ -3,17 +3,10 @@ using NN.POS.System.API.Core.IRepositories.Roles;
 
 namespace NN.POS.System.API.App.Commands.Roles.Handlers;
 
-public class DeleteRoleByNameCommandHandler : IRequestHandler<DeleteRoleByNameCommand, bool>
+public class DeleteRoleByNameCommandHandler(IRoleRepository roleRepository) : IRequestHandler<DeleteRoleByNameCommand, bool>
 {
-    private readonly IRoleRepository _roleRepository;
-
-    public DeleteRoleByNameCommandHandler(IRoleRepository roleRepository)
+    public async Task<bool> Handle(DeleteRoleByNameCommand request, CancellationToken cancellationToken)
     {
-        _roleRepository = roleRepository;
-    }
-
-    public Task<bool> Handle(DeleteRoleByNameCommand request, CancellationToken cancellationToken)
-    {
-        return _roleRepository.DeleteRoleAsync(request.Name, cancellationToken);
+        return await roleRepository.DeleteRoleAsync(request.Name, cancellationToken);
     }
 }

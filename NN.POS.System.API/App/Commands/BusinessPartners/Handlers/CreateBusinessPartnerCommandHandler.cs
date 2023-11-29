@@ -6,15 +6,8 @@ using NN.POS.System.Model.Dtos.BusinessPartners;
 
 namespace NN.POS.System.API.App.Commands.BusinessPartners.Handlers;
 
-public class CreateBusinessPartnerCommandHandler : IRequestHandler<CreateBusinessPartnerCommand, BusinessPartnerDto>
+public class CreateBusinessPartnerCommandHandler(IBusinessPartnerRepository businessPartnerRepository) : IRequestHandler<CreateBusinessPartnerCommand, BusinessPartnerDto>
 {
-    private readonly IBusinessPartnerRepository _businessPartnerRepository;
-
-    public CreateBusinessPartnerCommandHandler(IBusinessPartnerRepository businessPartnerRepository)
-    {
-        _businessPartnerRepository = businessPartnerRepository;
-    }
-
     public async Task<BusinessPartnerDto> Handle(CreateBusinessPartnerCommand r, CancellationToken cancellationToken)
     {
         var entity = new BusinessPartnerEntity(id: 0, firstName: r.FirstName, lastName: r.LastName,
@@ -24,7 +17,7 @@ public class CreateBusinessPartnerCommandHandler : IRequestHandler<CreateBusines
             Email = r.Email,
             Address = r.Address,
         };
-        var data = await _businessPartnerRepository.CreateAsync(entity, cancellationToken);
+        var data = await businessPartnerRepository.CreateAsync(entity, cancellationToken);
         return data.ToDto();
     }
 }

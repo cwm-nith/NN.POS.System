@@ -6,15 +6,8 @@ using NN.POS.System.Model.Dtos.Roles;
 
 namespace NN.POS.System.API.App.Commands.Roles.Handlers;
 
-public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, RoleDto>
+public class CreateRoleCommandHandler(IRoleRepository roleRepository) : IRequestHandler<CreateRoleCommand, RoleDto>
 {
-    private readonly IRoleRepository _roleRepository;
-
-    public CreateRoleCommandHandler(IRoleRepository roleRepository)
-    {
-        _roleRepository = roleRepository;
-    }
-
     public async Task<RoleDto> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
         var roleEn = new RoleEntity(request.Name, DateTime.UtcNow, DateTime.UtcNow)
@@ -22,7 +15,7 @@ public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, RoleD
             DisplayName = request.DisplayName,
             Description = request.Description,
         };
-        var role = await _roleRepository.CreateRoleAsync(roleEn, cancellationToken);
+        var role = await roleRepository.CreateRoleAsync(roleEn, cancellationToken);
         return role.ToDto();
     }
 }

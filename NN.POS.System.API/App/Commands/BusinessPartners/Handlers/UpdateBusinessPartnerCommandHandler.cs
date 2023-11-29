@@ -6,18 +6,11 @@ using NN.POS.System.Model.Dtos.BusinessPartners;
 
 namespace NN.POS.System.API.App.Commands.BusinessPartners.Handlers;
 
-public class UpdateBusinessPartnerCommandHandler : IRequestHandler<UpdateBusinessPartnerCommand, BusinessPartnerDto>
+public class UpdateBusinessPartnerCommandHandler(IBusinessPartnerRepository businessPartnerRepository) : IRequestHandler<UpdateBusinessPartnerCommand, BusinessPartnerDto>
 {
-    private readonly IBusinessPartnerRepository _businessPartnerRepository;
-
-    public UpdateBusinessPartnerCommandHandler(IBusinessPartnerRepository businessPartnerRepository)
-    {
-        _businessPartnerRepository = businessPartnerRepository;
-    }
-
     public async Task<BusinessPartnerDto> Handle(UpdateBusinessPartnerCommand r, CancellationToken cancellationToken)
     {
-        var busEntity = await _businessPartnerRepository.GetByIdAsync(r.Id, cancellationToken);
+        var busEntity = await businessPartnerRepository.GetByIdAsync(r.Id, cancellationToken);
 
         BusinessPartnerEntity entity = new (
             id: r.Id,
@@ -33,7 +26,7 @@ public class UpdateBusinessPartnerCommandHandler : IRequestHandler<UpdateBusines
             Address = r.Address ?? busEntity.Address,
             Email = r.Email ?? busEntity.Email,
         };
-        await _businessPartnerRepository.UpdateAsync(entity, cancellationToken);
+        await businessPartnerRepository.UpdateAsync(entity, cancellationToken);
         return entity.ToDto();
     }
 }
