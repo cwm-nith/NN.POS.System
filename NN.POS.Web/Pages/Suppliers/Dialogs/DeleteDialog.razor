@@ -1,4 +1,5 @@
-﻿@namespace NN.POS.Web.Pages.Suppliers.Dialogs
+﻿@using NN.POS.Model.Dtos.BusinessPartners
+@namespace NN.POS.Web.Pages.Suppliers.Dialogs
 
 
 <MudDialog>
@@ -17,12 +18,15 @@
 
     [Parameter]
     public int Id { get; set; }
+
+    [Parameter]
+    public MudTable<BusinessPartnerDto>? Table { get; set; }
     private async Task Submit()
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
         await httpClient.DeleteAsync($"{Setting.PrefixEndpoint}BusinessPartner/{Id}").ConfigureAwait(false);
         MudDialog?.Close(DialogResult.Ok(true));
-        NavigationManager.Refresh();
+        Table?.ReloadServerData();
     }
     private void Cancel() => MudDialog?.Cancel();
 }

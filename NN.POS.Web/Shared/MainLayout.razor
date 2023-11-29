@@ -16,7 +16,11 @@
             </MudButton>
         </MudDrawerHeader>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" >
+            <MudMenuItem>Profile</MudMenuItem>
+            <MudMenuItem>My account</MudMenuItem>
+            <MudMenuItem OnClick="LogOut">Logout</MudMenuItem>
+        </MudMenu>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <AuthorizeView>
@@ -60,5 +64,12 @@
         }
         var email = claims.Where(c => c.Type == "email").Select(x => x.Value).FirstOrDefault();
         return email ?? "";
+    }
+
+    protected async Task LogOut()
+    {
+        await LocalStorageService.RemoveItemAsync("jat");
+        (AuthStateProvider as CustomAuthProvider)?.NotifyAuthState();
+        NavigationManager.NavigateTo(RouteName.Login);
     }
 }

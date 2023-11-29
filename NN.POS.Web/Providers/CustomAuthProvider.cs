@@ -5,16 +5,11 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace NN.POS.Web.Providers;
 
-public class CustomAuthProvider : AuthenticationStateProvider
+public class CustomAuthProvider(ILocalStorageService localStorageService) : AuthenticationStateProvider
 {
-    private readonly ILocalStorageService _localStorageService;
-    public CustomAuthProvider(ILocalStorageService localStorageService)
-    {
-        _localStorageService = localStorageService;
-    }
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var jwtToken = await _localStorageService.GetItemAsync<string>("jat");
+        var jwtToken = await localStorageService.GetItemAsync<string>("jat");
         if (string.IsNullOrEmpty(jwtToken))
         {
             return new AuthenticationState(

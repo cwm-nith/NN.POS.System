@@ -3,8 +3,6 @@
 @page "/login"
 @using NN.POS.Model.Dtos.Users
 @using NN.POS.Web.Validations.Auth
-@using NN.POS.Web.Providers
-@using NN.POS.Web.Constants
 
 <MudPaper Height="80vh" Width="90%" Class="m-0 p-0">
     <MudContainer MaxWidth="MaxWidth.Large">
@@ -95,7 +93,7 @@
                     var tokenResponse = await response.Content.ReadFromJsonAsync<UserDto>();
                     await LocalStorageService.SetItemAsync("jat", tokenResponse?.Token);
                     (AuthStateProvider as CustomAuthProvider)?.NotifyAuthState();
-                    NavigationManager.NavigateTo("/dashboard");
+                    NavigationManager.NavigateTo(RouteName.Dashboard);
                     break;
                 }
                 default:

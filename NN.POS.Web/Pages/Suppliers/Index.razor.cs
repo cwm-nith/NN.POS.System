@@ -7,9 +7,12 @@ using NN.POS.Web.Pages.Suppliers.Dialogs;
 
 namespace NN.POS.Web.Pages.Suppliers;
 
-
 public partial class Index
 {
+
+    private MudTable<BusinessPartnerDto>? _table;
+    private string _searchString = "";
+
     private async Task<TableData<BusinessPartnerDto>> ServerReload(TableState state)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
@@ -32,11 +35,22 @@ public partial class Index
     {
         var parameters = new DialogParameters<DeleteDialog>
         {
-            { x => x.Id, id}
+            {
+                x => x.Id, id
+            },
+            {
+                x => x.Table, _table
+            }
         };
 
         var options = new DialogOptions() { CloseButton = true};
 
         Dialog.Show<DeleteDialog>("Delete", parameters, options);
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
     }
 }
