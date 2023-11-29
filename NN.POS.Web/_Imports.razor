@@ -1,0 +1,32 @@
+﻿@using global::System.Net.Http
+@using global::System.Net.Http.Json
+@using global::System.Text.Json
+@using global::System.Text
+@using global::System.Net.Mime
+@using global::System.Net
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using System
+@using Microsoft.JSInterop
+@using NN.POS.Web
+@using NN.POS.Web.Shared
+@using MudBlazor
+@using FluentValidation
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Authorization
+@using NN.POS.Web.Components
+@using NN.POS.Web.AppSettings
+@using NN.POS.Web.Constants
+
+
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+@inject Setting Setting
+@inject IDialogService Dialog

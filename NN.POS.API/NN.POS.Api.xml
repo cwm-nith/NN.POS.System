@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NN.POS.API</name>
+    </assembly>
+    <members>
+        <member name="M:NN.POS.API.Controllers.V1.UserController.Get(NN.POS.Common.Pagination.PagedQuery)">
+            <summary>
+            Get all users
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

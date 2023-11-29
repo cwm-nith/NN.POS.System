@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!--<InvariantGlobalization>true</InvariantGlobalization>-->
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>D:\Projects\NN.POS\NN.POS.API\NN.POS.Api.xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="App\Commands\BusinessPartners\Handlers\" />
+    <Folder Include="App\Queries\BusinessPartners\" />
+    <Folder Include="App\Commands\UserRoles\Handlers\" />
+    <Folder Include="App\Queries\UserRoles\" />
+    <Folder Include="App\Queries\Users\" />
+    <Folder Include="Controllers\V2\" />
+    <Folder Include="Core\Commons\" />
+    <Folder Include="Core\Constants\" />
+    <Folder Include="Core\Entities\BusinessPartners\" />
+    <Folder Include="Core\Entities\Roles\" />
+    <Folder Include="Core\Exceptions\BusinessPartners\" />
+    <Folder Include="Core\Exceptions\Roles\" />
+    <Folder Include="Core\IRepositories\BusinessPartners\" />
+    <Folder Include="Core\IRepositories\Roles\" />
+    <Folder Include="Core\IServices\" />
+    <Folder Include="Core\Utils\" />
+    <Folder Include="Infra\DbConfigs\" />
+    <Folder Include="Infra\Options\" />
+    <Folder Include="Infra\QueryHandlers\BusinessPartners\" />
+    <Folder Include="Infra\QueryHandlers\UserRoles\" />
+    <Folder Include="Infra\QueryHandlers\Roles\" />
+    <Folder Include="Infra\Repositories\BusinessPartners\" />
+    <Folder Include="Infra\Repositories\Roles\" />
+    <Folder Include="Infra\Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" Version="7.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="7.1.0" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.12" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NN.POS.Common\NN.POS.Common.csproj" />
+    <ProjectReference Include="..\NN.POS.Model\NN.POS.Model.csproj" />
+  </ItemGroup>
+
+</Project>
