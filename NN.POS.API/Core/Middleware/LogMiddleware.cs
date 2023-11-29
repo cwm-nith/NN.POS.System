@@ -1,6 +1,6 @@
 ﻿namespace NN.POS.API.Core.Middleware;
 
-public class LogMiddleware(RequestDelegate next, ILogger logger)
+public class LogMiddleware(RequestDelegate next, ILogger<LogMiddleware> logger)
 {
     public async Task Invoke(HttpContext context)
     {

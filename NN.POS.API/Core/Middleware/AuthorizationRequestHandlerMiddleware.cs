@@ -1,7 +1,7 @@
 ﻿using NN.POS.API.Core.Exceptions;
 
 namespace NN.POS.API.Core.Middleware;
-public sealed class AuthorizationRequestHandlerMiddleware(RequestDelegate next, ILogger logger)
+public sealed class AuthorizationRequestHandlerMiddleware(RequestDelegate next, ILogger<AuthorizationRequestHandlerMiddleware> logger)
 {
     public Task Invoke(HttpContext context)
     {

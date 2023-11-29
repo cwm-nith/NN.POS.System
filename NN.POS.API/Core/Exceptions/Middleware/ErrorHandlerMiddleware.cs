@@ -3,7 +3,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace NN.POS.API.Core.Exceptions.Middleware;
 
-public class ErrorHandlerMiddleware(RequestDelegate next, ILogger logger)
+public class ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
 {
     public async Task Invoke(HttpContext context)
     {
