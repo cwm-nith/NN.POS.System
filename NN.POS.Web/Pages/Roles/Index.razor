@@ -1,0 +1,111 @@
+﻿@using NN.POS.Model.Dtos.Roles
+@using NN.POS.Web.Pages.Roles.Dialogs
+@attribute [Route(RouteName.Roles)]
+
+
+<MudContainer Class="mt-2">
+
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.CreateRole">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       Color="Color.Primary">
+                Create
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<RoleDto>>>(ServerReload))"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              @ref="_table">
+
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Roles</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Display Name</MudTh>
+            <MudTh>Description</MudTh>
+            <MudTh>Created At</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Display Name">@context.DisplayName</MudTd>
+                <MudTd DataLabel="Description">@context.Description</MudTd>
+                <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteRole(context.Id))"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+
+    @code {
+    private MudTable<RoleDto>? _table;
+    private string _searchString = "";
+
+    private async Task<TableData<RoleDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}role?Page={state.Page + 1}&Results={state.PageSize}";
+
+        Console.WriteLine(path);
+
+        var data =
+            await httpClient.GetFromJsonAsync<PagedResult<RoleDto>>(path);
+
+        return new TableData<RoleDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    protected void GoToUpdatePage(int id)
+    {
+        NavigationManager.NavigateTo($"{RouteName.UpdateRole}/{id}");
+    }
+
+    private void DeleteRole(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog>
+        {
+            {
+                x => x.Id, id
+            },
+            {
+                x => x.Table, _table
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+}

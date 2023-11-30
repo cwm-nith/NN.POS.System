@@ -7,15 +7,8 @@ using NN.POS.Model.Dtos.Roles;
 
 namespace NN.POS.API.Controllers.V1;
 
-public class UserRoleController : BaseApiController
+public class UserRoleController(IMediator mediator) : BaseApiController
 {
-    private readonly IMediator _mediator;
-
-    public UserRoleController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize(Roles = "Admin, read-role")]
     [HttpGet("{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -27,7 +20,7 @@ public class UserRoleController : BaseApiController
     public async Task<ActionResult<List<UserRoleDto>>> GetUserRoles(int userId)
     {
         var q = new GetUserRoleByUserIdQuery(userId);
-        var data = await _mediator.Send(q);
+        var data = await mediator.Send(q);
         return Ok(data);
     }
 
@@ -42,7 +35,7 @@ public class UserRoleController : BaseApiController
     public async Task<ActionResult<List<UserRoleDto>>> GetAllUserRoles(int userId)
     {
         var q = new GetAllUserRoleByUserIdQuery(userId);
-        var data = await _mediator.Send(q);
+        var data = await mediator.Send(q);
         return Ok(data);
     }
 
@@ -57,7 +50,7 @@ public class UserRoleController : BaseApiController
     public async Task<ActionResult<bool>> AddRoleToUser(int userId, int roleId)
     {
         var q = new AddRoleToUserCommand(userId, roleId);
-        var data = await _mediator.Send(q);
+        var data = await mediator.Send(q);
         return Ok(data);
     }
 
@@ -72,7 +65,7 @@ public class UserRoleController : BaseApiController
     public async Task<ActionResult<bool>> RemoveUserRole(int userId, int roleId)
     {
         var q = new RemoveUserRoleCommand(userId, roleId);
-        var data = await _mediator.Send(q);
+        var data = await mediator.Send(q);
         return Ok(data);
     }
 }

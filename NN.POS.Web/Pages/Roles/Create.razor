@@ -1,0 +1,120 @@
+﻿@using NN.POS.Model.Dtos.Roles
+@using NN.POS.Web.Validations.Roles
+@attribute [Route(RouteName.CreateRole)]
+
+<MudContainer Class="p-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.Roles">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Color="Color.Primary">
+                Back
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+    <MudCard>
+        <MudForm Model="_roleModel" Validation="_roleValidator.ValidateValue" @ref="_form">
+            <MudCardContent>
+                <MudContainer Class="text-center">
+                    <MudChip Color="Color.Primary" Class="p-4">
+                        <MudText Typo="Typo.h6">Create New Role</MudText>
+                    </MudChip>
+                </MudContainer>
+                <MudDivider Class="mt-2" />
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_roleModel.Name"
+                                      For="@(() => _roleModel.Name)"
+                                      Immediate="true"
+                                      Label="Name" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_roleModel.DisplayName"
+                                      For="@(() => _roleModel.DisplayName)"
+                                      Immediate="true"
+                                      Label="DisplayName" />
+                    </MudItem>
+                </MudGrid>
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="10" sm="12" xs="12">
+                        <MudTextField @bind-Value="_roleModel.Description"
+                                      For="@(() => _roleModel.Description)"
+                                      Immediate="true"
+                                      Label="Description" />
+                    </MudItem>
+                </MudGrid>
+
+                @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                {
+                    <MudChip Class="d-flex justify-center" Color="Color.Error">
+                        <p>@_apiErrorMessages</p>
+                    </MudChip>
+                }
+
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudGrid>
+                    <MudItem sm="0" lg="9"></MudItem>
+                    <MudItem sm="12" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="CreateRoleAsync">
+                            Save
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</MudContainer>
+
+
+
+@code {
+    readonly CreateRoleDto _roleModel = new();
+
+    readonly CreateRoleValidator _roleValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+    private async Task CreateRoleAsync()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_roleModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}role", requestContent);
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                        break;
+                    }
+                case HttpStatusCode.Unauthorized:
+                    {
+                        NavigationManager.NavigateTo(RouteName.Login);
+                        break;
+                    }
+                case HttpStatusCode.OK:
+                    {
+                        NavigationManager.NavigateTo(RouteName.Roles);
+                        break;
+                    }
+                default:
+                    _apiErrorMessages = "Login Failed Please try after some time";
+                    break;
+            }
+
+        }
+    }
+}

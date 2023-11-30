@@ -77,6 +77,21 @@ public class RoleController : BaseApiController
         return Ok(data);
     }
 
+
+    [Authorize(Roles = "Admin,write-role")]
+    [HttpGet("{id:int}")]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<RoleDto>> GetRole(int id)
+    {
+        var cmd = new GetRoleByIdQuery
+        {
+            Id = id
+        };
+
+        var data = await _mediator.Send(cmd);
+        return Ok(data);
+    }
+
     [Authorize(Roles = "Admin,write-role")]
     [HttpPost("create-many")]
     [ProducesResponseType(StatusCodes.Status200OK)]

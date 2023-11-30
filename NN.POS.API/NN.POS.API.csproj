@@ -31,7 +31,6 @@
     <Folder Include="Infra\Options\" />
     <Folder Include="Infra\QueryHandlers\BusinessPartners\" />
     <Folder Include="Infra\QueryHandlers\UserRoles\" />
-    <Folder Include="Infra\QueryHandlers\Roles\" />
     <Folder Include="Infra\Repositories\BusinessPartners\" />
     <Folder Include="Infra\Repositories\Roles\" />
     <Folder Include="Infra\Services\" />
