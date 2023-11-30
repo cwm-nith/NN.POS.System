@@ -5,9 +5,9 @@
         <MudNavLink Href="@RouteName.Supplier">Suppliers</MudNavLink>
         @* <MudNavLink Href="/security">Security</MudNavLink> *@
     </MudNavGroup>
-    <MudNavGroup Title="User Management" Expanded='$"/{_section}" == RouteName.Users'>
+    <MudNavGroup Title="User Management" Expanded='$"/{_section}" == RouteName.UsersManagement'>
         <MudNavLink Href="@RouteName.Users">Users</MudNavLink>
-        @* <MudNavLink Href="/security">Security</MudNavLink> *@
+        <MudNavLink Href="@RouteName.Roles">Roles</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 
