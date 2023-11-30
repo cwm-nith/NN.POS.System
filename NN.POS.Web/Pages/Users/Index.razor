@@ -1,0 +1,112 @@
+﻿@using NN.POS.Model.Dtos.Users
+@using NN.POS.Web.Pages.Users.Dialogs
+
+@attribute [Route(RouteName.Users)]
+
+
+<MudContainer Class="mt-2">
+
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.CreateSupplier">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       Color="Color.Primary">
+                Create
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<UserDto>>>(ServerReload))"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              @ref="_table">
+
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Suppliers</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Username</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Last Login</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Username">@context.Username</MudTd>
+                <MudTd DataLabel="Email">@context.Email</MudTd>
+                <MudTd DataLabel="Last Login">@context.LastLogin?.ToString("f")</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteUser(context.Id))"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+
+    @code {
+    private MudTable<UserDto>? _table;
+    private string _searchString = "";
+
+    private async Task<TableData<UserDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}user?Page={state.Page + 1}&Results={state.PageSize}";
+
+        Console.WriteLine(path);
+
+        var data =
+            await httpClient.GetFromJsonAsync<PagedResult<UserDto>>(path);
+
+        return new TableData<UserDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    protected void GoToUpdatePage(int id)
+    {
+        NavigationManager.NavigateTo($"{RouteName.UpdateUser}/{id}");
+    }
+
+    private void DeleteUser(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog>
+        {
+            {
+                x => x.Id, id
+            },
+            {
+                x => x.Table, _table
+            }
+        };
+
+        var options = new DialogOptions() { CloseButton = true };
+
+        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+}

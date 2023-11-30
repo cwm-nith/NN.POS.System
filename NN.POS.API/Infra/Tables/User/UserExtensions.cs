@@ -24,12 +24,12 @@ public static class UserExtensions
             Name = t.Name,
             Username = t.Username,
             Email = t.Email,
-            LastLogin = null,
+            LastLogin = t.LastLogin,
             CreatedAt = t.CreatedAt,
             UpdatedAt = t.UpdatedAt,
             Id = t.Id,
             Password = t.Password,
-            Token = token
+            Token = token,
         };
 
     public static UserEntity ToEntity(this UserDto t, string? token = null) =>
@@ -40,7 +40,7 @@ public static class UserExtensions
             Name = t.Name,
             Username = t.Username,
             Email = t.Email,
-            LastLogin = null,
+            LastLogin = t.LastLogin,
             CreatedAt = t.CreatedAt,
             UpdatedAt = t.UpdatedAt
         };
@@ -54,6 +54,7 @@ public static class UserExtensions
             Password = t.Password,
             Email = t.Email,
             UpdatedAt = t.UpdatedAt,
-            CreatedAt = t.CreatedAt
+            CreatedAt = t.CreatedAt,
+            LastLogin = t.LastLogin
         };
 }

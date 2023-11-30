@@ -23,4 +23,7 @@ public class UserTable : BaseTable
 
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; }
+
+    [Column("last_login")]
+    public DateTime? LastLogin { get; set; }
 }
