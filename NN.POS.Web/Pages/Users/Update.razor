@@ -1,7 +1,8 @@
-﻿@using NN.POS.Model.Dtos.Users
-@using NN.POS.Web.Validations.Users
-@attribute [Route(RouteName.CreateUser)]
+﻿@attribute [Route($"{RouteName.UpdateUser}/{{Id:int}}")]
 
+@using NN.POS.Web.Validations.Users
+@using Newtonsoft.Json
+@using NN.POS.Model.Dtos.Users
 
 <MudContainer Class="p-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
@@ -18,50 +19,29 @@
             <MudCardContent>
                 <MudContainer Class="text-center">
                     <MudChip Color="Color.Primary" Class="p-4">
-                        <MudText Typo="Typo.h6">Create New User</MudText>
+                        <MudText Typo="Typo.h6">Update User</MudText>
                     </MudChip>
                 </MudContainer>
                 <MudDivider Class="mt-2" />
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
-                    <MudItem lg="5" sm="12" xs="12">
+                    <MudItem lg="5" sm="12">
                         <MudTextField @bind-Value="_userModel.Name"
                                       For="@(() => _userModel.Name)"
                                       Immediate="true"
-                                      Label="Name" />
-                    </MudItem>
-                    <MudItem lg="5" sm="12" xs="12">
-                        <MudTextField @bind-Value="_userModel.Username"
-                                      For="@(() => _userModel.Username)"
-                                      Immediate="true"
-                                      Label="Username" />
-                    </MudItem>
-                </MudGrid>
+                                      Label="Last name" />
 
-                <MudGrid Spacing="5" Justify="Justify.Center">
-                    <MudItem lg="5" sm="12" xs="12">
-                        <MudTextField @bind-Value="_userModel.Password"
-                                      For="@(() => _userModel.Password)"
-                                      Immediate="true"
-                                      InputType="InputType.Password"
-                                      Label="Password" />
+
                     </MudItem>
-                    <MudItem lg="5" sm="12" xs="12">
-                        <MudTextField @bind-Value="_userModel.ConfirmPassword"
-                                      For="@(() => _userModel.ConfirmPassword)"
-                                      Immediate="true"
-                                      InputType="InputType.Password"
-                                      Label="Confirm password" />
-                    </MudItem>
-                </MudGrid>
-                <MudGrid Spacing="5" Justify="Justify.Center">
-                    <MudItem lg="10" sm="12" md="12" xxl="10" xl="10" xs="12">
+                    <MudItem lg="5" sm="12">
                         <MudTextField @bind-Value="_userModel.Email"
                                       For="@(() => _userModel.Email)"
                                       Immediate="true"
-                                      Label="Email" />
+                                      InputType="InputType.Email"
+                                      Label="Last name" />
                     </MudItem>
                 </MudGrid>
+
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
                     <MudChip Class="d-flex justify-center" Color="Color.Error">
@@ -78,7 +58,7 @@
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.AddCircle"
-                                   OnClick="CreateUserAsync">
+                                   OnClick="UpdateUserAsync">
                             Save
                         </MudButton>
                     </MudItem>
@@ -88,25 +68,30 @@
     </MudCard>
 </MudContainer>
 
-
 @code {
-    readonly CreateUserBfDto _userModel = new();
 
-    readonly CreateUserValidator _userValidator = new();
+    [Parameter]
+    public int Id { get; set; }
+
+    private UpdateUserDto _userModel = new();
+
+    readonly UpdateUserValidator _userValidator = new();
 
     MudForm? _form;
 
     string? _apiErrorMessages;
 
-    private async Task CreateUserAsync()
+
+
+    private async Task UpdateUserAsync()
     {
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(_userModel);
+            var jsonPayload = JsonConvert.SerializeObject(_userModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}user", requestContent);
+            var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}user/{Id}", requestContent);
 
             switch (response.StatusCode)
             {
@@ -133,4 +118,18 @@
 
         }
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var data = await httpClient.GetFromJsonAsync<UserDto>($"{Setting.PrefixEndpoint}user/{Id}");
+        Id = data?.Id ?? 0;
+        _userModel = new UpdateUserDto
+            {
+                Email = data?.Email,
+                Name = data?.Name
+            };
+        Console.WriteLine(JsonConvert.SerializeObject(data));
+    }
+
 }
