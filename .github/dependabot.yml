@@ -12,20 +12,20 @@ updates:
       day: "wednesday"
     open-pull-requests-limit: 5
   - package-ecosystem: "nuget" # See documentation for possible values
-      directory: "/NN.POS.Common" # Location of package manifests
-      schedule:
-        interval: "weekly"
-        day: "wednesday"
-      open-pull-requests-limit: 5
+    directory: "/NN.POS.Common" # Location of package manifests
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    open-pull-requests-limit: 5
   - package-ecosystem: "nuget" # See documentation for possible values
-      directory: "/NN.POS.Model" # Location of package manifests
-      schedule:
-        interval: "weekly"
-        day: "wednesday"
-      open-pull-requests-limit: 5
+    directory: "/NN.POS.Model" # Location of package manifests
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    open-pull-requests-limit: 5
   - package-ecosystem: "nuget" # See documentation for possible values
-      directory: "/NN.POS.Web" # Location of package manifests
-      schedule:
-        interval: "weekly"
-        day: "wednesday"
-      open-pull-requests-limit: 5
+    directory: "/NN.POS.Web" # Location of package manifests
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    open-pull-requests-limit: 5
