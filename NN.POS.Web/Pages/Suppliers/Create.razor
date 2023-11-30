@@ -111,9 +111,9 @@
 @code {
 
     readonly CreateBusinessPartnerDto _supplyModel = new()
-    {
-        ContactType = ContactType.Supplier
-    };
+        {
+            ContactType = ContactType.Supplier
+        };
 
     readonly CreateSupplyValidator _supplyValidator = new();
 
@@ -134,10 +134,13 @@
             switch (response.StatusCode)
             {
                 case HttpStatusCode.BadRequest:
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                        break;
+                    }
                 case HttpStatusCode.Unauthorized:
                     {
-                        var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                        _apiErrorMessages = errors?["message"];
                         NavigationManager.NavigateTo(RouteName.Login);
                         break;
                     }
