@@ -17,7 +17,7 @@ public partial class Index
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
         var data =
-            await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>($"{Setting.PrefixEndpoint}BusinessPartner?ContactType=1&Page={state.Page}&Results={state.PageSize}");
+            await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>($"{Setting.PrefixEndpoint}BusinessPartner?ContactType=1&Page={state.Page + 1}&Results={state.PageSize}");
 
         return new TableData<BusinessPartnerDto>
         {

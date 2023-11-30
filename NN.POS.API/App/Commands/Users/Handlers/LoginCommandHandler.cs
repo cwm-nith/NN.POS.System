@@ -17,6 +17,11 @@ public class LoginCommandHandler(IUserRepository userRepository, ITokenProvider 
         if (!user.ValidatePassword(request.Password, passwordHasher)) throw new InvalidCredentialException();
         
         var token = await tokenProvider.CreateTokenAsync(user, cancellationToken);
+
+        user.LastLogin = DateTime.UtcNow;
+
+        await userRepository.UpdateUserAsync(user, cancellationToken).ConfigureAwait(false);
+
         return user.ToDto(token);
     }
 }

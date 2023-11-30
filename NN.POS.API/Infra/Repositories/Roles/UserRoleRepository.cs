@@ -86,8 +86,8 @@ public class UserRoleRepository(
                           from ur in g.DefaultIfEmpty()
                           select new UserRoleDto
                           {
-                              UserId = ur != null ? ur.UserId : userId,
-                              Id = ur != null ? ur.Id : 0,
+                              UserId = ur?.UserId ?? userId,
+                              Id = ur?.Id ?? 0,
                               IsInRole = ur != null,
                               RoleId = role.Id,
                               Name = role.Name,

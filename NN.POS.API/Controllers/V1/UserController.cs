@@ -10,14 +10,8 @@ using NN.POS.Model.Dtos.Users;
 namespace NN.POS.API.Controllers.V1;
 
 [ApiVersion("1")]
-public class UserController : BaseApiController
+public class UserController(IMediator mediator) : BaseApiController
 {
-    private readonly IMediator _mediator;
-
-    public UserController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
 
     /// <summary>
     /// Get all users
@@ -38,7 +32,7 @@ public class UserController : BaseApiController
             Page = q.Page,
             Results = q.Results,
         };
-        var data = await _mediator.Send(query);
+        var data = await mediator.Send(query);
         return Ok(data);
     }
 
@@ -53,7 +47,7 @@ public class UserController : BaseApiController
     public async Task<ActionResult<UserDto>> GetUserById(int id)
     {
         var query = new GetUserByIdQuery(id);
-        var data = await _mediator.Send(query);
+        var data = await mediator.Send(query);
         return Ok(data);
     }
 
@@ -68,7 +62,7 @@ public class UserController : BaseApiController
     public async Task<ActionResult<UserDto>> GetUserByUsername(string username)
     {
         var query = new GetUserByNameQuery(username);
-        var data = await _mediator.Send(query);
+        var data = await mediator.Send(query);
         return Ok(data);
     }
 
@@ -83,7 +77,7 @@ public class UserController : BaseApiController
     public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
     {
         var query = new GetUserByEmailQuery(email);
-        var data = await _mediator.Send(query);
+        var data = await mediator.Send(query);
         return Ok(data);
     }
 
@@ -98,7 +92,7 @@ public class UserController : BaseApiController
     {
         var cmd = new CreateUserCommand(name: body.Name, username: body.Username, password: body.Password,
             email: body.Email, updatedAt: DateTime.UtcNow);
-        var data = await _mediator.Send(cmd);
+        var data = await mediator.Send(cmd);
         return Ok(data);
     }
 
@@ -112,7 +106,7 @@ public class UserController : BaseApiController
     public async Task<ActionResult<UserDto>> CreateUser(int id, [FromBody] UpdateUserDto body)
     {
         var cmd = new UpdateUserCommand(id, body.Name, body.Email);
-        var data = await _mediator.Send(cmd);
+        var data = await mediator.Send(cmd);
         return Ok(data);
     }
 
@@ -126,7 +120,7 @@ public class UserController : BaseApiController
     public async Task<ActionResult<bool>> DeleteUser(int id)
     {
         var cmd = new DeleteUserCommand(id);
-        var data = await _mediator.Send(cmd);
+        var data = await mediator.Send(cmd);
         return Ok(data);
     }
 }
