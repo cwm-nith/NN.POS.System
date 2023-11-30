@@ -1,0 +1,137 @@
+﻿@using NN.POS.Model.Dtos.Users
+@using NN.POS.Web.Validations.Users
+@using NN.POS.Model.Dtos
+@attribute [Route(RouteName.CreateUser)]
+
+
+<MudContainer Class="p-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.Supplier">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Color="Color.Primary">
+                Back
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+    <MudCard>
+        <MudForm Model="_userModel" Validation="_userValidator.ValidateValue" @ref="_form">
+            <MudCardContent>
+                <MudContainer Class="text-center">
+                    <MudChip Color="Color.Primary" Class="p-4">
+                        <MudText Typo="Typo.h6">Create New User</MudText>
+                    </MudChip>
+                </MudContainer>
+                <MudDivider Class="mt-2" />
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_userModel.Name"
+                                      For="@(() => _userModel.Name)"
+                                      Immediate="true"
+                                      Label="Name" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_userModel.Username"
+                                      For="@(() => _userModel.Username)"
+                                      Immediate="true"
+                                      Label="Username" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_userModel.Password"
+                                      For="@(() => _userModel.Password)"
+                                      Immediate="true"
+                                      InputType="InputType.Password"
+                                      Label="Password" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_userModel.ConfirmPassword"
+                                      For="@(() => _userModel.ConfirmPassword)"
+                                      Immediate="true"
+                                      InputType="InputType.Password"
+                                      Label="Confirm password" />
+                    </MudItem>
+                </MudGrid>
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="10" sm="12" md="12" xxl="10" xl="10" xs="12">
+                        <MudTextField @bind-Value="_userModel.Email"
+                                      For="@(() => _userModel.Email)"
+                                      Immediate="true"
+                                      Label="Email" />
+                    </MudItem>
+                </MudGrid>
+                @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                {
+                    <MudChip Class="d-flex justify-center" Color="Color.Error">
+                        <p>@_apiErrorMessages</p>
+                    </MudChip>
+                }
+
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudGrid>
+                    <MudItem sm="0" lg="9"></MudItem>
+                    <MudItem sm="12" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="CreateUserAsync">
+                            Save
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</MudContainer>
+
+
+@code {
+    readonly CreateUserBfDto _userModel = new();
+
+    readonly CreateUserValidator _userValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+    private async Task CreateUserAsync()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_userModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}user", requestContent);
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                        break;
+                    }
+                case HttpStatusCode.Unauthorized:
+                    {
+                        NavigationManager.NavigateTo(RouteName.Login);
+                        break;
+                    }
+                case HttpStatusCode.OK:
+                    {
+                        NavigationManager.NavigateTo(RouteName.Users);
+                        break;
+                    }
+                default:
+                    _apiErrorMessages = "Login Failed Please try after some time";
+                    break;
+            }
+
+        }
+    }
+}

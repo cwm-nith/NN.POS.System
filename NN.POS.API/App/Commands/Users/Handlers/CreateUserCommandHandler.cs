@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using NN.POS.API.Core.Entities.Users;
+using NN.POS.API.Core.Exceptions.Users;
 using NN.POS.API.Core.IRepositories.Users;
 using NN.POS.API.Infra.Tables.User;
 using NN.POS.Model.Dtos.Users;
@@ -11,6 +12,13 @@ public class CreateUserCommandHandler(IUserRepository userRepository, IPasswordH
 {
     public async Task<UserDto> Handle(CreateUserCommand r, CancellationToken cancellationToken)
     {
+        var isUserExisted = await userRepository.IsUserExistedAsync(r.Username, cancellationToken);
+
+        if (isUserExisted)
+        {
+            throw new UserExistedException(r.Username);
+        }
+
         var entity = new UserEntity
         {
             Name = r.Name,

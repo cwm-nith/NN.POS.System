@@ -44,6 +44,11 @@ public class UserRepository(IWriteDbRepository<UserTable> writeDbRepository,
         return await readDbRepository.ExistsAsync(i => i.Id == id, cancellation);
     }
 
+    public async Task<bool> IsUserExistedAsync(string username, CancellationToken cancellation = default)
+    {
+        return await readDbRepository.ExistsAsync(i => i.Username == username, cancellation);
+    }
+
     public async Task<UserEntity> CreateUserAsync(UserEntity user, CancellationToken cancellation = default)
     {
         var userTable = await writeDbRepository.AddAsync(user.ToTable(), cancellation);

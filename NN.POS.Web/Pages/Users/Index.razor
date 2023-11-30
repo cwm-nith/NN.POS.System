@@ -7,7 +7,7 @@
 <MudContainer Class="mt-2">
 
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
-        <MudLink Href="@RouteName.CreateSupplier">
+        <MudLink Href="@RouteName.CreateUser">
             <MudButton Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.AddCircle"
                        Color="Color.Primary">
@@ -23,7 +23,7 @@
               @ref="_table">
 
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Suppliers</MudText>
+            <MudText Typo="Typo.h6">Users</MudText>
             <MudSpacer />
             <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -41,7 +41,7 @@
                 <MudTd DataLabel="Name">@context.Name</MudTd>
                 <MudTd DataLabel="Username">@context.Username</MudTd>
                 <MudTd DataLabel="Email">@context.Email</MudTd>
-                <MudTd DataLabel="Last Login">@context.LastLogin?.ToString("f")</MudTd>
+                <MudTd DataLabel="Last Login">@context.LastLogin?.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteUser(context.Id))"></MudIconButton>
