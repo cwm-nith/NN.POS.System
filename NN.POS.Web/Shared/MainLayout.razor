@@ -1,6 +1,4 @@
-﻿@using global::System.Security.Claims
-@using NN.POS.Web.Constants
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -16,11 +14,16 @@
             </MudButton>
         </MudDrawerHeader>
         <MudSpacer />
-        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" >
-            <MudMenuItem>Profile</MudMenuItem>
-            <MudMenuItem>My account</MudMenuItem>
-            <MudMenuItem OnClick="LogOut">Logout</MudMenuItem>
-        </MudMenu>
+        <AuthorizeView>
+            <Authorized>
+                <MudText>Welcome @UserDisplayName(context.User.Claims)</MudText>
+                <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" >
+                    <MudMenuItem>Profile</MudMenuItem>
+                    <MudMenuItem>My account</MudMenuItem>
+                    <MudMenuItem OnClick="LogOut">Logout</MudMenuItem>
+                </MudMenu>
+            </Authorized>
+        </AuthorizeView>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <AuthorizeView>
@@ -50,20 +53,13 @@
         _drawerOpen = !_drawerOpen;
     }
 
-    private static string UserDisplayName(IReadOnlyCollection<Claim> claims)
+    private static string UserDisplayName(IEnumerable<Claim> claims)
     {
-        var firstName = claims.Where(c => c.Type == "nameid")
+        claims = claims.ToList();
+        var username = claims.Where(c => c.Type == "nameid")
             .Select(x => x.Value).FirstOrDefault();
 
-        var lastName = claims.Where(c => c.Type == "userId")
-            .Select(c => c.Value).FirstOrDefault();
-
-        if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
-        {
-            return $"{firstName}  {lastName}";
-        }
-        var email = claims.Where(c => c.Type == "email").Select(x => x.Value).FirstOrDefault();
-        return email ?? "";
+        return username ?? "";
     }
 
     protected async Task LogOut()

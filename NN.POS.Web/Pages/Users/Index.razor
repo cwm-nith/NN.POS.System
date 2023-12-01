@@ -43,8 +43,22 @@
                 <MudTd DataLabel="Email">@context.Email</MudTd>
                 <MudTd DataLabel="Last Login">@context.LastLogin?.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
-                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteUser(context.Id))"></MudIconButton>
+                    <MudButton StartIcon="@Icons.Material.Filled.ModeEdit"
+                               Color="Color.Warning"
+                               OnClick="@(() => GoToUpdatePage(context.Id))"
+                               Variant="Variant.Filled"
+                               Size="Size.Small">Update</MudButton>
+
+                    <MudButton StartIcon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               OnClick="@(() => DeleteUser(context.Id))"
+                               Variant="Variant.Filled"
+                               Size="Size.Small">Delete</MudButton>
+
+                    <MudButton Color="Color.Info"
+                               OnClick="@(() => ViewRoles(context.Id))"
+                               Variant="Variant.Filled"
+                               Size="Size.Small">Roles</MudButton>
                 </MudTd>
             </RowTemplate>
 
@@ -99,7 +113,7 @@
             }
         };
 
-        var options = new DialogOptions() { CloseButton = true };
+        var options = new DialogOptions { CloseButton = true };
 
         Dialog.Show<DeleteDialog>("Delete", parameters, options);
     }
@@ -108,5 +122,10 @@
     {
         _searchString = text;
         _table?.ReloadServerData();
+    }
+
+    private void ViewRoles(int id)
+    {
+        NavigationManager.NavigateTo($"{RouteName.UserRoles}/{id}");
     }
 }
