@@ -19,4 +19,6 @@ public static class RouteName
     public const string Roles = "/users-management/roles";
     public const string CreateRole= "/users-management/roles/create";
     public const string UpdateRole= "/users-management/roles/update";
+
+    public const string UserRoles = "/users-management/user-roles";
 }

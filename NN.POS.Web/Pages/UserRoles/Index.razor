@@ -1,0 +1,103 @@
+﻿@using NN.POS.Model.Dtos.Roles
+
+@attribute [Route($"{RouteName.UserRoles}/{{Id:int}}")]
+
+<MudTable Items="@_userRoles"
+          Dense="true"
+          Hover="true"
+          Bordered="true"
+          Striped="true"
+          Filter="new Func<UserRoleDto,bool>(FilterItems)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">User Roles</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString"
+                      Placeholder="Search"
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Class="mt-0">
+        </MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Role Id</MudTh>
+        <MudTh>User Id</MudTh>
+        <MudTh>User Role Id</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Display Name</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Has Role</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Role Id">@context.RoleId</MudTd>
+            <MudTd DataLabel="User Id">@context.UserId</MudTd>
+            <MudTd DataLabel="User Role Id">@context.Id</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Display Name">@context.DisplayName</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+            <MudTd DataLabel="Has Role">
+                <MudIconButton Icon="@(context.IsInRole ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)"
+                               Color="@(context.IsInRole ? Color.Primary : Color.Error)"
+                               OnClick="@(async () => await AddOrRemoveUserRoleAsync(context))" />
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+
+    @code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private string _searchString = "";
+    private IEnumerable<UserRoleDto> _userRoles = new List<UserRoleDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}UserRole/{Id}/all";
+        Console.WriteLine("User Roles Path Request: {0}", path);
+
+        var userRoles = await httpClient.GetFromJsonAsync<List<UserRoleDto>>(path);
+        _userRoles = userRoles ?? new List<UserRoleDto>();
+    }
+
+    private async Task AddOrRemoveUserRoleAsync(UserRoleDto value)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}UserRole/{value.UserId}/{value.RoleId}";
+
+        switch (value.IsInRole)
+        {
+            case false:
+                await httpClient.PostAsync(path, null);
+                break;
+
+            default:
+                await httpClient.DeleteAsync(path);
+                break;
+
+        }
+        value.IsInRole = !value.IsInRole;
+    }
+
+
+    private bool FilterItems(UserRoleDto element) => FilterFunc(element, _searchString);
+
+    private static bool FilterFunc(UserRoleDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+
+        if (element.DisplayName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+            return true;
+
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return element.Description?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false;
+    }
+}
