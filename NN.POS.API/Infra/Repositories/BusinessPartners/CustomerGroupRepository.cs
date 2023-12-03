@@ -5,6 +5,7 @@ using NN.POS.API.Infra.Tables;
 using NN.POS.Common.Pagination;
 using NN.POS.API.Core.IRepositories.BusinessPartners;
 using NN.POS.API.Core.Exceptions.BusinessPartners.CustomerGroups;
+using Microsoft.EntityFrameworkCore;
 
 namespace NN.POS.API.Infra.Repositories.BusinessPartners;
 
@@ -22,7 +23,7 @@ public class CustomerGroupRepository(IReadDbRepository<CustomerGroupTable> readD
         }
         else
         {
-            var data = await readDbRepository.BrowseDescAsync(i => i.Name.Contains(q.Search, StringComparison.OrdinalIgnoreCase), i => i.CreatedAt, q, cancellationToken);
+            var data = await readDbRepository.BrowseDescAsync(i => EF.Functions.Like(i.Name, $"%{q.Search}%"), i => i.CreatedAt, q, cancellationToken);
             return data.Map(i => i.ToEntity());
         }
     }

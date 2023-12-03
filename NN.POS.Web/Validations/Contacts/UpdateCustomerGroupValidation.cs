@@ -3,10 +3,10 @@ using NN.POS.Model.Dtos.BusinessPartners.CustomerGroups;
 
 namespace NN.POS.Web.Validations.Contacts;
 
-public class CreateCustomerGroupValidation : AbstractValidator<CreateCustomerGroupDto>
+public class UpdateCustomerGroupValidation : AbstractValidator<UpdateCustomerGroupDto>
 {
 
-    public CreateCustomerGroupValidation()
+    public UpdateCustomerGroupValidation()
     {
         RuleFor(i => i.Name)
             .NotEmpty()
@@ -21,7 +21,7 @@ public class CreateCustomerGroupValidation : AbstractValidator<CreateCustomerGro
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
     {
         var result =
-            await ValidateAsync(ValidationContext<CreateCustomerGroupDto>.CreateWithOptions((CreateCustomerGroupDto)model, x => x.IncludeProperties(propertyName)));
+            await ValidateAsync(ValidationContext<UpdateCustomerGroupDto>.CreateWithOptions((UpdateCustomerGroupDto)model, x => x.IncludeProperties(propertyName)));
         return result.IsValid ? Array.Empty<string>() : result.Errors.Select(e => e.ErrorMessage);
     };
 }

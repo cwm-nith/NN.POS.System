@@ -37,7 +37,7 @@
                 <MudTd DataLabel="Name">@context.Name</MudTd>
                 <MudTd DataLabel="Value %">@context.Value</MudTd>
                 <MudTd DataLabel="Actions">
-                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => UpdateCustomerGroup(context.Id))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteCustomer(context.Id))"></MudIconButton>
                 </MudTd>
             </RowTemplate>
@@ -88,9 +88,9 @@
         };
 
         var options = new DialogOptions
-        {
-            CloseButton = true
-        };
+            {
+                CloseButton = true
+            };
 
         Dialog.Show<DeleteDialog>("Delete", parameters, options);
     }
@@ -103,7 +103,7 @@
 
     private void CreateCustomerGroup()
     {
-        var parameters = new DialogParameters<DeleteDialog>
+        var parameters = new DialogParameters<CreateDialog>
         {
             {
                 x => x.Table, _table
@@ -111,13 +111,36 @@
         };
 
         var options = new DialogOptions
-        {
-            CloseButton = true, 
-            MaxWidth = MaxWidth.Medium, 
-            FullWidth = true, 
-            CloseOnEscapeKey = true,
-        };
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                CloseOnEscapeKey = true,
+            };
 
         Dialog.Show<CreateDialog>("Create new Customer Group", parameters, options);
+    }
+
+    private void UpdateCustomerGroup(int id)
+    {
+        var parameters = new DialogParameters<UpdateDialog>
+            {
+                {
+                    i => i.Id, id
+                },
+                {
+                    x => x.Table, _table
+                }
+            };
+
+        var options = new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                CloseOnEscapeKey = true,
+            };
+
+        Dialog.Show<UpdateDialog>("Update Customer Group", parameters, options);
     }
 }

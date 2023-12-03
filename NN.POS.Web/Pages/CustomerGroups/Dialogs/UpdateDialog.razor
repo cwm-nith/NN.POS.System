@@ -1,0 +1,110 @@
+﻿@using NN.POS.Model.Dtos.BusinessPartners.CustomerGroups
+@using NN.POS.Web.Validations.Contacts
+
+@namespace NN.POS.Web.Pages.CustomerGroups.Dialogs
+
+<MudDialog >
+    <DialogContent>
+        <MudForm Model="_customerGroupModel" 
+                 Validation="_customerGroupValidator.ValidateValue" 
+                 @ref="_form">
+            <MudGrid Spacing="5" Justify="Justify.Center">
+                <MudItem lg="5" sm="12" xs="12" md="12">
+                    <MudTextField @bind-Value="_customerGroupModel.Name"
+                                  For="@(() => _customerGroupModel.Name)"
+                                  Immediate="true"
+                                  Label="Name"
+                                  Required="true" />
+
+
+                </MudItem>
+                <MudItem lg="5" sm="12" xs="12" md="12">
+                    <MudTextField @bind-Value="_customerGroupModel.Value"
+                                  For="@(() => _customerGroupModel.Value)"
+                                  Immediate="true"
+                                  InputType="InputType.Number"
+                                  InputMode="InputMode.numeric"
+                                  Label="Value %"
+                                  Required="true" />
+                </MudItem>
+            </MudGrid>
+
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Class="d-flex justify-center" Color="Color.Error">
+                    <p>@_apiErrorMessages</p>
+                </MudChip>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.AddCircle"
+                   OnClick="CreateCustomerGroupAsync">
+            Save
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public MudTable<CustomerGroupDto>? Table { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    MudForm? _form;
+    private string? _apiErrorMessages;
+    private UpdateCustomerGroupDto _customerGroupModel = new();
+    private readonly UpdateCustomerGroupValidation _customerGroupValidator = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var response = await httpClient.GetFromJsonAsync<CustomerGroupDto>($"{Setting.PrefixEndpoint}BusinessPartner/customer-group/{Id}");
+        if (response is not null)
+        {
+            _customerGroupModel = new UpdateCustomerGroupDto
+            {
+                Value = response.Value,
+                Name = response.Name
+            };
+        }
+    }
+
+    private async Task CreateCustomerGroupAsync()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_customerGroupModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+            var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}BusinessPartner/customer-group/{Id}", requestContent);
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                    break;
+                case HttpStatusCode.Unauthorized:
+                    NavigationManager.NavigateTo(RouteName.Login);
+                    break;
+                case HttpStatusCode.OK:
+                    MudDialog.Close();
+                    await Table?.ReloadServerData()!;
+                    break;
+                default:
+                    _apiErrorMessages = "Login Failed Please try after some time";
+                    break;
+            }
+
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}
