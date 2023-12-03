@@ -1,4 +1,4 @@
-﻿@page "/suppliers"
+﻿@attribute [Route(RouteName.Supplier)]
 @using NN.POS.Model.Dtos.BusinessPartners
 
 <MudContainer Class="mt-2">
@@ -41,7 +41,7 @@
                 <MudTd DataLabel="Email">@context.Email</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteUser(context.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteSupplier(context.Id))"></MudIconButton>
                 </MudTd>
             </RowTemplate>
 

@@ -5,10 +5,16 @@ public static class RouteName
     public const string Home = "/";
     public const string Login = "/login";
     public const string Dashboard = "/dashboard";
+    
+    public const string Contact = "/contact";
+    
+    public const string Supplier = "/contact/suppliers";
+    public const string CreateSupplier = "/contact/suppliers/create-supplier";
+    public const string UpdateSupplier = "/contact/suppliers/update-supplier";
 
-    public const string Supplier = "/suppliers";
-    public const string CreateSupplier = "/suppliers/create-supplier";
-    public const string UpdateSupplier = "/suppliers/update-supplier";
+    public const string Customers = "/contact/customers";
+    public const string CreateCustomer = "/contact/customers/create";
+    public const string UpdateCustomer = "/contact/customers/update";
 
     public const string UsersManagement = "/users-management";
 

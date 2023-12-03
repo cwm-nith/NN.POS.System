@@ -31,7 +31,7 @@ public partial class Index
         NavigationManager.NavigateTo($"{RouteName.UpdateSupplier}/{id}");
     }
 
-    private void DeleteUser(int id)
+    private void DeleteSupplier(int id)
     {
         var parameters = new DialogParameters<DeleteDialog>
         {

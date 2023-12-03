@@ -1,8 +1,8 @@
-﻿@page "/suppliers/update-supplier/{Id:int}"
+﻿@attribute [Route($"{RouteName.UpdateSupplier}/{{Id:int}}")]
+
 @using static Model.Enums.BusinessPartnerEnum
 @using Newtonsoft.Json
 @using NN.POS.Model.Dtos.BusinessPartners
-@using NN.POS.Web.Constants
 @using NN.POS.Web.Validations.Contacts
 
 <MudContainer Class="p-2">
