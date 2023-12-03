@@ -1,9 +1,9 @@
 ﻿@using NN.POS.Web.Extensions
 @using NN.POS.Web.Constants
 <MudNavMenu>
-    <MudNavGroup Title="Contacts" Expanded='$"/{_section}" == RouteName.Supplier'>
+    <MudNavGroup Title="Contacts" Expanded='$"/{_section}" == RouteName.Contact'>
         <MudNavLink Href="@RouteName.Supplier">Suppliers</MudNavLink>
-        @* <MudNavLink Href="/security">Security</MudNavLink> *@
+        <MudNavLink Href="@RouteName.Customers">Customers</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="User Management" Expanded='$"/{_section}" == RouteName.UsersManagement'>
         <MudNavLink Href="@RouteName.Users">Users</MudNavLink>

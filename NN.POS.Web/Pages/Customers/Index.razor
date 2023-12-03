@@ -1,10 +1,11 @@
-﻿@attribute [Route(RouteName.Supplier)]
-@using NN.POS.Model.Dtos.BusinessPartners
+﻿@using NN.POS.Model.Dtos.BusinessPartners
+@using NN.POS.Web.Pages.Customers.Dialogs
+@attribute [Route(RouteName.Customers)]
 
 <MudContainer Class="mt-2">
 
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
-        <MudLink Href="@RouteName.CreateSupplier">
+        <MudLink Href="@RouteName.CreateCustomer">
             <MudButton Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.AddCircle"
                        Color="Color.Primary">
@@ -41,7 +42,7 @@
                 <MudTd DataLabel="Email">@context.Email</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteSupplier(context.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteCustomer(context.Id))"></MudIconButton>
                 </MudTd>
             </RowTemplate>
 
@@ -56,3 +57,48 @@
             </PagerContent>
         </MudTable>
     </MudContainer>
+@code {
+    private MudTable<BusinessPartnerDto>? _table;
+    private string _searchString = "";
+
+    private async Task<TableData<BusinessPartnerDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var data =
+            await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>($"{Setting.PrefixEndpoint}BusinessPartner?ContactType=2&Page={state.Page + 1}&Results={state.PageSize}");
+
+        return new TableData<BusinessPartnerDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    protected void GoToUpdatePage(int id)
+    {
+        NavigationManager.NavigateTo($"{RouteName.UpdateCustomer}/{id}");
+    }
+
+    private void DeleteCustomer(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog>
+        {
+            {
+                x => x.Id, id
+            },
+            {
+                x => x.Table, _table
+            }
+        };
+
+        var options = new DialogOptions() { CloseButton = true };
+
+        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+}

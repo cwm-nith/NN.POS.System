@@ -1,4 +1,4 @@
-﻿@attribute [Route($"{RouteName.UpdateSupplier}/{{Id:int}}")]
+﻿@attribute [Route($"{RouteName.UpdateCustomer}/{{Id:int}}")]
 
 @using static Model.Enums.BusinessPartnerEnum
 @using Newtonsoft.Json
@@ -7,7 +7,7 @@
 
 <MudContainer Class="p-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
-        <MudLink Href="@RouteName.Supplier">
+        <MudLink Href="@RouteName.Customers">
             <MudButton Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.ArrowBack"
                        Color="Color.Primary">
@@ -16,27 +16,27 @@
         </MudLink>
     </MudPaper>
     <MudCard>
-        <MudForm Model="_supplyModel" Validation="_supplyValidator.ValidateValue" @ref="_form">
+        <MudForm Model="_customerModel" Validation="_customerValidator.ValidateValue" @ref="_form">
             <MudCardContent>
                 <MudContainer Class="text-center">
                     <MudChip Color="Color.Primary" Class="p-4">
-                        <MudText Typo="Typo.h6">Update Supply</MudText>
+                        <MudText Typo="Typo.h6">Update Customer</MudText>
                     </MudChip>
                 </MudContainer>
                 <MudDivider Class="mt-2" />
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12">
-                        <MudTextField @bind-Value="_supplyModel.FirstName"
-                                      For="@(() => _supplyModel.FirstName)"
+                        <MudTextField @bind-Value="_customerModel.FirstName"
+                                      For="@(() => _customerModel.FirstName)"
                                       Immediate="true"
                                       Label="Last name" />
 
 
                     </MudItem>
                     <MudItem lg="5" sm="12">
-                        <MudTextField @bind-Value="_supplyModel.LastName"
-                                      For="@(() => _supplyModel.LastName)"
+                        <MudTextField @bind-Value="_customerModel.LastName"
+                                      For="@(() => _customerModel.LastName)"
                                       Immediate="true"
                                       Label="Last name" />
                     </MudItem>
@@ -44,16 +44,16 @@
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12">
-                        <MudTextField @bind-Value="_supplyModel.Email"
-                                      For="@(() => _supplyModel.Email)"
+                        <MudTextField @bind-Value="_customerModel.Email"
+                                      For="@(() => _customerModel.Email)"
                                       Immediate="true"
                                       Label="Email" />
 
 
                     </MudItem>
                     <MudItem lg="5" sm="12">
-                        <MudTextField @bind-Value="_supplyModel.PhoneNumber"
-                                      For="@(() => _supplyModel.PhoneNumber)"
+                        <MudTextField @bind-Value="_customerModel.PhoneNumber"
+                                      For="@(() => _customerModel.PhoneNumber)"
                                       Immediate="true"
                                       Label="Phone number" />
                     </MudItem>
@@ -61,7 +61,7 @@
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12">
-                        <MudSelect T="BusinessType" @bind-Value="_supplyModel.BusinessType" For="@(() => _supplyModel.BusinessType)">
+                        <MudSelect T="BusinessType" @bind-Value="_customerModel.BusinessType" For="@(() => _customerModel.BusinessType)">
                             @foreach (BusinessType option in Enum.GetValues(typeof(BusinessType)))
                             {
                                 <MudSelectItem T="BusinessType" Value="option" />
@@ -69,16 +69,16 @@
                         </MudSelect>
                     </MudItem>
                     <MudItem lg="5" sm="12">
-                        <MudSelect @bind-Value="_supplyModel.ContactType" For="@(() => _supplyModel.ContactType)">
-                            <MudSelectItem Value="ContactType.Supplier" />
+                        <MudSelect @bind-Value="_customerModel.ContactType" For="@(() => _customerModel.ContactType)">
+                            <MudSelectItem Value="ContactType.Customer" />
                         </MudSelect>
                     </MudItem>
                 </MudGrid>
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="10" sm="12">
-                        <MudTextField @bind-Value="_supplyModel.Address"
-                                      For="@(() => _supplyModel.Address)"
+                        <MudTextField @bind-Value="_customerModel.Address"
+                                      For="@(() => _customerModel.Address)"
                                       Immediate="true"
                                       Label="Address" />
                     </MudItem>
@@ -100,7 +100,7 @@
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.AddCircle"
-                                   OnClick="UpdateSupplyAsync">
+                                   OnClick="UpdateCustomerAsync">
                             Save
                         </MudButton>
                     </MudItem>
@@ -115,9 +115,9 @@
     [Parameter]
     public int Id { get; set; }
 
-    private UpdateBusinessPartnerDto _supplyModel = new();
+    private UpdateBusinessPartnerDto _customerModel = new();
 
-    readonly UpdateSupplyValidator _supplyValidator = new();
+    readonly UpdateCustomerValidator _customerValidator = new();
 
     MudForm? _form;
 
@@ -125,12 +125,12 @@
 
 
 
-    private async Task UpdateSupplyAsync()
+    private async Task UpdateCustomerAsync()
     {
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            var jsonPayload = JsonConvert.SerializeObject(_supplyModel);
+            var jsonPayload = JsonConvert.SerializeObject(_customerModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}BusinessPartner", requestContent);
@@ -138,21 +138,19 @@
             switch (response.StatusCode)
             {
                 case HttpStatusCode.BadRequest:
-                {
-                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                    break;
-                }
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                        break;
+                    }
                 case HttpStatusCode.Unauthorized:
                     {
-                        var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                        _apiErrorMessages = errors?["message"];
                         NavigationManager.NavigateTo(RouteName.Login);
                         break;
                     }
                 case HttpStatusCode.OK:
                     {
-                        NavigationManager.NavigateTo(RouteName.Supplier);
+                        NavigationManager.NavigateTo(RouteName.Customers);
                         break;
                     }
                 default:
@@ -168,7 +166,7 @@
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
         var data = await httpClient.GetFromJsonAsync<BusinessPartnerDto>($"{Setting.PrefixEndpoint}BusinessPartner/{Id}");
 
-        _supplyModel = new UpdateBusinessPartnerDto
+        _customerModel = new UpdateBusinessPartnerDto
             {
                 Address = data?.Address,
                 BusinessType = data?.BusinessType ?? BusinessType.None,
