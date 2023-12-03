@@ -110,7 +110,7 @@ public class BusinessPartnerController(IMediator mediator) : BaseApiController
         return Ok(data);
     }
 
-    [HttpPost("create-customer-group")]
+    [HttpPost("customer-group")]
     public async Task<ActionResult> CreateCustomerGroup([FromBody] CreateCustomerGroupDto dto)
     {
         await mediator.Send(new CreateCustomerGroupCommand
@@ -120,13 +120,23 @@ public class BusinessPartnerController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpPut("update-customer-group/{id}")]
+    [HttpPut("customer-group/{id}")]
     public async Task<ActionResult> UpdateCustomerGroup(int id, [FromBody] UpdateCustomerGroupDto dto)
     {
         await mediator.Send(new UpdateCustomerGroupCommand
         {
             Id = id,
             Dto = dto
+        });
+        return Ok();
+    }
+
+    [HttpDelete("customer-group/{id}")]
+    public async Task<ActionResult> DeleteCustomerGroup(int id)
+    {
+        await mediator.Send(new DeleteCustomerGroupCommand
+        {
+            Id = id
         });
         return Ok();
     }
