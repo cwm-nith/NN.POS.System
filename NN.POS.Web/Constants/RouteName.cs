@@ -16,6 +16,8 @@ public static class RouteName
     public const string CreateCustomer = "/contact/customers/create";
     public const string UpdateCustomer = "/contact/customers/update";
 
+    public const string CustomerGroups = "/contact/customer-groups";
+
     public const string UsersManagement = "/users-management";
 
     public const string Users = "/users-management/users";

@@ -31,6 +31,7 @@ public static class Extensions
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IUserRoleRepository, UserRoleRepository>();
         services.AddTransient<IBusinessPartnerRepository, BusinessPartnerRepository>();
+        services.AddTransient<ICustomerGroupRepository, CustomerGroupRepository>();
         return services;
     }
 
