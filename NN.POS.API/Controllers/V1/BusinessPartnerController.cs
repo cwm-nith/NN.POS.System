@@ -119,5 +119,16 @@ public class BusinessPartnerController(IMediator mediator) : BaseApiController
         });
         return Ok();
     }
+
+    [HttpPut("update-customer-group/{id}")]
+    public async Task<ActionResult> UpdateCustomerGroup(int id, [FromBody] UpdateCustomerGroupDto dto)
+    {
+        await mediator.Send(new UpdateCustomerGroupCommand
+        {
+            Id = id,
+            Dto = dto
+        });
+        return Ok();
+    }
     #endregion
 }
