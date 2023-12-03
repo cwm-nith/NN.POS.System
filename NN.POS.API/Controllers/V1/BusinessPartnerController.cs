@@ -110,5 +110,14 @@ public class BusinessPartnerController(IMediator mediator) : BaseApiController
         return Ok(data);
     }
 
+    [HttpPost("create-customer-group")]
+    public async Task<ActionResult> CreateCustomerGroup([FromBody] CreateCustomerGroupDto dto)
+    {
+        await mediator.Send(new CreateCustomerGroupCommand
+        {
+            Dto = dto
+        });
+        return Ok();
+    }
     #endregion
 }

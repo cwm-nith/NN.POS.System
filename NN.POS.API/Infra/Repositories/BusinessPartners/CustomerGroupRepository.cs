@@ -42,6 +42,11 @@ public class CustomerGroupRepository(IReadDbRepository<CustomerGroupTable> readD
         await writeDbRepository.UpdateAsync(entity.ToTable(), cancellationToken);
     }
 
+    public async Task AddAsync(CustomerGroupEntity entity, CancellationToken cancellationToken = default)
+    {
+        await writeDbRepository.AddAsync(entity.ToTable(), cancellationToken);
+    }
+
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         var isExisted = await readDbRepository.ExistsAsync(i => i.Id == id, cancellationToken);
