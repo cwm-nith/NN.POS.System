@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.API.App.Commands.BusinessPartners;
 using NN.POS.API.App.Queries.BusinessPartners;
+using NN.POS.API.App.Queries.BusinessPartners.CustomerGroups;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.BusinessPartners;
+using NN.POS.Model.Dtos.BusinessPartners.CustomerGroups;
 
 namespace NN.POS.API.Controllers.V1;
 
@@ -96,9 +98,16 @@ public class BusinessPartnerController(IMediator mediator) : BaseApiController
     #region Customer Group
 
     [HttpGet("customer-groups")]
-    public async Task<ActionResult> GetAllCustomerGroups([FromQuery] )
+    public async Task<ActionResult<PagedResult<CustomerGroupDto>>> GetAllCustomerGroups([FromQuery] GetCustomerGroupDto q)
     {
-
+        var query = new GetCustomerGroupsQuery
+        {
+            Page = q.Page,
+            Results = q.Results,
+            Search = q.Search
+        };
+        var data = await mediator.Send(query);
+        return Ok(data);
     }
 
     #endregion
