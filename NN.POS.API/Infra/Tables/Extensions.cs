@@ -19,6 +19,7 @@ public static class Extensions
         services.AddPostgresRepository<RoleTable>();
         services.AddPostgresRepository<UserRoleTable>();
         services.AddPostgresRepository<BusinessPartnerTable>();
+        services.AddPostgresRepository<CustomerGroupTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>

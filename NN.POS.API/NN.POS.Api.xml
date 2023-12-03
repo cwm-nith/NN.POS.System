@@ -19,5 +19,15 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="P:NN.POS.API.Core.Entities.BusinessPartners.CustomerGroups.CustomerGroupEntity.Value">
+            <summary>
+            value format is percentage %
+            </summary>
+        </member>
+        <member name="P:NN.POS.API.Infra.Tables.BusinessPartners.CustomerGroupTable.Value">
+            <summary>
+            value format is percentage %
+            </summary>
+        </member>
     </members>
 </doc>
