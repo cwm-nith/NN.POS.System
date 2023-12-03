@@ -33,7 +33,7 @@ public class BusinessPartnerController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(q);
         return Ok(data);
     }
-    
+
     [Authorize(Roles = "Admin, read-business-partner")]
     [HttpGet("{id}")]
     public async Task<ActionResult<BusinessPartnerDto>> GetById(int id)
@@ -105,6 +105,17 @@ public class BusinessPartnerController(IMediator mediator) : BaseApiController
             Page = q.Page,
             Results = q.Results,
             Search = q.Search
+        };
+        var data = await mediator.Send(query);
+        return Ok(data);
+    }
+
+    [HttpGet("customer-group/{id}")]
+    public async Task<ActionResult<PagedResult<CustomerGroupDto>>> GetCustomerGroup(int id)
+    {
+        var query = new GetCustomerGroupByIdQuery
+        {
+            Id = id
         };
         var data = await mediator.Send(query);
         return Ok(data);
