@@ -19,6 +19,7 @@ public static class Extensions
         services.AddPostgresRepository<RoleTable>();
         services.AddPostgresRepository<UserRoleTable>();
         services.AddPostgresRepository<BusinessPartnerTable>();
+        services.AddPostgresRepository<CustomerGroupTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
@@ -31,6 +32,7 @@ public static class Extensions
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IUserRoleRepository, UserRoleRepository>();
         services.AddTransient<IBusinessPartnerRepository, BusinessPartnerRepository>();
+        services.AddTransient<ICustomerGroupRepository, CustomerGroupRepository>();
         return services;
     }
 
@@ -38,7 +40,7 @@ public static class Extensions
       where TTable : BaseTable
     {
         var logger = services.BuildServiceProvider().GetService<ILogger<WriteDbRepository<TTable>>>();
-        services.AddTransient<IReadDbRepository<TTable>>(sp =>
+        services.AddTransient<IReadDbRepository<TTable>>(_ =>
         {
             var context = services.BuildServiceProvider().GetRequiredService<DataDbContext>();
             return new ReadDbRepository<TTable>(context);

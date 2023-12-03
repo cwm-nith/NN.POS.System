@@ -4,11 +4,30 @@
         <name>NN.POS.API</name>
     </assembly>
     <members>
+        <member name="M:NN.POS.API.Controllers.V1.BusinessPartnerController.Get(NN.POS.Model.Dtos.BusinessPartners.GetBusinessPartnerDto)">
+            <summary>
+            Get BP base condition:
+            dto.ContactType => [None = 0, Supplier = 1, Customer = 2, SupplierCustomer = 3]
+            dto.BusinessType => [0: None, 1: Individual, 2: Business]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
         <member name="M:NN.POS.API.Controllers.V1.UserController.Get(NN.POS.Common.Pagination.PagedQuery)">
             <summary>
             Get all users
             </summary>
             <returns></returns>
+        </member>
+        <member name="P:NN.POS.API.Core.Entities.BusinessPartners.CustomerGroups.CustomerGroupEntity.Value">
+            <summary>
+            value format is percentage %
+            </summary>
+        </member>
+        <member name="P:NN.POS.API.Infra.Tables.BusinessPartners.CustomerGroupTable.Value">
+            <summary>
+            value format is percentage %
+            </summary>
         </member>
     </members>
 </doc>
