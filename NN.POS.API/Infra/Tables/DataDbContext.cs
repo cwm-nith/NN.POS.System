@@ -11,4 +11,5 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<RoleTable>? Roles { get; set; }
     public DbSet<UserRoleTable>? UserRoles { get; set; }
     public DbSet<BusinessPartnerTable>? BusinessPartners { get; set; }
+    public DbSet<CustomerGroupTable>? CustomerGroups { get; set; }
 }

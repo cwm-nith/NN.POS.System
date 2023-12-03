@@ -40,7 +40,7 @@ public static class Extensions
       where TTable : BaseTable
     {
         var logger = services.BuildServiceProvider().GetService<ILogger<WriteDbRepository<TTable>>>();
-        services.AddTransient<IReadDbRepository<TTable>>(sp =>
+        services.AddTransient<IReadDbRepository<TTable>>(_ =>
         {
             var context = services.BuildServiceProvider().GetRequiredService<DataDbContext>();
             return new ReadDbRepository<TTable>(context);
