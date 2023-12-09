@@ -37,4 +37,15 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         });
         return Ok(data);
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, [FromBody] UpdateUomDto body)
+    {
+        await mediator.Send(new UpdateUomCommand
+        {
+            Id = id,
+            Name = body.Name
+        });
+        return Ok();
+    }
 }

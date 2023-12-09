@@ -15,10 +15,10 @@ public class UnitOfMeasureRepository(IReadDbRepository<UnitOfMeasureTable> readD
         await writeDbRepository.AddAsync(dto.ToTable(), cancellationToken);
     }
 
-    public async Task UpdateAsync(string name, int id, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(string? name, int id, CancellationToken cancellationToken = default)
     {
         var uom = await GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
-        uom.Name = name;
+        uom.Name = name ?? uom.Name;
         await writeDbRepository.UpdateAsync(uom.ToTable(), cancellationToken);
     }
 
