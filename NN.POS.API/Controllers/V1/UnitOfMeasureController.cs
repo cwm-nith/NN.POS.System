@@ -25,4 +25,16 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(new GetUomByIdQuery(id));
         return Ok(data);
     }
+
+    [HttpGet]
+    public async Task<ActionResult<UnitOfMeasureDto>> Get([FromQuery] GetPageUomDto q)
+    {
+        var data = await mediator.Send(new GetUomPageQuery
+        {
+            Page = q.Page,
+            Results = q.Results,
+            Search = q.Search
+        });
+        return Ok(data);
+    }
 }

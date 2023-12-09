@@ -1,4 +1,5 @@
-﻿using NN.POS.API.Core.Exceptions.UnitOfMeasures;
+﻿using NN.POS.API.App.Queries.UnitOfMeasures;
+using NN.POS.API.Core.Exceptions.UnitOfMeasures;
 using NN.POS.API.Core.IRepositories.UnitOfMeasures;
 using NN.POS.API.Infra.Tables;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
@@ -28,9 +29,9 @@ public class UnitOfMeasureRepository(IReadDbRepository<UnitOfMeasureTable> readD
         await writeDbRepository.UpdateAsync(uom.ToTable(), cancellationToken);
     }
 
-    public async Task<PagedResult<UnitOfMeasureDto>> GetPageAsync(string search, PagedQuery page, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<UnitOfMeasureDto>> GetPageAsync(GetUomPageQuery q, CancellationToken cancellationToken = default)
     {
-        var data = await readDbRepository.BrowseAsync(i => !i.IsDeleted, o => o.Name, page, cancellationToken);
+        var data = await readDbRepository.BrowseAsync(i => !i.IsDeleted, o => o.Name, q, cancellationToken);
         return data.Map(i => i.ToDto());
     }
 
