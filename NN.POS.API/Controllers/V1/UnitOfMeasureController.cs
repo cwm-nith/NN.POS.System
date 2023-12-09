@@ -48,4 +48,14 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         });
         return Ok();
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await mediator.Send(new DeleteUomCommand
+        {
+            Id = id
+        });
+        return Ok();
+    }
 }
