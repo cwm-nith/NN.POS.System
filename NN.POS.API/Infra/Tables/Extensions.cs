@@ -8,6 +8,7 @@ using NN.POS.API.Infra.Repositories.Roles;
 using NN.POS.API.Infra.Repositories.UnitOfMeasures;
 using NN.POS.API.Infra.Repositories.Users;
 using NN.POS.API.Infra.Tables.BusinessPartners;
+using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
 using NN.POS.API.Infra.Tables.User;
@@ -26,6 +27,8 @@ public static class Extensions
         services.AddPostgresRepository<UnitOfMeasureDefineTable>();
         services.AddPostgresRepository<UnitOfMeasureTable>();
         services.AddPostgresRepository<UnitOfMeasureGroupTable>();
+        services.AddPostgresRepository<PriceListTable>();
+        services.AddPostgresRepository<PriceListDetailTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
@@ -40,6 +43,8 @@ public static class Extensions
         services.AddTransient<IBusinessPartnerRepository, BusinessPartnerRepository>();
         services.AddTransient<ICustomerGroupRepository, CustomerGroupRepository>();
         services.AddTransient<IUnitOfMeasureRepository, UnitOfMeasureRepository>();
+        services.AddTransient<IUnitOfMeasureGroupRepository, UnitOfMeasureGroupRepository>();
+        services.AddTransient<IUnitOfMeasureDefineRepository, UnitOfMeasureDefineRepository>();
         return services;
     }
 
@@ -52,7 +57,7 @@ public static class Extensions
             var context = services.BuildServiceProvider().GetRequiredService<DataDbContext>();
             return new ReadDbRepository<TTable>(context);
         });
-        services.AddTransient<IWriteDbRepository<TTable>>(sp =>
+        services.AddTransient<IWriteDbRepository<TTable>>(_ =>
         {
             var context = services.BuildServiceProvider().GetRequiredService<DataDbContext>();
             return new WriteDbRepository<TTable>(context, logger);
