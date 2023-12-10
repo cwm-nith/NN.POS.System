@@ -73,12 +73,21 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpPost("uom-group/{id}")]
+    [HttpGet("uom-group/{id}")]
     public async Task<ActionResult<UnitOfMeasureGroupDto>> GetUomGroupById(int id)
     {
         var data = await mediator.Send(new GetUomGroupByIdQuery(id));
         return Ok(data);
     }
+
+    [HttpPut("uom-group/{id}")]
+    public async Task<ActionResult<UnitOfMeasureGroupDto>> UpdateUomGroup(int id, [FromBody] UpdateUomGroupDto body)
+    {
+        await mediator.Send(new UpdateUomGroupCommand(id, body.Name));
+        return Ok();
+    }
+
+    
 
     #endregion
 }
