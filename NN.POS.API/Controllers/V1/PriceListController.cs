@@ -84,5 +84,17 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok(data);
     }
 
+    [HttpGet("detail")]
+    public async Task<ActionResult> GetDetailPage([FromQuery] GetPagePriceListDetailDto dto)
+    {
+        var data = await mediator.Send(new GetPagePriceListDetailQuery
+        {
+            Page = dto.Page,
+            Results = dto.Results,
+            Search = dto.Search
+        });
+        return Ok(data);
+    }
+
     #endregion
 }
