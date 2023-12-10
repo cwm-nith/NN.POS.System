@@ -18,6 +18,17 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, [FromBody] UpdatePriceListDto body)
+    {
+        await mediator.Send(new UpdatePriceListCommand
+        {
+            Id = id,
+            Name = body.Name
+        });
+        return Ok();
+    }
+
     [HttpGet]
     public async Task<ActionResult<PagedResult<PriceListDto>>> GetPage([FromQuery] GetPagePriceListDto q)
     {
