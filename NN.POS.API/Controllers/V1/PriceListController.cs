@@ -91,7 +91,8 @@ public class PriceListController(IMediator mediator) : BaseApiController
         {
             Page = dto.Page,
             Results = dto.Results,
-            Search = dto.Search
+            Search = dto.Search,
+            PriceListId = dto.PriceListId
         });
         return Ok(data);
     }
