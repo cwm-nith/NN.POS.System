@@ -6,14 +6,9 @@ using NN.POS.Model.Dtos.Users;
 
 namespace NN.POS.API.Controllers.V1;
 
-public class AuthController : BaseApiController
+public class AuthController(IMediator mediator) : BaseApiController
 {
-    private readonly IMediator _mediator;
-
-    public AuthController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly IMediator _mediator = mediator;
 
     [AllowAnonymous]
     [HttpPost("login")]
