@@ -1,5 +1,6 @@
 ﻿using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using NN.POS.Model.Dtos.PriceLists;
 
 namespace NN.POS.API.Infra.Tables.PriceLists;
 
@@ -34,4 +35,39 @@ public class PriceListDetailTable : BaseTable
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; }
+
+    public PriceListTable PriceList { get; set; } = new();
+}
+
+public static class PriceListDetailTableExtensions
+{
+    public static PriceListDetailTable ToTable(this PriceListDetailDto p) => new()
+    {
+        Id = p.Id,
+        PriceListId = p.PriceListId,
+        CreatedAt = p.CreatedAt,
+        CcyId = p.CcyId,
+        Cost = p.Cost,
+        DiscountType = p.DiscountType,
+        PromotionId = p.PromotionId,
+        DiscountValue = p.DiscountValue,
+        ItemId = p.ItemId,
+        Price = p.Price,
+        UomId = p.UomId
+    };
+
+    public static PriceListDetailDto ToDto(this PriceListDetailTable p) => new()
+    {
+        Id = p.Id,
+        PriceListId = p.PriceListId,
+        CreatedAt = p.CreatedAt,
+        CcyId = p.CcyId,
+        Cost = p.Cost,
+        DiscountType = p.DiscountType,
+        PromotionId = p.PromotionId,
+        DiscountValue = p.DiscountValue,
+        ItemId = p.ItemId,
+        Price = p.Price,
+        UomId = p.UomId
+    };
 }
