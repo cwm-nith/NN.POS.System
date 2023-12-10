@@ -105,5 +105,12 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpPut("uom-define/{id}")]
+    public async Task<ActionResult> UpdateUomDefine(int id, [FromBody] CreateUomDefineDto body)
+    {
+        await mediator.Send(new UpdateUomDefineCommand(id, body));
+        return Ok();
+    }
+
     #endregion
 }
