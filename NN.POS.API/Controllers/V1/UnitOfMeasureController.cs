@@ -112,5 +112,12 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpGet("uom-define/{id}")]
+    public async Task<ActionResult> GetUomDefineById(int id)
+    {
+        var data = await mediator.Send(new GetUomDefineByIdQuery(id));
+        return Ok(data);
+    }
+
     #endregion
 }
