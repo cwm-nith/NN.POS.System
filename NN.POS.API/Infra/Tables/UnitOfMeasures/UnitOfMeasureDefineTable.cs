@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using NN.POS.Model.Dtos.UnitOfMeasures;
 
 namespace NN.POS.API.Infra.Tables.UnitOfMeasures;
 
@@ -28,4 +29,33 @@ public class UnitOfMeasureDefineTable : BaseTable
 
     [Column("created_at")] 
     public DateTime CreatedAt { get; set; }
+}
+
+public static class UnitOfMeasureDefineTableExtensions
+{
+    public static UnitOfMeasureDefineTable ToTable(this UnitOfMeasureDefineDto u) => new()
+    {
+        Id = u.Id,
+        CreatedAt = u.CreatedAt,
+        IsDeleted = u.IsDeleted,
+        AltQty = u.AltQty,
+        BaseQty = u.BaseQty,
+        AltUomId = u.AltUomId,
+        BaseUomId = u.BaseUomId,
+        Factor = u.Factor,
+        GroupUomId = u.GroupUomId
+    };
+
+    public static UnitOfMeasureDefineDto ToDto(this UnitOfMeasureDefineTable u) => new()
+    {
+        Id = u.Id,
+        CreatedAt = u.CreatedAt,
+        IsDeleted = u.IsDeleted,
+        AltQty = u.AltQty,
+        BaseQty = u.BaseQty,
+        AltUomId = u.AltUomId,
+        BaseUomId = u.BaseUomId,
+        Factor = u.Factor,
+        GroupUomId = u.GroupUomId
+    };
 }

@@ -95,4 +95,14 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
     }
 
     #endregion
+
+    #region UOM Define
+
+    [HttpPost("uom-define")]
+    public async Task<ActionResult> CreateUomDefine([FromBody] CreateUomDefineDto body)
+    {
+        return Ok();
+    }
+
+    #endregion
 }
