@@ -77,5 +77,12 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpGet("detail/{id}")]
+    public async Task<ActionResult> GetDetailById(int id)
+    {
+        var data = await mediator.Send(new GetPriceListDetailByIdQuery(id));
+        return Ok(data);
+    }
+
     #endregion
 }
