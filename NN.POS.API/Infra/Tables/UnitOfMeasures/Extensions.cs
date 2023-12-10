@@ -11,6 +11,7 @@ public static class Extensions
         IsDeleted = u.IsDeleted,
         Name = u.Name
     };
+
     public static UnitOfMeasureTable ToTable(this UnitOfMeasureDto u) => new()
     {
         CreatedAt = u.CreatedAt,

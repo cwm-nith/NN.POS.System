@@ -8,6 +8,8 @@ namespace NN.POS.API.Controllers.V1;
 
 public class UnitOfMeasureController(IMediator mediator) : BaseApiController
 {
+    #region UOM
+
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] CreateUomDto body)
     {
@@ -58,4 +60,25 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         });
         return Ok();
     }
+
+    #endregion
+
+    #region UOM Group
+
+    [HttpPost("uom-group")]
+    public async Task<ActionResult> CreateUomGroup([FromBody] CreateUomGroupDto body)
+    {
+        var cmd = new CreateUomGroupCommand(body.Name);
+        await mediator.Send(cmd);
+        return Ok();
+    }
+
+    [HttpPost("uom-group/{id}")]
+    public async Task<ActionResult<UnitOfMeasureGroupDto>> GetUomGroupById(int id)
+    {
+        var data = await mediator.Send(new GetUomGroupByIdQuery(id));
+        return Ok(data);
+    }
+
+    #endregion
 }
