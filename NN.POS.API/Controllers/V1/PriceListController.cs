@@ -29,6 +29,13 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await mediator.Send(new DeletePriceListCommand(id));
+        return Ok();
+    }
+
     [HttpGet]
     public async Task<ActionResult<PagedResult<PriceListDto>>> GetPage([FromQuery] GetPagePriceListDto q)
     {
@@ -38,6 +45,14 @@ public class PriceListController(IMediator mediator) : BaseApiController
             Results = q.Results,
             Search = q.Search
         };
+        var data = await mediator.Send(query);
+        return Ok(data);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PriceListDto>> GetById(int id)
+    {
+        var query = new GetPriceListByIdQuery(id);
         var data = await mediator.Send(query);
         return Ok(data);
     }
