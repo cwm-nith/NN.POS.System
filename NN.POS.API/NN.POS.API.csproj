@@ -22,7 +22,6 @@
     <Folder Include="Core\IRepositories\Roles\" />
     <Folder Include="Core\IServices\" />
     <Folder Include="Core\Utils\" />
-    <Folder Include="Infra\DbConfigs\" />
     <Folder Include="Infra\Options\" />
     <Folder Include="Infra\QueryHandlers\UserRoles\" />
     <Folder Include="Infra\Repositories\Roles\" />
