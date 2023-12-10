@@ -87,7 +87,12 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    
+    [HttpDelete("uom-group/{id}")]
+    public async Task<ActionResult<UnitOfMeasureGroupDto>> DeleteUomGroup(int id)
+    {
+        await mediator.Send(new DeleteUomGroupCommand(id));
+        return Ok();
+    }
 
     #endregion
 }
