@@ -58,4 +58,16 @@ public class PriceListController(IMediator mediator) : BaseApiController
     }
 
     #endregion
+
+    #region Price list detail
+
+    [HttpPost("detail")]
+    public async Task<ActionResult> CreateDetail([FromBody] List<CreatePriceListDetailDto> body)
+    {
+        var cmd = new CreatePriceListDetailCommand(body);
+        await mediator.Send(cmd);
+        return Ok();
+    }
+
+    #endregion
 }
