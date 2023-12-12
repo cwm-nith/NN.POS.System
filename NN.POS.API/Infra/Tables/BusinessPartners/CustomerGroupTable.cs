@@ -11,7 +11,7 @@ public class CustomerGroupTable : BaseTable
     /// <summary>
     /// value format is percentage %
     /// </summary>
-    [Column("value")]
+    [Column("value", TypeName = "decimal(18,4)")]
     public decimal Value { get; set; }
 
     [Column("created_at")]
