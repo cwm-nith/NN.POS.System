@@ -1,5 +1,6 @@
 ﻿using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using NN.POS.Model.Dtos.ItemMasters;
 
 namespace NN.POS.API.Infra.Tables.ItemMasters;
 
@@ -88,4 +89,63 @@ public class ItemMasterDataTable : BaseTable
 
     [NotMapped]
     public IFormFile? File { get; set; }
+}
+
+public static class ItemMasterDataTableExtensions
+{
+    public static ItemMasterDataDto ToDto(this ItemMasterDataTable i, string? baseImageUrl = null) => new()
+    {
+        Barcode = i.Barcode,
+        BaseUomId = i.BaseUomId,
+        Code = i.Code,
+        CreatedAt = i.CreatedAt,
+        Description = i.Description,
+        Id = i.Id,
+        Image = $"{baseImageUrl}{i.Image}",
+        InventoryUoMid = i.InventoryUoMid,
+        IsDeleted = i.IsDeleted,
+        IsSale = i.IsSale,
+        IsPurchase = i.IsPurchase,
+        IsInventory = i.IsInventory,
+        Name = i.Name,
+        PriceListId = i.PriceListId,
+        OtherName = i.OtherName,
+        Process = i.Process,
+        PurchaseUomId = i.PurchaseUomId,
+        SaleUomId = i.SaleUomId,
+        StockCommit = i.StockCommit,
+        StockIn = i.StockIn,
+        StockOnHand = i.StockOnHand,
+        Type = i.Type,
+        UomGroupId = i.UomGroupId,
+        WarehouseId = i.WarehouseId
+    };
+
+    public static ItemMasterDataTable ToTable(this ItemMasterDataDto i) => new()
+    {
+        Barcode = i.Barcode,
+        BaseUomId = i.BaseUomId,
+        Code = i.Code,
+        CreatedAt = i.CreatedAt,
+        Description = i.Description,
+        Id = i.Id,
+        Image = i.Image?.Split('/')[^1],
+        InventoryUoMid = i.InventoryUoMid,
+        IsDeleted = i.IsDeleted,
+        IsSale = i.IsSale,
+        IsPurchase = i.IsPurchase,
+        IsInventory = i.IsInventory,
+        Name = i.Name,
+        PriceListId = i.PriceListId,
+        OtherName = i.OtherName,
+        Process = i.Process,
+        PurchaseUomId = i.PurchaseUomId,
+        SaleUomId = i.SaleUomId,
+        StockCommit = i.StockCommit,
+        StockIn = i.StockIn,
+        StockOnHand = i.StockOnHand,
+        Type = i.Type,
+        UomGroupId = i.UomGroupId,
+        WarehouseId = i.WarehouseId
+    };
 }
