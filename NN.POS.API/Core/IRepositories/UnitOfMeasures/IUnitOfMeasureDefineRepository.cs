@@ -2,7 +2,7 @@
 
 namespace NN.POS.API.Core.IRepositories.UnitOfMeasures;
 
-public interface IUnitOfMeasureDefineRepository
+public interface IUnitOfMeasureDefineRepository : IRepository
 {
     Task CreateAsync(UnitOfMeasureDefineDto dto, CancellationToken cancellationToken = default);
     Task UpdateAsync(CreateUomDefineDto dto, int id, CancellationToken cancellationToken = default);

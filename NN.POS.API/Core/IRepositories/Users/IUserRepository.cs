@@ -5,7 +5,7 @@ using NN.POS.Common.Pagination;
 
 namespace NN.POS.API.Core.IRepositories.Users;
 
-public interface IUserRepository
+public interface IUserRepository : IRepository
 {
     Task<UserEntity?> GetByIdAsync(int id, CancellationToken cancellation = default);
     Task<UserEntity?> GetByUserNameAsync(string username, CancellationToken cancellation = default);

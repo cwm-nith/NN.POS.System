@@ -5,7 +5,7 @@ using NN.POS.Common.Pagination;
 
 namespace NN.POS.API.Core.IRepositories.BusinessPartners;
 
-public interface IBusinessPartnerRepository
+public interface IBusinessPartnerRepository : IRepository
 {
     Task<BusinessPartnerEntity> CreateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default);
     Task UpdateAsync(BusinessPartnerEntity entity, CancellationToken cancellation = default);

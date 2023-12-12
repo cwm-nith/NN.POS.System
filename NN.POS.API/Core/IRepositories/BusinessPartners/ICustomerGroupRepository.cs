@@ -4,7 +4,7 @@ using NN.POS.Common.Pagination;
 
 namespace NN.POS.API.Core.IRepositories.BusinessPartners;
 
-public interface ICustomerGroupRepository
+public interface ICustomerGroupRepository : IRepository
 {
     Task<PagedResult<CustomerGroupEntity>> GetAsync(GetCustomerGroupsQuery q, CancellationToken cancellationToken = default);
     Task<CustomerGroupEntity> GetByIdAsync(int id, CancellationToken cancellationToken = default);

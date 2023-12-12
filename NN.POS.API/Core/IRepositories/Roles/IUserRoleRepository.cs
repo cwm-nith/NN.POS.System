@@ -2,7 +2,7 @@
 
 namespace NN.POS.API.Core.IRepositories.Roles;
 
-public interface IUserRoleRepository
+public interface IUserRoleRepository : IRepository
 {
     Task<bool> AddRoleToUserAsync(int userId, int roleId, CancellationToken cancellation = default);
     Task<bool> UserRoleExistedAsync(int userId, int roleId, CancellationToken cancellation = default);
