@@ -1,6 +1,7 @@
 ﻿using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 using NN.POS.Model.Dtos.PriceLists;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace NN.POS.API.Infra.Tables.PriceLists;
 
@@ -18,7 +19,7 @@ public class PriceListDetailTable : BaseTable
     [Column("ccy_id")]
     public int CcyId { get; set; }
 
-    [Column("discount_value")]
+    [Column("discount_value", TypeName = "decimal(18,4)")]
     public decimal DiscountValue { get; set; }
 
     [Column("discount_type")]
@@ -27,10 +28,10 @@ public class PriceListDetailTable : BaseTable
     [Column("promotion_id")]
     public int PromotionId { get; set; }
 
-    [Column("cost")]
+    [Column("cost", TypeName = "decimal(18,4)")]
     public decimal Cost { get; set; } // purchase price
 
-    [Column("price")]
+    [Column("price", TypeName = "decimal(18,4)")]
     public decimal Price { get; set; } // sale price
 
     [Column("created_at")]

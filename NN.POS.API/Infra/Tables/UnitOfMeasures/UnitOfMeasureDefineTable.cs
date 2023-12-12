@@ -15,13 +15,13 @@ public class UnitOfMeasureDefineTable : BaseTable
     [Column("group_uom_id")]
     public int GroupUomId { get; set; }
 
-    [Column("alt_qty")]
+    [Column("alt_qty", TypeName = "decimal(18,4)")]
     public decimal AltQty { get; set; }
 
-    [Column("base_qty")]
+    [Column("base_qty", TypeName = "decimal(18,4)")]
     public decimal BaseQty { get; set; }
 
-    [Column("factor")]
+    [Column("factor", TypeName = "decimal(18,4)")]
     public decimal Factor { get; set; }
 
     [Column("is_deleted")]
