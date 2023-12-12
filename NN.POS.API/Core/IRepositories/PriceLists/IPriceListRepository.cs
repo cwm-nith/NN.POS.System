@@ -4,7 +4,7 @@ using NN.POS.Model.Dtos.PriceLists;
 
 namespace NN.POS.API.Core.IRepositories.PriceLists;
 
-public interface IPriceListRepository
+public interface IPriceListRepository : IRepository
 {
     Task CreateAsync(PriceListDto dto, CancellationToken token = default);
     Task UpdateAsync(string? name, int id, CancellationToken cancellationToken = default);

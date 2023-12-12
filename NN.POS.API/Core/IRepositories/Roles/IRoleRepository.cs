@@ -5,7 +5,7 @@ using NN.POS.Common.Pagination;
 
 namespace NN.POS.API.Core.IRepositories.Roles;
 
-public interface IRoleRepository
+public interface IRoleRepository : IRepository
 {
     Task<RoleEntity?> GetRoleByIdAsync(int id, CancellationToken cancellation = default);
     Task<RoleEntity?> GetRoleByNameAsync(string name, CancellationToken cancellation = default);

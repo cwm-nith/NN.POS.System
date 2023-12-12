@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NN.POS.API.Core.IRepositories;
 using NN.POS.API.Core.IRepositories.BusinessPartners;
 using NN.POS.API.Core.IRepositories.PriceLists;
 using NN.POS.API.Core.IRepositories.Roles;
@@ -38,17 +39,13 @@ public static class Extensions
               var options = sp.CreateScope().ServiceProvider.GetRequiredService<DbContextOptions<DataDbContext>>();
               return new DataDbContext(options);
           });
+        
+        services.Scan(s =>
+            s.FromAssemblies(AppDomain.CurrentDomain.GetAssemblies())
+                .AddClasses(c => c.AssignableTo(typeof(IRepository)))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime());
 
-        services.AddTransient<IUserRepository, UserRepository>();
-        services.AddTransient<IRoleRepository, RoleRepository>();
-        services.AddTransient<IUserRoleRepository, UserRoleRepository>();
-        services.AddTransient<IBusinessPartnerRepository, BusinessPartnerRepository>();
-        services.AddTransient<ICustomerGroupRepository, CustomerGroupRepository>();
-        services.AddTransient<IUnitOfMeasureRepository, UnitOfMeasureRepository>();
-        services.AddTransient<IUnitOfMeasureGroupRepository, UnitOfMeasureGroupRepository>();
-        services.AddTransient<IUnitOfMeasureDefineRepository, UnitOfMeasureDefineRepository>();
-        services.AddTransient<IPriceListRepository, PriceListRepository>();
-        services.AddTransient<IPriceListDetailRepository, PriceListDetailRepository>();
         return services;
     }
 

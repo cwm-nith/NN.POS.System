@@ -4,7 +4,7 @@ using NN.POS.Model.Dtos.UnitOfMeasures;
 
 namespace NN.POS.API.Core.IRepositories.UnitOfMeasures;
 
-public interface IUnitOfMeasureRepository
+public interface IUnitOfMeasureRepository : IRepository
 {
     Task CreateAsync(UnitOfMeasureDto dto, CancellationToken cancellationToken = default);
     Task UpdateAsync(string? name, int id, CancellationToken cancellationToken = default);
