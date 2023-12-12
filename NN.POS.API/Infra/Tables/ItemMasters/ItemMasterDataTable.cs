@@ -69,7 +69,7 @@ public class ItemMasterDataTable : BaseTable
     public bool IsPurchase { get; set; }
     
     [Column("image")]
-    public string Image { get; set; } = string.Empty;
+    public string? Image { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
