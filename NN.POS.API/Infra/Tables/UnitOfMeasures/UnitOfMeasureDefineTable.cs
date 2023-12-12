@@ -3,7 +3,7 @@ using NN.POS.Model.Dtos.UnitOfMeasures;
 
 namespace NN.POS.API.Infra.Tables.UnitOfMeasures;
 
-[Table("unit_of_measure_define")]
+[Table("unit_of_measure_defines")]
 public class UnitOfMeasureDefineTable : BaseTable
 {
     [Column("base_uom_id")]

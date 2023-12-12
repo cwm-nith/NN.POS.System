@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NN.POS.API.Infra.Tables.UnitOfMeasures;
 
-[Table("unit_of_measure_group")]
+[Table("unit_of_measure_groups")]
 public class UnitOfMeasureGroupTable : BaseTable
 {
     [Column("name")]
