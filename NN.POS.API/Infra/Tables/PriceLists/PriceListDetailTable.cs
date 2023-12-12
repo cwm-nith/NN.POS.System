@@ -1,10 +1,10 @@
 ﻿using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 using NN.POS.Model.Dtos.PriceLists;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace NN.POS.API.Infra.Tables.PriceLists;
 
+[Table("price_list_details")]
 public class PriceListDetailTable : BaseTable
 {
     [Column("price_list_id")]
