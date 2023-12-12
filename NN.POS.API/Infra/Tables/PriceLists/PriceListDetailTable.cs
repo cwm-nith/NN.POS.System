@@ -34,9 +34,6 @@ public class PriceListDetailTable : BaseTable
     [Column("price", TypeName = "decimal(18,4)")]
     public decimal Price { get; set; } // sale price
 
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
-
     public PriceListTable PriceList { get; set; } = new();
 }
 

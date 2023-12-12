@@ -15,9 +15,6 @@ public class PriceListTable : BaseTable
     [Column("ccy_id")]
     public int CcyId { get; set; }
 
-    [Column("created_at")] 
-    public DateTime CreatedAt { get; set; }
-
     public List<PriceListDetailTable> PriceListDetails { get; set; } = new();
 }
 
