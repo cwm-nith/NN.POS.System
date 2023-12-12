@@ -46,6 +46,7 @@ public static class Extensions
         services.AddTransient<ICustomerGroupRepository, CustomerGroupRepository>();
         services.AddTransient<IUnitOfMeasureRepository, UnitOfMeasureRepository>();
         services.AddTransient<IUnitOfMeasureGroupRepository, UnitOfMeasureGroupRepository>();
+        services.AddTransient<IUnitOfMeasureDefineRepository, UnitOfMeasureDefineRepository>();
         services.AddTransient<IPriceListRepository, PriceListRepository>();
         services.AddTransient<IPriceListDetailRepository, PriceListDetailRepository>();
         return services;
