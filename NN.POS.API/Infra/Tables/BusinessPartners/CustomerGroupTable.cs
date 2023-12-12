@@ -2,7 +2,7 @@
 
 namespace NN.POS.API.Infra.Tables.BusinessPartners;
 
-[Table("customer_group")]
+[Table("customer_groups")]
 public class CustomerGroupTable : BaseTable
 {
     [Column("name")]

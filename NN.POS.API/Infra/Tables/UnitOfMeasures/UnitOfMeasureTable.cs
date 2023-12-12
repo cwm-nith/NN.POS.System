@@ -2,7 +2,7 @@
 
 namespace NN.POS.API.Infra.Tables.UnitOfMeasures;
 
-[Table("unit_of_measure")]
+[Table("unit_of_measures")]
 public class UnitOfMeasureTable : BaseTable
 {
     [Column("name")]
