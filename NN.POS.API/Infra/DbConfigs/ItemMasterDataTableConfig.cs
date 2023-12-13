@@ -19,7 +19,7 @@ public static class ItemMasterDataTableConfig
         builder.Entity<ItemMasterDataTable>()
             .Property(x => x.Type)
             .HasColumnType("varchar")
-            .HasMaxLength(32)
+            .HasMaxLength(20)
             .HasConversion(
                 v => v.ToEnumString(),
                 v => v.ToEnum<ItemMasterDataType>(false));
