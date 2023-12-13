@@ -4,8 +4,6 @@ using NN.POS.API.Infra;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddInfrastructure(builder.Configuration)
