@@ -125,5 +125,7 @@ public class ItemMasterDataRepository(
                 i => i.Name, q, cancellationToken);
             return item.Map(i => i.ToDto());
         }
+        var itemMaster = await readDbRepository.BrowseAsync(i => !i.IsDeleted, i => i.Name, q, cancellationToken);
+        return itemMaster.Map(i => i.ToDto());
     }
 }
