@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NN.POS.API.App.Commands.ItemMasterData;
 using NN.POS.API.App.Queries.ItemMasters;
 using NN.POS.API.Core.Exceptions.ItemMasters;
 using NN.POS.API.Core.IRepositories.ItemMasters;
@@ -19,9 +20,9 @@ public class ItemMasterDataRepository(
         await writeDbRepository.AddAsync(dto.ToTable(), cancellationToken);
     }
 
-    public async Task UpdateAsync(ItemMasterDataDto dto, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(int id, UpdateItemMasterDataDto dto, CancellationToken cancellationToken = default)
     {
-        var item = await GetByIdAsync(dto.Id, cancellationToken).ConfigureAwait(false);
+        var item = await GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         item.Name = dto.Name;
         item.OtherName = dto.OtherName;

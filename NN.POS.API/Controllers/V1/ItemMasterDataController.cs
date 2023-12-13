@@ -15,4 +15,12 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
         await mediator.Send(cmd);
         return Ok();
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, [FromBody] UpdateItemMasterDataDto body)
+    {
+        var cmd = new UpdateItemMasterDataCommand(id, body);
+        await mediator.Send(cmd);
+        return Ok();
+    }
 }
