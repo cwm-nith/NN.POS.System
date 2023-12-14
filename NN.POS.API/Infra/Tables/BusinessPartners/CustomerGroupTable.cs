@@ -14,8 +14,6 @@ public class CustomerGroupTable : BaseTable
     [Column("value", TypeName = "decimal(18,4)")]
     public decimal Value { get; set; }
 
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; }
 }

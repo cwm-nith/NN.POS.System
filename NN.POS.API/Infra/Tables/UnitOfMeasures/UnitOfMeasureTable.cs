@@ -10,7 +10,4 @@ public class UnitOfMeasureTable : BaseTable
 
     [Column("is_deleted")]
     public bool IsDeleted { get; set; }
-
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
 }

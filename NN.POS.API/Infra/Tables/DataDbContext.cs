@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NN.POS.API.Infra.DbConfigs;
 using NN.POS.API.Infra.Tables.BusinessPartners;
+using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
@@ -20,11 +21,13 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<UnitOfMeasureDefineTable>? UnitOfMeasureDefines { get; set; }
     public DbSet<UnitOfMeasureGroupTable>? UnitOfMeasureGroups { get; set; }
     public DbSet<UnitOfMeasureTable>? UnitOfMeasures { get; set; }
+    public DbSet<ItemMasterDataTable>? ItemMasterData { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder
-            .AddPriceListTableRelationship();
+            .AddPriceListTableRelationship()
+            .ItemMasterDataTableDbConfig();
     }
 }

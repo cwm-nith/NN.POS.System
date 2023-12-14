@@ -29,5 +29,22 @@
             value format is percentage %
             </summary>
         </member>
+        <member name="P:NN.POS.API.Infra.Tables.ItemMasters.ItemMasterDataTable.Type">
+            <summary>
+            None = 0,
+            Group = 1,
+            Item = 2,
+            Service = 3, 
+            Labor = 4
+            </summary>
+        </member>
+        <member name="P:NN.POS.API.Infra.Tables.ItemMasters.ItemMasterDataTable.Process">
+            <summary>
+            None = 0,
+            Fifo = 1,
+            Average = 2,
+            Standard = 3
+            </summary>
+        </member>
     </members>
 </doc>
