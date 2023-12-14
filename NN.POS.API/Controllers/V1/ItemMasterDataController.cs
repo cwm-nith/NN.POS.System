@@ -23,4 +23,14 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
         await mediator.Send(cmd);
         return Ok();
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var cmd = new DeleteItemMasterDataCommand(id);
+        await mediator.Send(cmd);
+        return Ok();
+    }
+
+    
 }
