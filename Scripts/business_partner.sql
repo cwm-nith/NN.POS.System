@@ -15,8 +15,8 @@ CREATE TABLE [dbo].[business_partners](
 	[phone_number] [nvarchar](250) NOT NULL,
 	[email] [nvarchar](150) NULL,
 	[address] [nvarchar](150) NULL,
-	[contact_type] [int] NOT NULL,
-	[business_type] [int] NOT NULL,
+	[contact_type] [nvarchar](20) NOT NULL,
+	[business_type] [nvarchar](20) NOT NULL,
 	[created_at] [datetime] NOT NULL,
 	[updated_at] [datetime] NOT NULL,
  CONSTRAINT [PK_business_partners] PRIMARY KEY CLUSTERED 

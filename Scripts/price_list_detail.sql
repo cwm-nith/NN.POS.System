@@ -15,7 +15,7 @@ CREATE TABLE [dbo].[price_list_details](
 	[uom_id] [int] NULL,
 	[ccy_id] [int] NOT NULL,
 	[discount_value] [decimal](18, 4) NOT NULL,
-	[discount_type] [int] NOT NULL,
+	[discount_type] [nvarchar](20) NOT NULL,
 	[promotion_id] [int] NOT NULL,
 	[cost] [decimal](18, 4) NOT NULL,
 	[price] [decimal](18, 4) NOT NULL,
