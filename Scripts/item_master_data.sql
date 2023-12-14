@@ -31,6 +31,8 @@ CREATE TABLE [dbo].[item_master_data](
 	[is_purchase] [bit] NOT NULL,
 	[image] [nvarchar](250) NOT NULL,
 	[description] [nvarchar](1250) NULL,
+	[is_deleted] [bit] NOT NULL,
+	[created_at] [datetime] NOT NULL,
  CONSTRAINT [PK_item_master_data] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
