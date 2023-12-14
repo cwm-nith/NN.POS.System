@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using Microsoft.AspNetCore.Http;
+using NN.POS.Model.Enums;
 
 namespace NN.POS.Model.Dtos.ItemMasters;
 
@@ -30,7 +31,6 @@ public class CreateItemMasterDataDto : IBaseDto
     public bool IsInventory { get; set; }
     public bool IsSale { get; set; }
     public bool IsPurchase { get; set; }
-    public string? Image { get; set; }
     public string? Description { get; set; }
 
     /// <summary>
@@ -40,4 +40,6 @@ public class CreateItemMasterDataDto : IBaseDto
     /// Standard = 3
     /// </summary>
     public ItemMasterDataProcess Process { get; set; }
+
+    public IFormFile? File { get; set; }
 }
