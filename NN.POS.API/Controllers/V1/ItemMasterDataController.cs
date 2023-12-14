@@ -36,8 +36,16 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
     [HttpGet("{id}")]
     public async Task<ActionResult> GetById(int id)
     {
-        var cmd = new GetItemMasterDataByIdQuery(id);
-        await mediator.Send(cmd);
-        return Ok();
+        var q = new GetItemMasterDataByIdQuery(id);
+        var data  =await mediator.Send(q);
+        return Ok(data);
+    }
+
+    [HttpGet("get-unique")]
+    public async Task<ActionResult> GetUnique([FromQuery] GeyItemMasterDataUniqueDto q)
+    {
+        var query = new GetItemMasterDataUniqueQuery(q);
+        var data = await mediator.Send(query);
+        return Ok(data);
     }
 }
