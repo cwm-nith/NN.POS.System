@@ -29,4 +29,10 @@ public static class RouteName
     public const string UpdateRole= "/users-management/roles/update";
 
     public const string UserRoles = "/users-management/user-roles";
+
+    public const string Products = "/products";
+
+    public const string ItemMasterData = $"{Products}/item-master-data";
+    public const string ItemMasterDataCreate = $"{Products}/item-master-data/create";
+    public const string ItemMasterDataUpdate = $"{Products}/item-master-data/update";
 }
