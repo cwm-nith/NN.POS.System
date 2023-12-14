@@ -63,4 +63,12 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(query);
         return Ok(data);
     }
+
+    [HttpPost("update-img")]
+    public async Task<ActionResult> UpdateImage([FromForm] UpdateItemMasterImageDto body)
+    {
+        var cmd = new UpdateItemMasterImageCommand(body);
+        await mediator.Send(cmd);
+        return Ok();
+    }
 }

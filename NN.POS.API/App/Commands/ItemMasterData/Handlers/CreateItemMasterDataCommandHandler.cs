@@ -43,7 +43,7 @@ public class CreateItemMasterDataCommandHandler(IItemMasterDataRepository reposi
         if (r.File != null)
         {
             var uploadsPath = Path.Join(environment.WebRootPath, "contents/item-master/images");
-            var filePath = Path.Combine(uploadsPath, r.File.FileName);
+            var filePath = Path.Join(uploadsPath, r.File.FileName);
             await using Stream fileStream = new FileStream(filePath, FileMode.Create);
             await r.File.CopyToAsync(fileStream, cancellationToken);
         }
