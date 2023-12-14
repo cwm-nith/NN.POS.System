@@ -13,6 +13,7 @@ var app = builder.Build();
 var settings = app.Services.GetService<AppSettings>();
 if(settings?.Swagger.IsEnable ?? false) app.UseCustomSwagger();
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseCors(i => 
         i.AllowCredentials()
