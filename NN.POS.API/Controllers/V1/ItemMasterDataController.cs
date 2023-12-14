@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.API.App.Commands.ItemMasterData;
+using NN.POS.API.App.Queries.ItemMasters;
 using NN.POS.Model.Dtos.ItemMasters;
 
 namespace NN.POS.API.Controllers.V1;
@@ -32,5 +33,11 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    
+    [HttpGet("{id}")]
+    public async Task<ActionResult> GetById(int id)
+    {
+        var cmd = new GetItemMasterDataByIdQuery(id);
+        await mediator.Send(cmd);
+        return Ok();
+    }
 }
