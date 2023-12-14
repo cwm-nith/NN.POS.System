@@ -48,4 +48,19 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(query);
         return Ok(data);
     }
+
+    [HttpGet]
+    public async Task<ActionResult> GetPage([FromQuery] GetPageItemMasterDataDto q)
+    {
+        var query = new GetPageItemMasterDataQuery
+        {
+            Page = q.Page,
+            Process = q.Process,
+            Results = q.Results,
+            Search = q.Search,
+            Type = q.Type
+        };
+        var data = await mediator.Send(query);
+        return Ok(data);
+    }
 }
