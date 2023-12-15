@@ -35,4 +35,16 @@ public static class RouteName
     public const string ItemMasterData = $"{Products}/item-master-data";
     public const string ItemMasterDataCreate = $"{Products}/item-master-data/create";
     public const string ItemMasterDataUpdate = $"{Products}/item-master-data/update";
+
+    public const string Uom = $"{Products}/uom";
+    public const string UomCreate = $"{Products}/uom/create";
+    public const string UomUpdate = $"{Products}/uom/update";
+
+    public const string UomGroup = $"{Products}/uom-group";
+    public const string UomGroupCreate = $"{Products}/uom-group/create";
+    public const string UomGroupUpdate = $"{Products}/uom-group/update";
+
+    public const string UomDefine = $"{Products}/uom-define";
+    public const string UomDefineCreate = $"{Products}/uom-define/create";
+    public const string UomDefineUpdate = $"{Products}/uom-define/update";
 }
