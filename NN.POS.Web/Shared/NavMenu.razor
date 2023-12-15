@@ -12,6 +12,11 @@
     </MudNavGroup>
     <MudNavGroup Title="Products" Expanded='$"/{_section}" == RouteName.Products'>
         <MudNavLink Href="@RouteName.ItemMasterData">Item Master Data</MudNavLink>
+        <MudNavGroup Title="Unit of Measure" Expanded='$"/{_section}" == RouteName.Products'>
+            <MudNavLink Href="@RouteName.Uom">Uom</MudNavLink>
+            <MudNavLink Href="@RouteName.UomGroup">Uom Group</MudNavLink>
+            <MudNavLink Href="@RouteName.UomDefine">Uom Define</MudNavLink>
+        </MudNavGroup>
     </MudNavGroup>
 </MudNavMenu>
 
