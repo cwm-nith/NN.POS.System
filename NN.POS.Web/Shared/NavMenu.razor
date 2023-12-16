@@ -10,7 +10,7 @@
         <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Users">Users</MudNavLink>
         <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Roles">Roles</MudNavLink>
     </MudNavGroup>
-    <MudNavGroup Title="Products" Expanded="@(NavbarStateService.Value == RouteName.Products)">
+    <MudNavGroup Title="Products" Expanded="@(NavbarStateService.Value is RouteName.Products or RouteName.UnitOfMeasure)">
         <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.ItemMasterData">Item Master Data</MudNavLink>
 
         <MudNavGroup Title="Unit of Measure" Expanded="@(NavbarStateService.Value == RouteName.UnitOfMeasure)">
