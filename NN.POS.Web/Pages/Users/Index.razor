@@ -3,6 +3,7 @@
 
 @attribute [Route(RouteName.Users)]
 
+@implements IDisposable
 
 <MudContainer Class="mt-2">
 
@@ -77,6 +78,17 @@
     @code {
     private MudTable<UserDto>? _table;
     private string _searchString = "";
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task<TableData<UserDto>> ServerReload(TableState state)
     {
