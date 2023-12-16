@@ -3,6 +3,8 @@
 @using NN.POS.Model.Dtos.BusinessPartners
 @using NN.POS.Web.Validations.Contacts
 
+@implements IDisposable
+
 <MudContainer Class="p-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
         <MudLink Href="@RouteName.Supplier">
@@ -120,6 +122,17 @@
     MudForm? _form;
 
     string? _apiErrorMessages;
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.Contact);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task CreateSupplyAsync()
     {
