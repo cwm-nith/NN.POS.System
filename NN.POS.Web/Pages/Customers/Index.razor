@@ -1,6 +1,7 @@
 ﻿@using NN.POS.Model.Dtos.BusinessPartners
 @using NN.POS.Web.Pages.Customers.Dialogs
 @attribute [Route(RouteName.Customers)]
+@implements IDisposable
 
 <MudContainer Class="mt-2">
 
@@ -61,6 +62,12 @@
     private MudTable<BusinessPartnerDto>? _table;
     private string _searchString = "";
 
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.Contact);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
     private async Task<TableData<BusinessPartnerDto>> ServerReload(TableState state)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
@@ -100,5 +107,10 @@
     {
         _searchString = text;
         _table?.ReloadServerData();
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
     }
 }
