@@ -1,7 +1,7 @@
 ﻿@using NN.POS.Model.Dtos.Roles
 @using NN.POS.Web.Pages.Roles.Dialogs
 @attribute [Route(RouteName.Roles)]
-
+@implements IDisposable
 
 <MudContainer Class="mt-2">
 
@@ -62,6 +62,18 @@
     @code {
     private MudTable<RoleDto>? _table;
     private string _searchString = "";
+
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task<TableData<RoleDto>> ServerReload(TableState state)
     {
