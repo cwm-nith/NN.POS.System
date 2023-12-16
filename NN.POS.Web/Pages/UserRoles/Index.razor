@@ -2,6 +2,8 @@
 
 @attribute [Route($"{RouteName.UserRoles}/{{Id:int}}")]
 
+@implements IDisposable
+
 <MudTable Items="@_userRoles"
           Dense="true"
           Hover="true"
@@ -52,6 +54,17 @@
 
     private string _searchString = "";
     private IEnumerable<UserRoleDto> _userRoles = new List<UserRoleDto>();
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     protected override async Task OnInitializedAsync()
     {
