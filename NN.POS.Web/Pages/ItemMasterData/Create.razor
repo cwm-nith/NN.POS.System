@@ -1,7 +1,7 @@
 ﻿@using NN.POS.Model.Dtos.ItemMasters
 @using NN.POS.Web.Validations.ItemMasters
 @attribute [Route(RouteName.ItemMasterDataCreate)]
-
+@implements IDisposable
 
 
 <MudContainer Class="p-2">
@@ -82,6 +82,17 @@
     MudForm? _form;
 
     string? _apiErrorMessages;
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.Products);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task CreateRoleAsync()
     {

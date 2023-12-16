@@ -2,7 +2,7 @@
 @using NN.POS.Model.Enums
 @using NN.POS.Web.Components.Dialogs
 @attribute [Route(RouteName.ItemMasterData)]
-
+@implements IDisposable
 
 <MudContainer Class="mt-2">
 
@@ -84,6 +84,18 @@
         _index = 1 + rowNumber + (_table?.CurrentPage ?? 0) * (_table?.RowsPerPage ?? 0);
         return string.Empty;
     }
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.Products);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
     private async Task<TableData<ItemMasterDataDto>> ServerReload(TableState state)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
