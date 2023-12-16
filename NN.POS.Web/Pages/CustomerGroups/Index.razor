@@ -1,7 +1,7 @@
 ﻿@using NN.POS.Web.Pages.CustomerGroups.Dialogs
 @using NN.POS.Model.Dtos.BusinessPartners.CustomerGroups
 @attribute [Route(RouteName.CustomerGroups)]
-
+@implements IDisposable
 
 <MudContainer Class="mt-2">
 
@@ -56,6 +56,17 @@
     @code {
     private MudTable<CustomerGroupDto>? _table;
     private string _searchString = "";
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.Contact);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task<TableData<CustomerGroupDto>> ServerReload(TableState state)
     {
