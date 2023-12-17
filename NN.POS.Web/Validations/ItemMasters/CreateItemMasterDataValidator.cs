@@ -1,13 +1,11 @@
 ﻿using FluentValidation;
 using NN.POS.Model.Dtos.ItemMasters;
 using NN.POS.Model.Enums;
-using static NN.POS.Model.Enums.BusinessPartnerEnum;
 
 namespace NN.POS.Web.Validations.ItemMasters;
 
-public class CreateItemMasterDataValidator : AbstractValidator<CreateItemMasterDataDto>
+public class CreateItemMasterDataValidator : BaseValidator<CreateItemMasterDataDto>
 {
-
     public CreateItemMasterDataValidator()
     {
         RuleFor(i => i.Name)
@@ -50,11 +48,4 @@ public class CreateItemMasterDataValidator : AbstractValidator<CreateItemMasterD
             .Must(i => i > 0)
             .WithMessage("Please choose warehouse!");
     }
-
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result =
-            await ValidateAsync(ValidationContext<CreateItemMasterDataDto>.CreateWithOptions((CreateItemMasterDataDto)model, x => x.IncludeProperties(propertyName)));
-        return result.IsValid ? Array.Empty<string>() : result.Errors.Select(e => e.ErrorMessage);
-    };
 }

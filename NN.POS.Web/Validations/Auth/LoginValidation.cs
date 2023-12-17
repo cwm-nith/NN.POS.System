@@ -3,7 +3,7 @@ using NN.POS.Model.Dtos.Users;
 
 namespace NN.POS.Web.Validations.Auth;
 
-public class LoginValidation : AbstractValidator<LoginDto>
+public class LoginValidation : BaseValidator<LoginDto>
 {
     public LoginValidation()
     {
@@ -15,11 +15,4 @@ public class LoginValidation : AbstractValidator<LoginDto>
             .NotEmpty()
             .WithMessage("Password required");
     }
-
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result =
-            await ValidateAsync(ValidationContext<LoginDto>.CreateWithOptions((LoginDto)model, x => x.IncludeProperties(propertyName)));
-        return result.IsValid ? Array.Empty<string>() : result.Errors.Select(e => e.ErrorMessage);
-    };
 }
