@@ -7,11 +7,22 @@ using NN.POS.Web.Pages.Suppliers.Dialogs;
 
 namespace NN.POS.Web.Pages.Suppliers;
 
-public partial class Index
+public partial class Index : IDisposable
 {
 
     private MudTable<BusinessPartnerDto>? _table;
     private string _searchString = "";
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.Contact);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task<TableData<BusinessPartnerDto>> ServerReload(TableState state)
     {

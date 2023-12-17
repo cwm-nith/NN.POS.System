@@ -7,6 +7,7 @@ using NN.POS.Web;
 using NN.POS.Web.AppSettings;
 using NN.POS.Web.Constants;
 using NN.POS.Web.Providers;
+using NN.POS.Web.States;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -16,6 +17,12 @@ var settings = new Setting();
 
 builder.Configuration.GetSection("Setting").Bind(settings);
 builder.Services.AddSingleton(settings);
+
+builder.Services.Scan(s =>
+    s.FromAssemblies(AppDomain.CurrentDomain.GetAssemblies())
+        .AddClasses(c => c.AssignableTo(typeof(IStateBaseService)))
+        .AsImplementedInterfaces()
+        .WithSingletonLifetime());
 
 builder.Services.AddHttpClient(AppConstants.HttpClientName, options =>
 {

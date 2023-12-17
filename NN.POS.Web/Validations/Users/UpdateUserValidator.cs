@@ -3,7 +3,7 @@ using NN.POS.Model.Dtos.Users;
 
 namespace NN.POS.Web.Validations.Users;
 
-public class UpdateUserValidator : AbstractValidator<UpdateUserDto>
+public class UpdateUserValidator : BaseValidator<UpdateUserDto>
 {
     public UpdateUserValidator()
     {
@@ -19,11 +19,4 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserDto>
             .EmailAddress()
             .WithMessage("Email is not a valid email address");
     }
-
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result =
-            await ValidateAsync(ValidationContext<UpdateUserDto>.CreateWithOptions((UpdateUserDto)model, x => x.IncludeProperties(propertyName)));
-        return result.IsValid ? Array.Empty<string>() : result.Errors.Select(e => e.ErrorMessage);
-    };
 }

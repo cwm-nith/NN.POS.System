@@ -1,4 +1,5 @@
 ﻿@attribute [Route(RouteName.CreateCustomer)]
+@implements IDisposable
 
 @using static Model.Enums.BusinessPartnerEnum
 @using NN.POS.Model.Dtos.BusinessPartners
@@ -121,6 +122,17 @@
     MudForm? _form;
 
     string? _apiErrorMessages;
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.Contact);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task CreateCustomerAsync()
     {

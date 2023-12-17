@@ -3,9 +3,8 @@ using NN.POS.Model.Dtos.BusinessPartners.CustomerGroups;
 
 namespace NN.POS.Web.Validations.Contacts;
 
-public class UpdateCustomerGroupValidation : AbstractValidator<UpdateCustomerGroupDto>
+public class UpdateCustomerGroupValidation : BaseValidator<UpdateCustomerGroupDto>
 {
-
     public UpdateCustomerGroupValidation()
     {
         RuleFor(i => i.Name)
@@ -18,10 +17,4 @@ public class UpdateCustomerGroupValidation : AbstractValidator<UpdateCustomerGro
             .Must(i => i > 0)
             .WithMessage("Value must be greater than 0.");
     }
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result =
-            await ValidateAsync(ValidationContext<UpdateCustomerGroupDto>.CreateWithOptions((UpdateCustomerGroupDto)model, x => x.IncludeProperties(propertyName)));
-        return result.IsValid ? Array.Empty<string>() : result.Errors.Select(e => e.ErrorMessage);
-    };
 }

@@ -2,6 +2,7 @@
 @using NN.POS.Web.Validations.Users
 @attribute [Route(RouteName.CreateUser)]
 
+@implements IDisposable
 
 <MudContainer Class="p-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
@@ -97,6 +98,17 @@
     MudForm? _form;
 
     string? _apiErrorMessages;
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task CreateUserAsync()
     {

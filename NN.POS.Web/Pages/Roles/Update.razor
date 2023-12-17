@@ -3,6 +3,8 @@
 @using Newtonsoft.Json
 @attribute [Route($"{RouteName.UpdateRole}/{{Id:int}}")]
 
+@implements IDisposable
+
 <MudContainer Class="p-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
         <MudLink Href="@RouteName.Roles">
@@ -75,17 +77,28 @@
 
 
 @code {
-    
+
     [Parameter]
     public int Id { get; set; }
-    
+
     private UpdateRoleDto _roleModel = new();
 
     readonly UpdateRoleValidator _roleValidator = new();
-    
+
     MudForm? _form;
 
     string? _apiErrorMessages;
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
 
     private async Task UpdateRoleAsync()
     {
@@ -129,13 +142,13 @@
         var data = await httpClient.GetFromJsonAsync<RoleDto>($"{Setting.PrefixEndpoint}role/{Id}");
         Id = data?.Id ?? 0;
         _roleModel = new UpdateRoleDto
-        {
-            Name = data?.Name,
-            DisplayName = data?.DisplayName,
-            Description = data?.Description,
-            CreatedAt = DateTime.UtcNow,
-            Id = data?.Id ?? 0
-        };
+            {
+                Name = data?.Name,
+                DisplayName = data?.DisplayName,
+                Description = data?.Description,
+                CreatedAt = DateTime.UtcNow,
+                Id = data?.Id ?? 0
+            };
         Console.WriteLine(JsonConvert.SerializeObject(data));
     }
 }

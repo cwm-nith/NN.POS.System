@@ -3,7 +3,7 @@ using NN.POS.Model.Dtos.Users;
 
 namespace NN.POS.Web.Validations.Users;
 
-public class CreateUserValidator : AbstractValidator<CreateUserBfDto>
+public class CreateUserValidator : BaseValidator<CreateUserBfDto>
 {
     public CreateUserValidator()
     {
@@ -41,10 +41,4 @@ public class CreateUserValidator : AbstractValidator<CreateUserBfDto>
             .Equal(p => p.Password)
             .WithMessage("Confirm password doesn't match the password");
     }
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result =
-            await ValidateAsync(ValidationContext<CreateUserBfDto>.CreateWithOptions((CreateUserBfDto)model, x => x.IncludeProperties(propertyName)));
-        return result.IsValid ? Array.Empty<string>() : result.Errors.Select(e => e.ErrorMessage);
-    };
 }

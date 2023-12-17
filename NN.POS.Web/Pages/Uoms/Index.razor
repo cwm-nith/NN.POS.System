@@ -1,14 +1,16 @@
-﻿@using NN.POS.Model.Dtos.Users
-@using NN.POS.Web.Pages.Users.Dialogs
+﻿@attribute [Route(RouteName.Uom)]
 
-@attribute [Route(RouteName.Users)]
+@using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Pages.Uoms.Dialogs
 
 @implements IDisposable
 
-<MudContainer Class="mt-2">
 
+
+<MudContainer Class="mt-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
-        <MudLink Href="@RouteName.CreateUser">
+        <MudLink Href="@RouteName.UomCreate">
             <MudButton Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.AddCircle"
                        Color="Color.Primary">
@@ -17,7 +19,7 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<UserDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<UnitOfMeasureDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -32,34 +34,23 @@
         <HeaderContent>
             <MudTh>Id</MudTh>
             <MudTh>Name</MudTh>
-            <MudTh>Username</MudTh>
-            <MudTh>Email</MudTh>
-            <MudTh>Last Login</MudTh>
             <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Id">@context.Id</MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
-                <MudTd DataLabel="Username">@context.Username</MudTd>
-                <MudTd DataLabel="Email">@context.Email</MudTd>
-                <MudTd DataLabel="Last Login">@context.LastLogin?.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudButton StartIcon="@Icons.Material.Filled.ModeEdit"
                                Color="Color.Warning"
-                               OnClick="@(() => GoToUpdatePage(context.Id))"
+                               OnClick="@(() => GoToUpdatePage(context))"
                                Variant="Variant.Filled"
                                Size="Size.Small">Update</MudButton>
 
                     <MudButton StartIcon="@Icons.Material.Filled.Delete"
                                Color="Color.Error"
-                               OnClick="@(() => DeleteUser(context.Id))"
+                               OnClick="@(() => DeleteUom(context.Id))"
                                Variant="Variant.Filled"
                                Size="Size.Small">Delete</MudButton>
-
-                    <MudButton Color="Color.Info"
-                               OnClick="@(() => ViewRoles(context.Id))"
-                               Variant="Variant.Filled"
-                               Size="Size.Small">Roles</MudButton>
                 </MudTd>
             </RowTemplate>
 
@@ -75,13 +66,14 @@
         </MudTable>
     </MudContainer>
 
-    @code {
-    private MudTable<UserDto>? _table;
+@code {
+
+    private MudTable<UnitOfMeasureDto>? _table;
     private string _searchString = "";
 
     protected override void OnInitialized()
     {
-        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 
@@ -90,54 +82,61 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<UserDto>> ServerReload(TableState state)
+    private async Task<TableData<UnitOfMeasureDto>> ServerReload(TableState state)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var path = $"{Setting.PrefixEndpoint}user?Page={state.Page + 1}&Results={state.PageSize}";
+        var path = $"{Setting.PrefixEndpoint}unitOfMeasure?Page={state.Page + 1}&Results={state.PageSize}";
 
         Console.WriteLine(path);
 
         var data =
-            await httpClient.GetFromJsonAsync<PagedResult<UserDto>>(path);
+            await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureDto>>(path);
 
-        return new TableData<UserDto>
-            {
-                Items = data?.Items,
-                TotalItems = Convert.ToInt32(data?.TotalResults)
-            };
+        return new TableData<UnitOfMeasureDto>
+        {
+            Items = data?.Items,
+            TotalItems = Convert.ToInt32(data?.TotalResults)
+        };
     }
 
-    protected void GoToUpdatePage(int id)
+    protected void GoToUpdatePage(UnitOfMeasureDto data)
     {
-        NavigationManager.NavigateTo($"{RouteName.UpdateUser}/{id}");
-    }
-
-    private void DeleteUser(int id)
-    {
-        var parameters = new DialogParameters<DeleteDialog>
+        var parameters = new DialogParameters<UpdateUomDialog>
         {
             {
-                x => x.Id, id
+                x => x.Table, _table
             },
             {
+                x => x.Data, data
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true};
+
+        Dialog.Show<UpdateUomDialog>("Update", parameters, options);
+    }
+
+    private void DeleteUom(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog<UnitOfMeasureDto>>
+        {
+            {
                 x => x.Table, _table
+            },
+            {
+                x => x.Endpoint, $"unitOfMeasure/{id}"
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+        Dialog.Show<DeleteDialog<UnitOfMeasureDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)
     {
         _searchString = text;
         _table?.ReloadServerData();
-    }
-
-    private void ViewRoles(int id)
-    {
-        NavigationManager.NavigateTo($"{RouteName.UserRoles}/{id}");
     }
 }

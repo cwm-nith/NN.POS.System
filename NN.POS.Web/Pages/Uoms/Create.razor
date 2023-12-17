@@ -1,11 +1,13 @@
-﻿@using NN.POS.Model.Dtos.Roles
-@using NN.POS.Web.Validations.Roles
-@attribute [Route(RouteName.CreateRole)]
+﻿@using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Validations.Uoms
+@attribute [Route(RouteName.UomCreate)]
+
 @implements IDisposable
+
 
 <MudContainer Class="p-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
-        <MudLink Href="@RouteName.Roles">
+        <MudLink Href="@RouteName.Uom">
             <MudButton Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.ArrowBack"
                        Color="Color.Primary">
@@ -14,38 +16,24 @@
         </MudLink>
     </MudPaper>
     <MudCard>
-        <MudForm Model="_roleModel" Validation="_roleValidator.ValidateValue" @ref="_form">
+        <MudForm Model="_uomModel" Validation="_uomValidator.ValidateValue" @ref="_form">
             <MudCardContent>
                 <MudContainer Class="text-center">
                     <MudChip Color="Color.Primary" Class="p-4">
-                        <MudText Typo="Typo.h6">Create New Role</MudText>
+                        <MudText Typo="Typo.h6">Create New Unit of Measure</MudText>
                     </MudChip>
                 </MudContainer>
                 <MudDivider Class="mt-2" />
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12" xs="12">
-                        <MudTextField @bind-Value="_roleModel.Name"
-                                      For="@(() => _roleModel.Name)"
+                        <MudTextField @bind-Value="_uomModel.Name"
+                                      For="@(() => _uomModel.Name)"
                                       Immediate="true"
                                       Label="Name" />
                     </MudItem>
-                    <MudItem lg="5" sm="12" xs="12">
-                        <MudTextField @bind-Value="_roleModel.DisplayName"
-                                      For="@(() => _roleModel.DisplayName)"
-                                      Immediate="true"
-                                      Label="DisplayName" />
-                    </MudItem>
                 </MudGrid>
-                <MudGrid Spacing="5" Justify="Justify.Center">
-                    <MudItem lg="10" sm="12" xs="12">
-                        <MudTextField @bind-Value="_roleModel.Description"
-                                      For="@(() => _roleModel.Description)"
-                                      Immediate="true"
-                                      Label="Description" />
-                    </MudItem>
-                </MudGrid>
-
+                
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
                     <MudChip Class="d-flex justify-center" Color="Color.Error">
@@ -62,7 +50,7 @@
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.AddCircle"
-                                   OnClick="CreateRoleAsync">
+                                   OnClick="@(CreateUomAsync)">
                             Save
                         </MudButton>
                     </MudItem>
@@ -75,9 +63,9 @@
 
 
 @code {
-    readonly CreateRoleDto _roleModel = new();
+    readonly CreateUomDto _uomModel = new();
 
-    readonly CreateRoleValidator _roleValidator = new();
+    readonly CreateUomValidation _uomValidator = new();
 
     MudForm? _form;
 
@@ -85,7 +73,7 @@
 
     protected override void OnInitialized()
     {
-        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 
@@ -94,36 +82,36 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task CreateRoleAsync()
+    private async Task CreateUomAsync()
     {
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(_roleModel);
+            var jsonPayload = JsonSerializer.Serialize(_uomModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}role", requestContent);
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}unitOfMeasure", requestContent);
 
             switch (response.StatusCode)
             {
                 case HttpStatusCode.BadRequest:
-                    {
-                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                        break;
-                    }
+                {
+                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                    break;
+                }
                 case HttpStatusCode.Unauthorized:
-                    {
-                        NavigationManager.NavigateTo(RouteName.Login);
-                        break;
-                    }
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                    break;
+                }
                 case HttpStatusCode.OK:
-                    {
-                        NavigationManager.NavigateTo(RouteName.Roles);
-                        break;
-                    }
+                {
+                    NavigationManager.NavigateTo(RouteName.Uom);
+                    break;
+                }
                 default:
-                    _apiErrorMessages = "Login Failed Please try after some time";
+                    _apiErrorMessages = "Something went wrong, Please try after some time";
                     break;
             }
 

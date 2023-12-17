@@ -1,12 +1,13 @@
-﻿@using NN.POS.Model.Dtos.Roles
-@using NN.POS.Web.Pages.Roles.Dialogs
-@attribute [Route(RouteName.Roles)]
+﻿@using NN.POS.Model.Dtos.ItemMasters
+@using NN.POS.Model.Enums
+@using NN.POS.Web.Components.Dialogs
+@attribute [Route(RouteName.ItemMasterData)]
 @implements IDisposable
 
 <MudContainer Class="mt-2">
 
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
-        <MudLink Href="@RouteName.CreateRole">
+        <MudLink Href="@RouteName.ItemMasterDataCreate">
             <MudButton Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.AddCircle"
                        Color="Color.Primary">
@@ -15,11 +16,12 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<RoleDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<ItemMasterDataDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
-              @ref="_table">
+              @ref="_table"
+              RowClassFunc="@RowClassFunc">
 
         <ToolBarContent>
             <MudText Typo="Typo.h6">Roles</MudText>
@@ -28,18 +30,32 @@
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <HeaderContent>
+            <MudTh>№</MudTh>
             <MudTh>Id</MudTh>
+            <MudTh>Code</MudTh>
+            <MudTh>Barcode</MudTh>
             <MudTh>Name</MudTh>
-            <MudTh>Display Name</MudTh>
-            <MudTh>Description</MudTh>
-            <MudTh>Created At</MudTh>
-            <MudTh>Actions</MudTh>
+            <MudTh>Other Name</MudTh>
+            <MudTh>UoM</MudTh>
+            <MudTh>Group</MudTh>
+            <MudTh>Type</MudTh>
+            <MudTh>Image</MudTh>
+            <MudTh>Action</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="No">@_index</MudTd>
+                <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Code">@context.Code</MudTd>
+                <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
-                <MudTd DataLabel="Display Name">@context.DisplayName</MudTd>
-                <MudTd DataLabel="Description">@context.Description</MudTd>
+                <MudTd DataLabel="Other Name">@context.OtherName</MudTd>
+                <MudTd DataLabel="Uom">@context.BaseUomId</MudTd>
+                <MudTd DataLabel="Group">@context.Code</MudTd>
+                <MudTd DataLabel="Type">@context.Type.ToEnumString()</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage Src="@($"{Setting.ApiUrl}/contents/item-master/images/{context.Image}")"
+                              Class="w-25 h-25" />
+                </MudTd>
                 <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
@@ -60,13 +76,18 @@
     </MudContainer>
 
     @code {
-    private MudTable<RoleDto>? _table;
+    private MudTable<ItemMasterDataDto>? _table;
     private string _searchString = "";
-
+    private int _index;
+    private string RowClassFunc(ItemMasterDataDto element, int rowNumber)
+    {
+        _index = 1 + rowNumber + (_table?.CurrentPage ?? 0) * (_table?.RowsPerPage ?? 0);
+        return string.Empty;
+    }
 
     protected override void OnInitialized()
     {
-        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.SetExpendAsync(RouteName.Products);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 
@@ -75,18 +96,18 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<RoleDto>> ServerReload(TableState state)
+    private async Task<TableData<ItemMasterDataDto>> ServerReload(TableState state)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var path = $"{Setting.PrefixEndpoint}role?Page={state.Page + 1}&Results={state.PageSize}";
+        var path = $"{Setting.PrefixEndpoint}ItemMasterData?Page={state.Page + 1}&Results={state.PageSize}&Process=0&Type=0&search={_searchString}";
 
         Console.WriteLine(path);
 
         var data =
-            await httpClient.GetFromJsonAsync<PagedResult<RoleDto>>(path);
+            await httpClient.GetFromJsonAsync<PagedResult<ItemMasterDataDto>>(path);
 
-        return new TableData<RoleDto>
+        return new TableData<ItemMasterDataDto>
             {
                 Items = data?.Items,
                 TotalItems = Convert.ToInt32(data?.TotalResults)
@@ -100,10 +121,10 @@
 
     private void DeleteRole(int id)
     {
-        var parameters = new DialogParameters<DeleteDialog>
+        var parameters = new DialogParameters<DeleteDialog<ItemMasterDataDto>>
         {
             {
-                x => x.Id, id
+                x => x.Endpoint, $"ItemMasterData/{id}"
             },
             {
                 x => x.Table, _table
@@ -112,7 +133,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+        Dialog.Show<DeleteDialog<ItemMasterDataDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

@@ -1,0 +1,98 @@
+﻿@using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Validations.Uoms
+
+@namespace NN.POS.Web.Pages.Uoms.Dialogs
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="_uomModel" Validation="_uomValidator.ValidateValue" @ref="_form">
+            <MudGrid Spacing="5" Justify="Justify.Center">
+                <MudItem lg="5" sm="12" xs="12">
+                    <MudTextField @bind-Value="_uomModel.Name"
+                                  For="@(() => _uomModel.Name)"
+                                  Immediate="true"
+                                  Label="Name" />
+                </MudItem>
+            </MudGrid>
+
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Class="d-flex justify-center" Color="Color.Error">
+                    <p>@_apiErrorMessages</p>
+                </MudChip>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(Submit)">Yes</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public UnitOfMeasureDto? Data { get; set; }
+
+    [Parameter]
+    public MudTable<UnitOfMeasureDto>? Table { get; set; }
+
+    private UpdateUomDto _uomModel = new();
+
+    readonly UpdateUomValidation _uomValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+
+    protected override void OnParametersSet()
+    {
+        _uomModel = new UpdateUomDto
+        {
+            Name = Data?.Name
+        };
+        base.OnParametersSet();
+    }
+
+    private async Task Submit()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_uomModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+            var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}unitOfMeasure/{Data?.Id}", requestContent);
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                {
+                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                    break;
+                }
+                case HttpStatusCode.Unauthorized:
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                    break;
+                }
+                case HttpStatusCode.OK:
+                {
+                    MudDialog?.Close(DialogResult.Ok(true));
+                    Table?.ReloadServerData();
+                    break;
+                }
+                default:
+                    _apiErrorMessages = "Something went wrong, Please try after some time";
+                    break;
+            }
+
+        }
+        
+    }
+    private void Cancel() => MudDialog?.Cancel();
+}

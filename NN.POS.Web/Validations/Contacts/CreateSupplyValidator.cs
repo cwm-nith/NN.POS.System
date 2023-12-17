@@ -4,7 +4,7 @@ using static NN.POS.Model.Enums.BusinessPartnerEnum;
 
 namespace NN.POS.Web.Validations.Contacts;
 
-public class CreateSupplyValidator : AbstractValidator<CreateBusinessPartnerDto>
+public class CreateSupplyValidator : BaseValidator<CreateBusinessPartnerDto>
 {
     public CreateSupplyValidator()
     {
@@ -47,11 +47,4 @@ public class CreateSupplyValidator : AbstractValidator<CreateBusinessPartnerDto>
             .WithMessage("Phone number is required");
 
     }
-
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result =
-            await ValidateAsync(ValidationContext<CreateBusinessPartnerDto>.CreateWithOptions((CreateBusinessPartnerDto)model, x => x.IncludeProperties(propertyName)));
-        return result.IsValid ? Array.Empty<string>() : result.Errors.Select(e => e.ErrorMessage);
-    };
 }

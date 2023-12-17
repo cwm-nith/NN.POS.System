@@ -1,33 +1,22 @@
 ﻿@using NN.POS.Web.Extensions
 @using NN.POS.Web.Constants
 <MudNavMenu>
-    <MudNavGroup Title="Contacts" Expanded='$"/{_section}" == RouteName.Contact'>
-        <MudNavLink Href="@RouteName.Supplier">Suppliers</MudNavLink>
-        <MudNavLink Href="@RouteName.Customers">Customers</MudNavLink>
-        <MudNavLink Href="@RouteName.CustomerGroups">Customer Groups</MudNavLink>
+    <MudNavGroup Title="Contacts" Expanded="@(NavbarStateService.Value == RouteName.Contact)">
+        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Supplier">Suppliers</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Customers">Customers</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.CustomerGroups">Customer Groups</MudNavLink>
     </MudNavGroup>
-    <MudNavGroup Title="User Management" Expanded='$"/{_section}" == RouteName.UsersManagement'>
-        <MudNavLink Href="@RouteName.Users">Users</MudNavLink>
-        <MudNavLink Href="@RouteName.Roles">Roles</MudNavLink>
+    <MudNavGroup Title="User Management" Expanded="@(NavbarStateService.Value == RouteName.UsersManagement)">
+        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Users">Users</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Roles">Roles</MudNavLink>
+    </MudNavGroup>
+    <MudNavGroup Title="Products" Expanded="@(NavbarStateService.Value is RouteName.Products or RouteName.UnitOfMeasure)">
+        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.ItemMasterData">Item Master Data</MudNavLink>
+
+        <MudNavGroup Title="Unit of Measure" Expanded="@(NavbarStateService.Value == RouteName.UnitOfMeasure)">
+            <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Uom">Uom</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.UomGroup">Uom Group</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.UomDefine">Uom Define</MudNavLink>
+        </MudNavGroup>
     </MudNavGroup>
 </MudNavMenu>
-
-@code
-{
-
-    string? _section;
-
-    protected override void OnInitialized()
-    {
-        Refresh();
-        base.OnInitialized();
-    }
-
-    public void Refresh()
-    {
-        _section = NavigationManager.GetSection();
-        Console.WriteLine(_section);
-        StateHasChanged();
-    }
-
-}
