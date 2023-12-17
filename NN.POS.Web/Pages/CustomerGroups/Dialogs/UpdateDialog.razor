@@ -38,18 +38,18 @@
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="@Cancel">Cancel</MudButton>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.AddCircle"
-                   OnClick="CreateCustomerGroupAsync">
+                   OnClick="@CreateCustomerGroupAsync">
             Save
         </MudButton>
     </DialogActions>
 </MudDialog>
 @code {
     [CascadingParameter]
-    MudDialogInstance MudDialog { get; set; }
+    MudDialogInstance? MudDialog { get; set; }
 
     [Parameter]
     public MudTable<CustomerGroupDto>? Table { get; set; }
@@ -96,7 +96,7 @@
                     NavigationManager.NavigateTo(RouteName.Login);
                     break;
                 case HttpStatusCode.OK:
-                    MudDialog.Close();
+                    MudDialog?.Close();
                     await Table?.ReloadServerData()!;
                     break;
                 default:
@@ -106,5 +106,5 @@
 
         }
     }
-    void Cancel() => MudDialog.Cancel();
+    void Cancel() => MudDialog?.Cancel();
 }
