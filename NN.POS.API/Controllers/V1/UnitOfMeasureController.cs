@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.API.App.Commands.UnitOfMeasures;
 using NN.POS.API.App.Queries.UnitOfMeasures;
+using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.UnitOfMeasures;
 
 namespace NN.POS.API.Controllers.V1;
@@ -71,6 +72,13 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         var cmd = new CreateUomGroupCommand(body.Name);
         await mediator.Send(cmd);
         return Ok();
+    }
+
+    [HttpGet("uom-group")]
+    public async Task<ActionResult<PagedResult<UnitOfMeasureGroupDto>>> GetUomGroupPage(
+        [FromQuery] GetUomPageGroupQuery q)
+    {
+        return Ok(await mediator.Send(q));
     }
 
     [HttpGet("uom-group/{id}")]

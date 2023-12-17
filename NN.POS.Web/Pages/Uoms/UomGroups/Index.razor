@@ -1,0 +1,138 @@
+﻿@attribute [Route(RouteName.UomGroup)]
+
+@using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Pages.Uoms.Dialogs
+@implements IDisposable
+
+<MudContainer Class="mt-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.UomGroupCreate">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       Color="Color.Primary">
+                Create
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<UnitOfMeasureGroupDto>>>(ServerReload))"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              @ref="_table">
+
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Users</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudButton StartIcon="@Icons.Material.Filled.ModeEdit"
+                               Color="Color.Warning"
+                               OnClick="@(() => GoToUpdatePage(context))"
+                               Variant="Variant.Filled"
+                               Size="Size.Small">Update</MudButton>
+
+                    <MudButton StartIcon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               OnClick="@(() => DeleteUom(context.Id))"
+                               Variant="Variant.Filled"
+                               Size="Size.Small">Delete</MudButton>
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+
+@code {
+    private MudTable<UnitOfMeasureGroupDto>? _table;
+    private string _searchString = "";
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private async Task<TableData<UnitOfMeasureGroupDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}unitOfMeasure/uom-group?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+
+        Console.WriteLine(path);
+
+        var data =
+            await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureGroupDto>>(path);
+
+        return new TableData<UnitOfMeasureGroupDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    protected void GoToUpdatePage(UnitOfMeasureGroupDto data)
+    {
+        var parameters = new DialogParameters<UpdateUomGroupDialog>
+        {
+            {
+                x => x.Table, _table
+            },
+            {
+                x => x.Data, data
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        Dialog.Show<UpdateUomGroupDialog>("Update", parameters, options);
+    }
+
+    private void DeleteUom(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog<UnitOfMeasureGroupDto>>
+        {
+            {
+                x => x.Table, _table
+            },
+            {
+                x => x.Endpoint, $"unitOfMeasure/uom-group/{id}"
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<DeleteDialog<UnitOfMeasureGroupDto>>("Delete", parameters, options);
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+}

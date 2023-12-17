@@ -1,0 +1,120 @@
+﻿@using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Validations.Uoms.UomGroups
+@attribute [Route(RouteName.UomGroupCreate)]
+
+@implements IDisposable
+
+
+<MudContainer Class="p-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.UomGroup">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Color="Color.Primary">
+                Back
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+    <MudCard>
+        <MudForm Model="_uomGroupModel" Validation="_uomGroupValidator.ValidateValue" @ref="_form">
+            <MudCardContent>
+                <MudContainer Class="text-center">
+                    <MudChip Color="Color.Primary" Class="p-4">
+                        <MudText Typo="Typo.h6">Create New Unit of Measure Group</MudText>
+                    </MudChip>
+                </MudContainer>
+                <MudDivider Class="mt-2" />
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomGroupModel.Name"
+                                      For="@(() => _uomGroupModel.Name)"
+                                      Immediate="true"
+                                      Label="Name" />
+                    </MudItem>
+                </MudGrid>
+                
+                @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                {
+                    <MudChip Class="d-flex justify-center" Color="Color.Error">
+                        <p>@_apiErrorMessages</p>
+                    </MudChip>
+                }
+
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudGrid>
+                    <MudItem sm="0" lg="9"></MudItem>
+                    <MudItem sm="12" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="@(CreateUomGroupAsync)">
+                            Save
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</MudContainer>
+
+
+
+@code {
+    readonly CreateUomGroupDto _uomGroupModel = new();
+
+    readonly CreateUomGroupValidation _uomGroupValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private async Task CreateUomGroupAsync()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_uomGroupModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-group", requestContent);
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                {
+                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                    break;
+                }
+                case HttpStatusCode.Unauthorized:
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                    break;
+                }
+                case HttpStatusCode.OK:
+                {
+                    NavigationManager.NavigateTo(RouteName.UomGroup);
+                    break;
+                }
+                default:
+                    _apiErrorMessages = "Something went wrong, Please try after some time";
+                    break;
+            }
+
+        }
+    }
+}
