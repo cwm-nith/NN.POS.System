@@ -2,6 +2,7 @@
 
 @using NN.POS.Model.Dtos.UnitOfMeasures
 @using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Pages.Uoms.Dialogs
 
 @implements IDisposable
 
@@ -41,7 +42,7 @@
                 <MudTd DataLabel="Actions">
                     <MudButton StartIcon="@Icons.Material.Filled.ModeEdit"
                                Color="Color.Warning"
-                               OnClick="@(() => GoToUpdatePage(context.Id))"
+                               OnClick="@(() => GoToUpdatePage(context))"
                                Variant="Variant.Filled"
                                Size="Size.Small">Update</MudButton>
 
@@ -99,9 +100,21 @@
         };
     }
 
-    protected void GoToUpdatePage(int id)
+    protected void GoToUpdatePage(UnitOfMeasureDto data)
     {
-        NavigationManager.NavigateTo($"{RouteName.UomUpdate}/{id}");
+        var parameters = new DialogParameters<UpdateUomDialog>
+        {
+            {
+                x => x.Table, _table
+            },
+            {
+                x => x.Data, data
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true};
+
+        Dialog.Show<UpdateUomDialog>("Update", parameters, options);
     }
 
     private void DeleteUom(int id)
