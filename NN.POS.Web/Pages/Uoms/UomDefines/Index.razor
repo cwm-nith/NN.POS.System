@@ -1,6 +1,7 @@
 ﻿@attribute [Route($"{RouteName.UomDefine}/{{Id:int}}")]
 
 @using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Pages.Uoms.Dialogs
 @using NN.POS.Web.Validations.Uoms.UomDefines
 @implements IDisposable
 
@@ -34,7 +35,7 @@
                                       ReadOnly="true"
                                       Label="Alt Uom"
                                       Class="cursor-pointer"
-                                      @onclick="@(() => { Console.WriteLine("Hello world"); })" />
+                                      @onclick="@(() => SelectUomList(false))" />
                     </MudItem>
                     <MudItem lg="5" sm="12" xs="12">
                         <MudTextField @bind-Value="_uomDefineModel.AltQty"
@@ -50,7 +51,9 @@
                                       For="@(() => _uomDefine.BaseUomName)"
                                       Immediate="true"
                                       ReadOnly="true"
-                                      Label="Base Uom" />
+                                      Label="Base Uom"
+                                      Class="cursor-pointer"
+                                      @onclick="@(() => SelectUomList(true))" />
                     </MudItem>
                     <MudItem lg="5" sm="12" xs="12">
                         <MudTextField @bind-Value="_uomDefineModel.BaseQty"
@@ -181,6 +184,36 @@
         _uomDefine = new UnitOfMeasureDefineDto();
     }
 
+
+    protected void SelectUomList(bool isBaseUom)
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                i => i.OnChooseUom, 
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    if (isBaseUom)
+                    {
+                        _uomDefine.BaseUomId = uom.Id;
+                        _uomDefineModel.BaseUomId = uom.Id;
+                        _uomDefine.BaseUomName = uom.Name;
+                    }
+                    else
+                    {
+                        _uomDefine.AltUomId = uom.Id;
+                        _uomDefineModel.AltUomId = uom.Id;
+                        _uomDefine.AltUomName = uom.Name;
+                    }
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        Dialog.Show<SelectUomDialog>("Select Uom", parameters, options);
+    }
+
     // private async Task<TableData<UnitOfMeasureGroupDto>> ServerReload(TableState state)
     // {
     //     var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
@@ -199,22 +232,7 @@
     //         };
     // }
 
-    // protected void GoToUpdatePage(UnitOfMeasureGroupDto data)
-    // {
-    //     var parameters = new DialogParameters<UpdateUomGroupDialog>
-    //     {
-    //         {
-    //             x => x.Table, _table
-    //         },
-    //         {
-    //             x => x.Data, data
-    //         }
-    //     };
 
-    //     var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
-
-    //     Dialog.Show<UpdateUomGroupDialog>("Update", parameters, options);
-    // }
 
     // private void DeleteUom(int id)
     // {
