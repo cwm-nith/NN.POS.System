@@ -1,0 +1,241 @@
+﻿@attribute [Route($"{RouteName.UomDefine}/{{Id:int}}")]
+
+@using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Validations.Uoms.UomDefines
+@implements IDisposable
+
+<MudContainer Class="mt-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.UomGroup">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       Color="Color.Primary">
+                Back
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+
+
+    <MudCard>
+        <MudForm Model="_uomDefineModel" Validation="_uomDefineValidator.ValidateValue" @ref="_form">
+            <MudCardContent>
+                <MudContainer Class="text-center">
+                    <MudChip Color="Color.Primary" Class="p-4">
+                        <MudText Typo="Typo.h6">Unit of Measure Define</MudText>
+                    </MudChip>
+                </MudContainer>
+                <MudDivider Class="mt-2" />
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefine.AltUomName"
+                                      For="@(() => _uomDefine.AltUomName)"
+                                      Immediate="true"
+                                      ReadOnly="true"
+                                      Label="Alt Uom"
+                                      Class="cursor-pointer"
+                                      @onclick="@(() => { Console.WriteLine("Hello world"); })" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefineModel.AltQty"
+                                      For="@(() => _uomDefineModel.AltQty)"
+                                      Immediate="true"
+                                      Label="Alt Qty" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefine.BaseUomName"
+                                      For="@(() => _uomDefine.BaseUomName)"
+                                      Immediate="true"
+                                      ReadOnly="true"
+                                      Label="Base Uom" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefineModel.BaseQty"
+                                      For="@(() => _uomDefineModel.BaseQty)"
+                                      Immediate="true"
+                                      Label="Base Qty" />
+                    </MudItem>
+                </MudGrid>
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefineModel.Factor"
+                                      For="@(() => _uomDefineModel.Factor)"
+                                      Immediate="true"
+                                      Label="Factor" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12" />
+                </MudGrid>
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudGrid>
+                    <MudItem sm="0" lg="9"></MudItem>
+                    <MudItem sm="12" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="@(Add)">
+                            Add
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+    @if (!string.IsNullOrEmpty(_apiErrorMessages))
+    {
+        <MudChip Class="d-flex justify-center" Color="Color.Error">
+            <p>@_apiErrorMessages</p>
+        </MudChip>
+    }
+    <MudTable Items="@_uomDefines"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              @ref="_table">
+
+        <HeaderContent>
+            <MudTh>Alt Uom</MudTh>
+            <MudTh>Base Uom</MudTh>
+            <MudTh>Alt Qty</MudTh>
+            <MudTh>Base Qty</MudTh>
+            <MudTh>Factor</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Alt Uom">@context.AltUomName</MudTd>
+                <MudTd DataLabel="Base Uom">@context.BaseUomName</MudTd>
+                <MudTd DataLabel="Alt Qty">@context.AltQty</MudTd>
+                <MudTd DataLabel="Base Qty">@context.BaseQty</MudTd>
+                <MudTd DataLabel="Factor">@context.Factor</MudTd>
+                <MudTd DataLabel="Actions">
+                    @* <MudButton StartIcon="@Icons.Material.Filled.ModeEdit"
+                Color="Color.Warning"
+                OnClick="@(() => Update(context))"
+                Variant="Variant.Filled"
+                Size="Size.Small">Update</MudButton>
+
+                <MudButton StartIcon="@Icons.Material.Filled.Delete"
+                Color="Color.Error"
+                OnClick="@(() => DeleteUom(context.Id))"
+                Variant="Variant.Filled"
+                Size="Size.Small">Delete</MudButton> *@
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+
+    @code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private CreateUomDefineDto _uomDefineModel = new();
+    private UnitOfMeasureDefineDto _uomDefine = new();
+    private readonly List<UnitOfMeasureDefineDto> _uomDefines = new();
+
+    readonly CreateUomDefineValidation _uomDefineValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+    private MudTable<UnitOfMeasureDefineDto>? _table;
+    // private string _searchString = "";
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private void Add()
+    {
+        _uomDefine.AltQty = _uomDefineModel.AltQty;
+        _uomDefine.AltUomId = _uomDefineModel.AltUomId;
+        _uomDefine.Factor = _uomDefineModel.Factor;
+        _uomDefine.BaseQty = _uomDefineModel.BaseQty;
+        _uomDefine.BaseUomId = _uomDefineModel.BaseUomId;
+        _uomDefine.Factor = _uomDefineModel.Factor;
+
+        _uomDefines.Add(_uomDefine);
+        _uomDefineModel = new CreateUomDefineDto();
+        _uomDefine = new UnitOfMeasureDefineDto();
+    }
+
+    // private async Task<TableData<UnitOfMeasureGroupDto>> ServerReload(TableState state)
+    // {
+    //     var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+    //     var path = $"{Setting.PrefixEndpoint}unitOfMeasure/uom-group?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+
+    //     Console.WriteLine(path);
+
+    //     var data =
+    //         await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureGroupDto>>(path);
+
+    //     return new TableData<UnitOfMeasureGroupDto>
+    //         {
+    //             Items = data?.Items,
+    //             TotalItems = Convert.ToInt32(data?.TotalResults)
+    //         };
+    // }
+
+    // protected void GoToUpdatePage(UnitOfMeasureGroupDto data)
+    // {
+    //     var parameters = new DialogParameters<UpdateUomGroupDialog>
+    //     {
+    //         {
+    //             x => x.Table, _table
+    //         },
+    //         {
+    //             x => x.Data, data
+    //         }
+    //     };
+
+    //     var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+    //     Dialog.Show<UpdateUomGroupDialog>("Update", parameters, options);
+    // }
+
+    // private void DeleteUom(int id)
+    // {
+    //     var parameters = new DialogParameters<DeleteDialog<UnitOfMeasureGroupDto>>
+    //     {
+    //         {
+    //             x => x.Table, _table
+    //         },
+    //         {
+    //             x => x.Endpoint, $"unitOfMeasure/uom-group/{id}"
+    //         }
+    //     };
+
+    //     var options = new DialogOptions { CloseButton = true };
+
+    //     Dialog.Show<DeleteDialog<UnitOfMeasureGroupDto>>("Delete", parameters, options);
+    // }
+
+    // private void OnSearch(string text)
+    // {
+    //     _searchString = text;
+    //     _table?.ReloadServerData();
+    // }
+}
