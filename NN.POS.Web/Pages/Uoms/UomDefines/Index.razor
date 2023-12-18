@@ -74,8 +74,15 @@
             </MudCardContent>
 
             <MudCardActions>
-                <MudGrid>
-                    <MudItem sm="0" lg="9"></MudItem>
+                <MudGrid Justify="Justify.SpaceBetween">
+                    <MudItem sm="12" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="@(CreateUomDefineAsync)">
+                            Save
+                        </MudButton>
+                    </MudItem>
                     <MudItem sm="12" lg="3">
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
@@ -170,19 +177,55 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private void Add()
+    private async Task CreateUomDefineAsync()
     {
-        _uomDefine.AltQty = _uomDefineModel.AltQty;
-        _uomDefine.AltUomId = _uomDefineModel.AltUomId;
-        _uomDefine.Factor = _uomDefineModel.Factor;
-        _uomDefine.BaseQty = _uomDefineModel.BaseQty;
-        _uomDefine.BaseUomId = _uomDefineModel.BaseUomId;
-        _uomDefine.Factor = _uomDefineModel.Factor;
+        var jsonPayload = JsonSerializer.Serialize(_uomDefine);
+        var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define", requestContent);
 
-        _uomDefines.Add(_uomDefine);
-        _uomDefineModel = new CreateUomDefineDto();
-        _uomDefine = new UnitOfMeasureDefineDto();
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.BadRequest:
+                {
+                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                    break;
+                }
+            case HttpStatusCode.Unauthorized:
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                    break;
+                }
+            case HttpStatusCode.OK:
+                {
+                    NavigationManager.NavigateTo(RouteName.UomGroup);
+                    break;
+                }
+            default:
+                _apiErrorMessages = "Something went wrong, Please try after some time";
+                break;
+        }
     }
+
+    private async Task Add()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            _uomDefine.AltQty = _uomDefineModel.AltQty;
+            _uomDefine.AltUomId = _uomDefineModel.AltUomId;
+            _uomDefine.Factor = _uomDefineModel.Factor;
+            _uomDefine.BaseQty = _uomDefineModel.BaseQty;
+            _uomDefine.BaseUomId = _uomDefineModel.BaseUomId;
+            _uomDefine.Factor = _uomDefineModel.Factor;
+
+            _uomDefines.Add(_uomDefine);
+            _uomDefineModel = new CreateUomDefineDto();
+            _uomDefine = new UnitOfMeasureDefineDto();
+        }
+    }
+
 
 
     protected void SelectUomList(bool isBaseUom)
@@ -190,7 +233,7 @@
         var parameters = new DialogParameters<SelectUomDialog>
         {
             {
-                i => i.OnChooseUom, 
+                i => i.OnChooseUom,
                 new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
                 {
                     if (isBaseUom)
@@ -213,47 +256,4 @@
 
         Dialog.Show<SelectUomDialog>("Select Uom", parameters, options);
     }
-
-    // private async Task<TableData<UnitOfMeasureGroupDto>> ServerReload(TableState state)
-    // {
-    //     var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-
-    //     var path = $"{Setting.PrefixEndpoint}unitOfMeasure/uom-group?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
-
-    //     Console.WriteLine(path);
-
-    //     var data =
-    //         await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureGroupDto>>(path);
-
-    //     return new TableData<UnitOfMeasureGroupDto>
-    //         {
-    //             Items = data?.Items,
-    //             TotalItems = Convert.ToInt32(data?.TotalResults)
-    //         };
-    // }
-
-
-
-    // private void DeleteUom(int id)
-    // {
-    //     var parameters = new DialogParameters<DeleteDialog<UnitOfMeasureGroupDto>>
-    //     {
-    //         {
-    //             x => x.Table, _table
-    //         },
-    //         {
-    //             x => x.Endpoint, $"unitOfMeasure/uom-group/{id}"
-    //         }
-    //     };
-
-    //     var options = new DialogOptions { CloseButton = true };
-
-    //     Dialog.Show<DeleteDialog<UnitOfMeasureGroupDto>>("Delete", parameters, options);
-    // }
-
-    // private void OnSearch(string text)
-    // {
-    //     _searchString = text;
-    //     _table?.ReloadServerData();
-    // }
 }
