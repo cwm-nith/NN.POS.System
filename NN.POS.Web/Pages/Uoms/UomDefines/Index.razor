@@ -1,6 +1,7 @@
 ﻿@attribute [Route($"{RouteName.UomDefine}/{{Id:int}}")]
 
 @using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Pages.Uoms.Dialogs
 @using NN.POS.Web.Validations.Uoms.UomDefines
 @using Newtonsoft.Json
@@ -27,6 +28,25 @@
                     </MudChip>
                 </MudContainer>
                 <MudDivider Class="mt-2" />
+                
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefine.BaseUomName"
+                                      For="@(() => _uomDefine.BaseUomName)"
+                                      Immediate="true"
+                                      ReadOnly="true"
+                                      Label="Base Uom"
+                                      Class="cursor-pointer"
+                                      Disabled="@(_uomDefineModel.Id > 0)"
+                                      @onclick="@(() => SelectUomList(true))" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefineModel.BaseQty"
+                                      For="@(() => _uomDefineModel.BaseQty)"
+                                      Immediate="true"
+                                      Label="Base Qty" />
+                    </MudItem>
+                </MudGrid>
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12" xs="12">
@@ -48,23 +68,6 @@
 
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12" xs="12">
-                        <MudTextField @bind-Value="_uomDefine.BaseUomName"
-                                      For="@(() => _uomDefine.BaseUomName)"
-                                      Immediate="true"
-                                      ReadOnly="true"
-                                      Label="Base Uom"
-                                      Class="cursor-pointer"
-                                      @onclick="@(() => SelectUomList(true))" />
-                    </MudItem>
-                    <MudItem lg="5" sm="12" xs="12">
-                        <MudTextField @bind-Value="_uomDefineModel.BaseQty"
-                                      For="@(() => _uomDefineModel.BaseQty)"
-                                      Immediate="true"
-                                      Label="Base Qty" />
-                    </MudItem>
-                </MudGrid>
-                <MudGrid Spacing="5" Justify="Justify.Center">
-                    <MudItem lg="5" sm="12" xs="12">
                         <MudTextField @bind-Value="_uomDefineModel.Factor"
                                       For="@(() => _uomDefineModel.Factor)"
                                       Immediate="true"
@@ -76,20 +79,20 @@
 
             <MudCardActions>
                 <MudGrid Justify="Justify.SpaceBetween">
+                    @* <MudItem sm="5" lg="3">
+                    <MudButton Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    StartIcon="@Icons.Material.Filled.AddCircle"
+                    OnClick="@(CreateUomDefineAsync)">
+                    Save
+                    </MudButton>
+                    </MudItem> *@
                     <MudItem sm="5" lg="3">
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.AddCircle"
                                    OnClick="@(CreateUomDefineAsync)">
-                            Save
-                        </MudButton>
-                    </MudItem>
-                    <MudItem sm="5" lg="3">
-                        <MudButton Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   StartIcon="@Icons.Material.Filled.AddCircle"
-                                   OnClick="@(Add)">
-                            Add
+                            @(_uomDefineModel.Id == 0 ? "Add" : "Update")
                         </MudButton>
                     </MudItem>
                 </MudGrid>
@@ -125,13 +128,13 @@
                 <MudTd DataLabel="Actions">
                     <MudButton StartIcon="@Icons.Material.Filled.ModeEdit"
                                Color="Color.Warning"
-                               OnClick="@(() => { })"
+                               OnClick="@(() => UpdateAsync(context.Id))"
                                Variant="Variant.Filled"
                                Size="Size.Small">Update</MudButton>
 
                     <MudButton StartIcon="@Icons.Material.Filled.Delete"
                                Color="Color.Error"
-                               OnClick="@(() => { })"
+                               OnClick="@(() => Delete(context.Id))"
                                Variant="Variant.Filled"
                                Size="Size.Small">Delete</MudButton>
                 </MudTd>
@@ -171,6 +174,11 @@
     {
         NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
         NavbarStateService.OnStateChange += StateHasChanged;
+        await GetUomDefineAsync();
+    }
+
+    private async Task GetUomDefineAsync()
+    {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
         var response = await httpClient.GetFromJsonAsync<List<UnitOfMeasureDefineDto>>($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define-uom-group-id/{Id}");
 
@@ -187,68 +195,97 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task CreateUomDefineAsync()
+    private void Delete(int id)
     {
-        var jsonPayload = JsonConvert.SerializeObject(_uomDefines.Select(i => new CreateUomDefineDto
+        var parameters = new DialogParameters<DeleteDialog<UnitOfMeasureDefineDto>>
             {
-                AltQty = i.AltQty,
-                Factor = i.Factor,
-                AltUomId = i.AltUomId,
-                BaseQty = i.BaseQty,
-                BaseUomId = i.BaseUomId,
-                GroupUomId = Id,
-                Id = i.Id
-            }));
+                {
+                    x => x.OnRefresh,
+                    new EventCallbackFactory().Create(this, async () => await GetUomDefineAsync())
+                },
+                {
+                    x => x.Endpoint, $"unitOfMeasure/uom-define/{id}"
+                }
+            };
 
-        Console.WriteLine(jsonPayload);
+        var options = new DialogOptions { CloseButton = true };
 
-        var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+        Dialog.Show<DeleteDialog<UnitOfMeasureDefineDto>>("Delete", parameters, options);
+    }
+
+    private async Task UpdateAsync(int id)
+    {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-        var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define", requestContent);
-
-        switch (response.StatusCode)
+        var res = await httpClient.GetFromJsonAsync<UnitOfMeasureDefineDto>($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define/{id}");
+        if (res is not null)
         {
-            case HttpStatusCode.BadRequest:
-                {
-                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                    break;
-                }
-            case HttpStatusCode.Unauthorized:
-                {
-                    NavigationManager.NavigateTo(RouteName.Login);
-                    break;
-                }
-            case HttpStatusCode.OK:
-                {
-                    NavigationManager.NavigateTo(RouteName.UomGroup);
-                    break;
-                }
-            default:
-                _apiErrorMessages = "Something went wrong, Please try after some time";
-                break;
+            Console.WriteLine(JsonConvert.SerializeObject(res));
+
+            _uomDefineModel = new CreateUomDefineDto
+            {
+                AltQty = res.AltQty,
+                AltUomId = res.AltUomId,
+                BaseQty = res.BaseQty,
+                BaseUomId = res.BaseUomId,
+                Factor = res.Factor,
+                GroupUomId = res.GroupUomId,
+                Id = res.Id
+            };
+            _uomDefine = new UnitOfMeasureDefineDto
+            {
+                AltUomName = res.AltUomName,
+                BaseUomName = res.BaseUomName
+            };
         }
     }
 
-    private async Task Add()
+    private async Task CreateUomDefineAsync()
     {
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            _uomDefine.AltQty = _uomDefineModel.AltQty;
-            _uomDefine.AltUomId = _uomDefineModel.AltUomId;
-            _uomDefine.Factor = _uomDefineModel.Factor;
-            _uomDefine.BaseQty = _uomDefineModel.BaseQty;
-            _uomDefine.BaseUomId = _uomDefineModel.BaseUomId;
-            _uomDefine.Factor = _uomDefineModel.Factor;
+            _uomDefineModel.GroupUomId = Id;
+            var jsonPayload = JsonConvert.SerializeObject(_uomDefineModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-            _uomDefines.Add(_uomDefine);
-            _uomDefineModel = new CreateUomDefineDto();
-            _uomDefine = new UnitOfMeasureDefineDto();
+            HttpResponseMessage? response;
+
+            if (_uomDefineModel.Id <= 0)
+            {
+                response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define-one", requestContent);
+            }
+            else
+            {
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define", requestContent);
+            }
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                        break;
+                    }
+                case HttpStatusCode.Unauthorized:
+                    {
+                        NavigationManager.NavigateTo(RouteName.Login);
+                        break;
+                    }
+                case HttpStatusCode.OK:
+                    {
+                        await GetUomDefineAsync();
+                        _uomDefineModel = new CreateUomDefineDto();
+                        _uomDefine = new UnitOfMeasureDefineDto();
+                        break;
+                    }
+                default:
+                    _apiErrorMessages = "Something went wrong, Please try after some time";
+                    break;
+            }
         }
     }
-
-
 
     protected void SelectUomList(bool isBaseUom)
     {

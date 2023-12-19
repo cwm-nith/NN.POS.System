@@ -24,12 +24,20 @@
     [Parameter]
     public string? Content { get; set; }
 
+    [Parameter]
+    public EventCallback? OnRefresh { get; set; }
+
     private async Task Submit()
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
         await httpClient.DeleteAsync($"{Setting.PrefixEndpoint}{Endpoint}").ConfigureAwait(false);
         MudDialog?.Close(DialogResult.Ok(true));
         Table?.ReloadServerData();
+        if (OnRefresh is not null)
+        {
+            await OnRefresh?.InvokeAsync()!;
+        }
+        
     }
     private void Cancel() => MudDialog?.Cancel();
 }
