@@ -19,7 +19,7 @@ public class CreateUomDefineCommandHandler(IUnitOfMeasureDefineRepository reposi
             CreatedAt = DateTime.UtcNow,
             Factor = r.Factor,
             GroupUomId = r.GroupUomId,
-            Id = 0,
+            Id = r.Id,
             IsDeleted = false
         }).ToList(), cancellationToken);
     }

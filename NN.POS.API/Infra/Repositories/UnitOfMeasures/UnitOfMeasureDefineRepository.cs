@@ -17,7 +17,7 @@ public class UnitOfMeasureDefineRepository(
 
     public async Task CreateManyAsync(List<UnitOfMeasureDefineDto> dto, CancellationToken cancellationToken = default)
     {
-        await writeDbRepository.AddManyAsync(dto.Select(i => i.ToTable()).ToList(), cancellationToken);
+        await writeDbRepository.UpdateManyAsync(dto.Select(i => i.ToTable()).ToList(), cancellationToken);
     }
 
     public async Task UpdateAsync(CreateUomDefineDto dto, int id, CancellationToken cancellationToken = default)
