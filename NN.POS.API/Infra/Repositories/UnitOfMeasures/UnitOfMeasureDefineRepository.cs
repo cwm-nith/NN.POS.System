@@ -43,8 +43,14 @@ public class UnitOfMeasureDefineRepository(
 
     public async Task<UnitOfMeasureDefineDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
+        var context = readDbRepository.Context;
         var uom = await readDbRepository.FirstOrDefaultAsync(i => i.Id == id && !i.IsDeleted, cancellationToken) ?? throw new UnitOfMeasureDefineNotFoundException(id);
-        return uom.ToDto();
+        var baseUom = context.UnitOfMeasures!.FirstOrDefault(i => !i.IsDeleted && i.Id == uom.BaseUomId);
+        var altUom = context.UnitOfMeasures!.FirstOrDefault(i => !i.IsDeleted && i.Id == uom.AltUomId);
+        var dto = uom.ToDto();
+        dto.BaseUomName = baseUom?.Name;
+        dto.AltUomName = altUom?.Name;
+        return dto;
     }
 
     public async Task<IEnumerable<UnitOfMeasureDefineDto>> GetUomDefineByGroupIdAsync(int groupId)

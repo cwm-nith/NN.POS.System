@@ -113,10 +113,24 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpPost("uom-define-one")]
+    public async Task<ActionResult> CreateUomDefineOne([FromBody] CreateUomDefineDto body)
+    {
+        await mediator.Send(new CreateUomDefineOneCommand(body));
+        return Ok();
+    }
+
     [HttpPut("uom-define/{id}")]
     public async Task<ActionResult> UpdateUomDefine(int id, [FromBody] CreateUomDefineDto body)
     {
         await mediator.Send(new UpdateUomDefineCommand(id, body));
+        return Ok();
+    }
+
+    [HttpDelete("uom-define/{id}")]
+    public async Task<ActionResult> DeleteUomDefine(int id)
+    {
+        await mediator.Send(new DeleteUomDefineCommand(id));
         return Ok();
     }
 
