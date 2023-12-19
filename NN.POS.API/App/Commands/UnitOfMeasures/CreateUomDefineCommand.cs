@@ -3,7 +3,7 @@ using NN.POS.Model.Dtos.UnitOfMeasures;
 
 namespace NN.POS.API.App.Commands.UnitOfMeasures;
 
-public class CreateUomDefineCommand(CreateUomDefineDto dto) : IRequest
+public class CreateUomDefineCommand(List<CreateUomDefineDto> dto) : IRequest
 {
-    public CreateUomDefineDto Dto => dto;
+    public List<CreateUomDefineDto> Dto => dto;
 }

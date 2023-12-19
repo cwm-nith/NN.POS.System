@@ -4,8 +4,10 @@ public class UnitOfMeasureDefineDto : IBaseDto
 {
     public int Id { get; set; }
     public int BaseUomId { get; set; }
+    public string? BaseUomName { get; set; }
 
     public int AltUomId { get; set; }
+    public string? AltUomName { get; set; }
 
     public int GroupUomId { get; set; }
 

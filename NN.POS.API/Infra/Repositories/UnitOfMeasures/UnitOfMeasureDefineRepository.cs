@@ -15,6 +15,11 @@ public class UnitOfMeasureDefineRepository(
         await writeDbRepository.AddAsync(dto.ToTable(), cancellationToken);
     }
 
+    public async Task CreateManyAsync(List<UnitOfMeasureDefineDto> dto, CancellationToken cancellationToken = default)
+    {
+        await writeDbRepository.UpdateManyAsync(dto.Select(i => i.ToTable()).ToList(), cancellationToken);
+    }
+
     public async Task UpdateAsync(CreateUomDefineDto dto, int id, CancellationToken cancellationToken = default)
     {
         var uomDefine = await GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
@@ -38,7 +43,39 @@ public class UnitOfMeasureDefineRepository(
 
     public async Task<UnitOfMeasureDefineDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
+        var context = readDbRepository.Context;
         var uom = await readDbRepository.FirstOrDefaultAsync(i => i.Id == id && !i.IsDeleted, cancellationToken) ?? throw new UnitOfMeasureDefineNotFoundException(id);
-        return uom.ToDto();
+        var baseUom = context.UnitOfMeasures!.FirstOrDefault(i => !i.IsDeleted && i.Id == uom.BaseUomId);
+        var altUom = context.UnitOfMeasures!.FirstOrDefault(i => !i.IsDeleted && i.Id == uom.AltUomId);
+        var dto = uom.ToDto();
+        dto.BaseUomName = baseUom?.Name;
+        dto.AltUomName = altUom?.Name;
+        return dto;
+    }
+
+    public async Task<IEnumerable<UnitOfMeasureDefineDto>> GetUomDefineByGroupIdAsync(int groupId)
+    {
+        var context = readDbRepository.Context;
+
+        var list = (from du in context.UnitOfMeasureDefines!.Where(i => !i.IsDeleted)
+                join uomGroup in context.UnitOfMeasureGroups!.Where(i => !i.IsDeleted && i.Id == groupId) on du.GroupUomId equals uomGroup.Id
+                join buo in context.UnitOfMeasures!.Where(i => !i.IsDeleted) on du.BaseUomId equals buo.Id
+                join auo in context.UnitOfMeasures!.Where(i => !i.IsDeleted) on du.AltUomId equals auo.Id
+                select new UnitOfMeasureDefineDto
+                {
+                    AltQty = du.AltQty,
+                    BaseQty = du.BaseQty,
+                    Factor = du.Factor,
+                    AltUomId = du.AltUomId,
+                    AltUomName = auo.Name,
+                    BaseUomId = buo.Id,
+                    BaseUomName = buo.Name,
+                    CreatedAt = du.CreatedAt,
+                    GroupUomId = uomGroup.Id,
+                    Id = du.Id,
+                    IsDeleted = du.IsDeleted
+                }
+            );
+        return await Task.FromResult(list);
     }
 }

@@ -4,13 +4,12 @@ using NN.POS.Model.Dtos.UnitOfMeasures;
 
 namespace NN.POS.API.App.Commands.UnitOfMeasures.Handlers;
 
-public class CreateUomDefineCommandHandler(IUnitOfMeasureDefineRepository repository) : IRequestHandler<CreateUomDefineCommand>
+public class CreateUomDefineOneCommandHandler(IUnitOfMeasureDefineRepository repository) : IRequestHandler<CreateUomDefineOneCommand>
 {
-    public async Task Handle(CreateUomDefineCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateUomDefineOneCommand request, CancellationToken cancellationToken)
     {
-        var req = request.Dto;
-
-        await repository.CreateManyAsync(req.Select(r => new UnitOfMeasureDefineDto
+        var r = request.Dto;
+        await repository.CreateAsync(new UnitOfMeasureDefineDto
         {
             AltQty = r.AltQty,
             AltUomId = r.AltUomId,
@@ -21,6 +20,6 @@ public class CreateUomDefineCommandHandler(IUnitOfMeasureDefineRepository reposi
             GroupUomId = r.GroupUomId,
             Id = r.Id,
             IsDeleted = false
-        }).ToList(), cancellationToken);
+        }, cancellationToken);
     }
 }

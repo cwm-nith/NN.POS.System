@@ -107,9 +107,16 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
     #region UOM Define
 
     [HttpPost("uom-define")]
-    public async Task<ActionResult> CreateUomDefine([FromBody] CreateUomDefineDto body)
+    public async Task<ActionResult> CreateUomDefine([FromBody] List<CreateUomDefineDto> body)
     {
         await mediator.Send(new CreateUomDefineCommand(body));
+        return Ok();
+    }
+
+    [HttpPost("uom-define-one")]
+    public async Task<ActionResult> CreateUomDefineOne([FromBody] CreateUomDefineDto body)
+    {
+        await mediator.Send(new CreateUomDefineOneCommand(body));
         return Ok();
     }
 
@@ -120,10 +127,24 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpDelete("uom-define/{id}")]
+    public async Task<ActionResult> DeleteUomDefine(int id)
+    {
+        await mediator.Send(new DeleteUomDefineCommand(id));
+        return Ok();
+    }
+
     [HttpGet("uom-define/{id}")]
     public async Task<ActionResult> GetUomDefineById(int id)
     {
         var data = await mediator.Send(new GetUomDefineByIdQuery(id));
+        return Ok(data);
+    }
+
+    [HttpGet("uom-define-uom-group-id/{id}")]
+    public async Task<ActionResult<IEnumerable<UnitOfMeasureDefineDto>>> GetUomDefineByUomGroupId(int id)
+    {
+        var data = await mediator.Send(new GetUomDefineByUomGroupIdQuery(id));
         return Ok(data);
     }
 

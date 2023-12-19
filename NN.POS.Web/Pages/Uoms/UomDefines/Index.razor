@@ -1,0 +1,318 @@
+﻿@attribute [Route($"{RouteName.UomDefine}/{{Id:int}}")]
+
+@using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Pages.Uoms.Dialogs
+@using NN.POS.Web.Validations.Uoms.UomDefines
+@using Newtonsoft.Json
+@implements IDisposable
+
+<MudContainer Class="mt-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.UomGroup">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       Color="Color.Primary">
+                Back
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+
+
+    <MudCard>
+        <MudForm Model="_uomDefineModel" Validation="_uomDefineValidator.ValidateValue" @ref="_form">
+            <MudCardContent>
+                <MudContainer Class="text-center">
+                    <MudChip Color="Color.Primary" Class="p-4">
+                        <MudText Typo="Typo.h6">Unit of Measure Define</MudText>
+                    </MudChip>
+                </MudContainer>
+                <MudDivider Class="mt-2" />
+                
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefine.BaseUomName"
+                                      For="@(() => _uomDefine.BaseUomName)"
+                                      Immediate="true"
+                                      ReadOnly="true"
+                                      Label="Base Uom"
+                                      Class="cursor-pointer"
+                                      Disabled="@(_uomDefineModel.Id > 0)"
+                                      @onclick="@(() => SelectUomList(true))" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefineModel.BaseQty"
+                                      For="@(() => _uomDefineModel.BaseQty)"
+                                      Immediate="true"
+                                      Label="Base Qty" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefine.AltUomName"
+                                      For="@(() => _uomDefine.AltUomName)"
+                                      Immediate="true"
+                                      ReadOnly="true"
+                                      Label="Alt Uom"
+                                      Class="cursor-pointer"
+                                      @onclick="@(() => SelectUomList(false))" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefineModel.AltQty"
+                                      For="@(() => _uomDefineModel.AltQty)"
+                                      Immediate="true"
+                                      Label="Alt Qty" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Spacing="5" Justify="Justify.Center">
+                    <MudItem lg="5" sm="12" xs="12">
+                        <MudTextField @bind-Value="_uomDefineModel.Factor"
+                                      For="@(() => _uomDefineModel.Factor)"
+                                      Immediate="true"
+                                      Label="Factor" />
+                    </MudItem>
+                    <MudItem lg="5" sm="12" xs="12" />
+                </MudGrid>
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudGrid Justify="Justify.SpaceBetween">
+                    @* <MudItem sm="5" lg="3">
+                    <MudButton Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    StartIcon="@Icons.Material.Filled.AddCircle"
+                    OnClick="@(CreateUomDefineAsync)">
+                    Save
+                    </MudButton>
+                    </MudItem> *@
+                    <MudItem sm="5" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="@(CreateUomDefineAsync)">
+                            @(_uomDefineModel.Id == 0 ? "Add" : "Update")
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+    @if (!string.IsNullOrEmpty(_apiErrorMessages))
+    {
+        <MudChip Class="d-flex justify-center" Color="Color.Error">
+            <p>@_apiErrorMessages</p>
+        </MudChip>
+    }
+    <MudTable Items="@_uomDefines"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              @ref="_table">
+
+        <HeaderContent>
+            <MudTh>Alt Uom</MudTh>
+            <MudTh>Base Uom</MudTh>
+            <MudTh>Alt Qty</MudTh>
+            <MudTh>Base Qty</MudTh>
+            <MudTh>Factor</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Alt Uom">@context.AltUomName</MudTd>
+                <MudTd DataLabel="Base Uom">@context.BaseUomName</MudTd>
+                <MudTd DataLabel="Alt Qty">@context.AltQty.ToString("N3", CultureInfo.InvariantCulture)</MudTd>
+                <MudTd DataLabel="Base Qty">@context.BaseQty.ToString("N3", CultureInfo.InvariantCulture)</MudTd>
+                <MudTd DataLabel="Factor">@context.Factor.ToString("N3", CultureInfo.InvariantCulture)</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudButton StartIcon="@Icons.Material.Filled.ModeEdit"
+                               Color="Color.Warning"
+                               OnClick="@(() => UpdateAsync(context.Id))"
+                               Variant="Variant.Filled"
+                               Size="Size.Small">Update</MudButton>
+
+                    <MudButton StartIcon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               OnClick="@(() => Delete(context.Id))"
+                               Variant="Variant.Filled"
+                               Size="Size.Small">Delete</MudButton>
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+
+    @code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private CreateUomDefineDto _uomDefineModel = new();
+    private UnitOfMeasureDefineDto _uomDefine = new();
+    private List<UnitOfMeasureDefineDto> _uomDefines = new();
+
+    readonly CreateUomDefineValidation _uomDefineValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+    private MudTable<UnitOfMeasureDefineDto>? _table;
+    // private string _searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
+        NavbarStateService.OnStateChange += StateHasChanged;
+        await GetUomDefineAsync();
+    }
+
+    private async Task GetUomDefineAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var response = await httpClient.GetFromJsonAsync<List<UnitOfMeasureDefineDto>>($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define-uom-group-id/{Id}");
+
+        Console.WriteLine(JsonConvert.SerializeObject(response));
+
+        if (response is not null)
+        {
+            _uomDefines = response;
+        }
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private void Delete(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog<UnitOfMeasureDefineDto>>
+            {
+                {
+                    x => x.OnRefresh,
+                    new EventCallbackFactory().Create(this, async () => await GetUomDefineAsync())
+                },
+                {
+                    x => x.Endpoint, $"unitOfMeasure/uom-define/{id}"
+                }
+            };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<DeleteDialog<UnitOfMeasureDefineDto>>("Delete", parameters, options);
+    }
+
+    private async Task UpdateAsync(int id)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var res = await httpClient.GetFromJsonAsync<UnitOfMeasureDefineDto>($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define/{id}");
+        if (res is not null)
+        {
+            Console.WriteLine(JsonConvert.SerializeObject(res));
+
+            _uomDefineModel = new CreateUomDefineDto
+            {
+                AltQty = res.AltQty,
+                AltUomId = res.AltUomId,
+                BaseQty = res.BaseQty,
+                BaseUomId = res.BaseUomId,
+                Factor = res.Factor,
+                GroupUomId = res.GroupUomId,
+                Id = res.Id
+            };
+            _uomDefine = new UnitOfMeasureDefineDto
+            {
+                AltUomName = res.AltUomName,
+                BaseUomName = res.BaseUomName
+            };
+        }
+    }
+
+    private async Task CreateUomDefineAsync()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            _uomDefineModel.GroupUomId = Id;
+            var jsonPayload = JsonConvert.SerializeObject(_uomDefineModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            HttpResponseMessage? response;
+
+            if (_uomDefineModel.Id <= 0)
+            {
+                response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define-one", requestContent);
+            }
+            else
+            {
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define", requestContent);
+            }
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                        break;
+                    }
+                case HttpStatusCode.Unauthorized:
+                    {
+                        NavigationManager.NavigateTo(RouteName.Login);
+                        break;
+                    }
+                case HttpStatusCode.OK:
+                    {
+                        await GetUomDefineAsync();
+                        _uomDefineModel = new CreateUomDefineDto();
+                        _uomDefine = new UnitOfMeasureDefineDto();
+                        break;
+                    }
+                default:
+                    _apiErrorMessages = "Something went wrong, Please try after some time";
+                    break;
+            }
+        }
+    }
+
+    protected void SelectUomList(bool isBaseUom)
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                i => i.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    if (isBaseUom)
+                    {
+                        _uomDefine.BaseUomId = uom.Id;
+                        _uomDefineModel.BaseUomId = uom.Id;
+                        _uomDefine.BaseUomName = uom.Name;
+                    }
+                    else
+                    {
+                        _uomDefine.AltUomId = uom.Id;
+                        _uomDefineModel.AltUomId = uom.Id;
+                        _uomDefine.AltUomName = uom.Name;
+                    }
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        Dialog.Show<SelectUomDialog>("Select Uom", parameters, options);
+    }
+}

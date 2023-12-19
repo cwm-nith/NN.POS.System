@@ -38,8 +38,17 @@ public class WriteDbRepository<TTable>(DataDbContext context, ILogger? logger) :
                 await using var t = await Context.Database.BeginTransactionAsync(cancellation);
                 foreach (var entity in entities)
                 {
-                    Context.Entry(entity).State = EntityState.Modified;
-                    Context.Set<TTable>().Update(entity);
+                    if (entity.Id > 0)
+                    {
+                        Context.Entry(entity).State = EntityState.Modified;
+                        Context.Set<TTable>().Update(entity);
+                    }
+                    else
+                    {
+                        Context.Entry(entity).State = EntityState.Added;
+                        await Context.Set<TTable>().AddAsync(entity, cancellation);
+                    }
+                    
                     await Context.SaveChangesAsync(cancellation);
                 }
 

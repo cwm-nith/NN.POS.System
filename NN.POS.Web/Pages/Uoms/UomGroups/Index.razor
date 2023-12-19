@@ -48,6 +48,12 @@
                                OnClick="@(() => DeleteUom(context.Id))"
                                Variant="Variant.Filled"
                                Size="Size.Small">Delete</MudButton>
+
+                    <MudButton StartIcon="@Icons.Material.Filled.Info"
+                               Color="Color.Info"
+                               OnClick="@(() => GotoDefinePage(context.Id))"
+                               Variant="Variant.Filled"
+                               Size="Size.Small">Define</MudButton>
                 </MudTd>
             </RowTemplate>
 
@@ -76,6 +82,11 @@
     public void Dispose()
     {
         NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private void GotoDefinePage(int id)
+    {
+        NavigationManager.NavigateTo($"{RouteName.UomDefine}/{id}");
     }
 
     private async Task<TableData<UnitOfMeasureGroupDto>> ServerReload(TableState state)

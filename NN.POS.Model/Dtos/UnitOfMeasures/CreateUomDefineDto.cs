@@ -2,6 +2,7 @@
 
 public class CreateUomDefineDto : IBaseDto
 {
+    public int Id { get; set; }
     public int BaseUomId { get; set; }
 
     public int AltUomId { get; set; }
