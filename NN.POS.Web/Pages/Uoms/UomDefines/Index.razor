@@ -3,6 +3,8 @@
 @using NN.POS.Model.Dtos.UnitOfMeasures
 @using NN.POS.Web.Pages.Uoms.Dialogs
 @using NN.POS.Web.Validations.Uoms.UomDefines
+@using JsonSerializer = System.Text.Json.JsonSerializer
+@using Newtonsoft.Json
 @implements IDisposable
 
 <MudContainer Class="mt-2">
@@ -166,10 +168,27 @@
     private MudTable<UnitOfMeasureDefineDto>? _table;
     // private string _searchString = "";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
         NavbarStateService.OnStateChange += StateHasChanged;
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var response = await httpClient.GetFromJsonAsync<UnitOfMeasureDefineDto>($"{Setting.PrefixEndpoint}unitOfMeasure/uom-define/{Id}");
+        
+        Console.WriteLine(JsonConvert.SerializeObject(response));
+        
+        if (response is not null)
+        {
+            _uomDefineModel = new CreateUomDefineDto
+            {
+                Factor = response.Factor,
+                AltQty = response.AltQty,
+                AltUomId = response.AltUomId,
+                BaseQty = response.BaseQty,
+                BaseUomId = response.BaseUomId,
+                GroupUomId = response.GroupUomId
+            };
+        }
     }
 
     public void Dispose()

@@ -8,4 +8,5 @@ public interface IUnitOfMeasureDefineRepository : IRepository
     Task UpdateAsync(CreateUomDefineDto dto, int id, CancellationToken cancellationToken = default);
     Task DeleteAsync(int id, CancellationToken cancellationToken = default);
     Task<UnitOfMeasureDefineDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<UnitOfMeasureDefineDto>> GetUomDefineByGroupIdAsync(int groupId);
 }
