@@ -127,5 +127,12 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok(data);
     }
 
+    [HttpGet("uom-define-uom-group-id/{id}")]
+    public async Task<ActionResult> GetUomDefineByUomGroupId(int id)
+    {
+        var data = await mediator.Send(new GetUomDefineByUomGroupIdQuery(id));
+        return Ok(data);
+    }
+
     #endregion
 }
