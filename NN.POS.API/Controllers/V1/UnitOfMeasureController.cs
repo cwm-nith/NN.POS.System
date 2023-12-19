@@ -107,7 +107,7 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
     #region UOM Define
 
     [HttpPost("uom-define")]
-    public async Task<ActionResult> CreateUomDefine([FromBody] CreateUomDefineDto body)
+    public async Task<ActionResult> CreateUomDefine([FromBody] List<CreateUomDefineDto> body)
     {
         await mediator.Send(new CreateUomDefineCommand(body));
         return Ok();
@@ -128,7 +128,7 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
     }
 
     [HttpGet("uom-define-uom-group-id/{id}")]
-    public async Task<ActionResult> GetUomDefineByUomGroupId(int id)
+    public async Task<ActionResult<IEnumerable<UnitOfMeasureDefineDto>>> GetUomDefineByUomGroupId(int id)
     {
         var data = await mediator.Send(new GetUomDefineByUomGroupIdQuery(id));
         return Ok(data);

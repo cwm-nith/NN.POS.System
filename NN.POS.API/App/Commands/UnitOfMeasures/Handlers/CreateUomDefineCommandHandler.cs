@@ -8,9 +8,9 @@ public class CreateUomDefineCommandHandler(IUnitOfMeasureDefineRepository reposi
 {
     public async Task Handle(CreateUomDefineCommand request, CancellationToken cancellationToken)
     {
-        var r = request.Dto;
+        var req = request.Dto;
 
-        await repository.CreateAsync(new UnitOfMeasureDefineDto
+        await repository.CreateManyAsync(req.Select(r => new UnitOfMeasureDefineDto
         {
             AltQty = r.AltQty,
             AltUomId = r.AltUomId,
@@ -21,6 +21,6 @@ public class CreateUomDefineCommandHandler(IUnitOfMeasureDefineRepository reposi
             GroupUomId = r.GroupUomId,
             Id = 0,
             IsDeleted = false
-        }, cancellationToken);
+        }).ToList(), cancellationToken);
     }
 }
