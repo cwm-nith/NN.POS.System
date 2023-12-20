@@ -13,11 +13,19 @@ public class CreateItemMasterDataDto : IBaseDto
     public decimal StockCommit { get; set; }
     public decimal StockOnHand { get; set; }
     public int BaseUomId { get; set; }
+    public string? BaseUomName { get; set; }
+
     public int PriceListId { get; set; }
+    
     public int UomGroupId { get; set; }
+    public string? UomGroupName { get; set; }
+    
     public int? PurchaseUomId { get; set; }
+    public string? PurchaseUomName { get; set; }
     public int? SaleUomId { get; set; }
-    public int? InventoryUoMid { get; set; }
+    public string? SaleUomName { get; set; }
+    public int? InventoryUomId { get; set; }
+    public string? InventoryUomName { get; set; }
     public int WarehouseId { get; set; }
 
     /// <summary>

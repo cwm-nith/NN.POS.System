@@ -10,15 +10,15 @@ public class CreateItemMasterDataValidator : BaseValidator<CreateItemMasterDataD
     {
         RuleFor(i => i.Name)
             .NotEmpty()
-            .WithMessage("Name cannot be null!");
+            .WithMessage("Name cannot be empty!");
 
         RuleFor(i => i.Code)
             .NotEmpty()
-            .WithMessage("Code cannot be null!");
+            .WithMessage("Code cannot be empty!");
 
         RuleFor(i => i.Barcode)
             .NotEmpty()
-            .WithMessage("Barcode cannot be null!");
+            .WithMessage("Barcode cannot be empty!");
 
         RuleFor(i => i.PriceListId)
             .Must(i => i > 0)
@@ -30,13 +30,13 @@ public class CreateItemMasterDataValidator : BaseValidator<CreateItemMasterDataD
 
         RuleFor(i => i.Process)
             .NotEmpty()
-            .WithMessage("Process cannot be null!")
+            .WithMessage("Process cannot be empty!")
             .Must(i => i != ItemMasterDataProcess.None)
             .WithMessage("Please select Process");
 
         RuleFor(i => i.Type)
             .NotEmpty()
-            .WithMessage("Type cannot be null!")
+            .WithMessage("Type cannot be empty!")
             .Must(i => i != ItemMasterDataType.None)
             .WithMessage("Please select Type");
 

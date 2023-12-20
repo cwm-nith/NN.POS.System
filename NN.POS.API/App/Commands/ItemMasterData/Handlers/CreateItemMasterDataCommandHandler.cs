@@ -26,7 +26,7 @@ public class CreateItemMasterDataCommandHandler(IItemMasterDataRepository reposi
             UomGroupId = r.UomGroupId,
             PurchaseUomId = r.PurchaseUomId,
             SaleUomId = r.SaleUomId,
-            InventoryUoMid = r.InventoryUoMid,
+            InventoryUoMid = r.InventoryUomId,
             WarehouseId = r.WarehouseId,
             Type = r.Type,
             IsInventory = r.IsInventory,
