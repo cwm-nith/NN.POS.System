@@ -4,10 +4,10 @@
     <MudNavGroup Title="Contacts" Expanded="@(NavbarStateService.Value == RouteName.Contact)">
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Supplier))"
                     Href="@RouteName.Supplier">Suppliers</MudNavLink>
-    
+
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Customers))"
                     Href="@RouteName.Customers">Customers</MudNavLink>
-    
+
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.CustomerGroups))"
                     Href="@RouteName.CustomerGroups">Customer Groups</MudNavLink>
     </MudNavGroup>
@@ -36,6 +36,14 @@
 
 @code
 {
+
+    protected override void OnInitialized()
+    {
+        
+        NavigationManager.LocationChanged += (_, _) => StateHasChanged();
+        base.OnInitialized();
+    }
+
     private string GetActiveClass(bool isActive)
     {
         return isActive ? "active" : "";
