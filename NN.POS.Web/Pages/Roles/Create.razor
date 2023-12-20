@@ -86,6 +86,7 @@
     protected override void OnInitialized()
     {
         NavbarStateService.SetExpend(RouteName.UsersManagement);
+        NavbarStateService.SetExpend(RouteName.Roles);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 
