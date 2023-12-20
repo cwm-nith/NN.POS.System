@@ -87,7 +87,7 @@
 
     protected override void OnInitialized()
     {
-        NavbarStateService.SetExpendAsync(RouteName.Products);
+        NavbarStateService.SetExpend(RouteName.Products);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 

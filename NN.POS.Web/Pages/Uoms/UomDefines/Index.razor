@@ -172,7 +172,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        NavbarStateService.SetExpendAsync(RouteName.UnitOfMeasure);
+        NavbarStateService.SetExpend(RouteName.UnitOfMeasure);
         NavbarStateService.OnStateChange += StateHasChanged;
         await GetUomDefineAsync();
     }
