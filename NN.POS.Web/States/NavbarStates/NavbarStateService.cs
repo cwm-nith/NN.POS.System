@@ -13,10 +13,13 @@ public class NavbarStateService : INavbarStateService
         NotifyStateChanged();
     }
 
-    public void SetActive(string value)
+    public void SetActive(string value, bool isNotify = false)
     {
         ActiveValue = value;
-        NotifyStateChanged();
+        if (isNotify)
+        {
+            NotifyStateChanged();
+        }
     }
 
     /// <summary>
