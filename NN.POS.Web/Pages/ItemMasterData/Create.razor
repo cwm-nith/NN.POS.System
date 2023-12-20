@@ -256,7 +256,7 @@
     protected override void OnInitialized()
     {
         NavbarStateService.SetExpend(RouteName.Products);
-        NavbarStateService.SetExpend(RouteName.ItemMasterData);
+        NavbarStateService.SetActive(RouteName.ItemMasterData);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 

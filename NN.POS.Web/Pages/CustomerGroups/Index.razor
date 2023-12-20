@@ -60,7 +60,7 @@
     protected override void OnInitialized()
     {
         NavbarStateService.SetExpend(RouteName.Contact);
-        NavbarStateService.SetExpend(RouteName.CustomerGroups);
+        NavbarStateService.SetActive(RouteName.CustomerGroups);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 
