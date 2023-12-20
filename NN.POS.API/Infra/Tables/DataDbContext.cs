@@ -28,6 +28,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
         base.OnModelCreating(modelBuilder);
         modelBuilder
             .AddPriceListTableRelationship()
-            .ItemMasterDataTableDbConfig();
+            .ItemMasterDataTableDbConfig()
+            .BusinessPartnerConfig();
     }
 }
