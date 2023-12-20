@@ -2,20 +2,42 @@
 @using NN.POS.Web.Constants
 <MudNavMenu>
     <MudNavGroup Title="Contacts" Expanded="@(NavbarStateService.Value == RouteName.Contact)">
-        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Supplier">Suppliers</MudNavLink>
-        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Customers">Customers</MudNavLink>
-        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.CustomerGroups">Customer Groups</MudNavLink>
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Supplier))"
+                    Href="@RouteName.Supplier">Suppliers</MudNavLink>
+    
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Customers))"
+                    Href="@RouteName.Customers">Customers</MudNavLink>
+    
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.CustomerGroups))"
+                    Href="@RouteName.CustomerGroups">Customer Groups</MudNavLink>
     </MudNavGroup>
+
     <MudNavGroup Title="User Management" Expanded="@(NavbarStateService.Value == RouteName.UsersManagement)">
-        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Users">Users</MudNavLink>
-        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Roles">Roles</MudNavLink>
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Users))" 
+                    Href="@RouteName.Users">Users</MudNavLink>
+
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Roles))" 
+                    Href="@RouteName.Roles">Roles</MudNavLink>
+
     </MudNavGroup>
+
     <MudNavGroup Title="Products" Expanded="@(NavbarStateService.Value is RouteName.Products or RouteName.UnitOfMeasure)">
-        <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.ItemMasterData">Item Master Data</MudNavLink>
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.ItemMasterData))" 
+                    Href="@RouteName.ItemMasterData">Item Master Data</MudNavLink>
 
         <MudNavGroup Title="Unit of Measure" Expanded="@(NavbarStateService.Value == RouteName.UnitOfMeasure)">
-            <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.Uom">Uom</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Href="@RouteName.UomGroup">Uom Group</MudNavLink>
+            <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Uom))" 
+                        Href="@RouteName.Uom">Uom</MudNavLink>
+            <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.UomGroup))" 
+                        Href="@RouteName.UomGroup">Uom Group</MudNavLink>
         </MudNavGroup>
     </MudNavGroup>
 </MudNavMenu>
+
+@code
+{
+    private string GetActiveClass(bool isActive)
+    {
+        return isActive ? "active" : "";
+    }
+}

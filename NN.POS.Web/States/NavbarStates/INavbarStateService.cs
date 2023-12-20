@@ -3,5 +3,7 @@
 public interface INavbarStateService : IStateBaseService
 {
     string Value { get; }
-    void SetExpendAsync(string value);
+    string ActiveValue { get; }
+    void SetExpend(string value);
+    void SetActive(string value);
 };
