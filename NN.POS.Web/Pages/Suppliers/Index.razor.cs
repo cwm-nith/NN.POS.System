@@ -15,7 +15,8 @@ public partial class Index : IDisposable
 
     protected override void OnInitialized()
     {
-        NavbarStateService.SetExpendAsync(RouteName.Contact);
+        NavbarStateService.SetExpend(RouteName.Contact);
+        NavbarStateService.SetActive(RouteName.Supplier);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 

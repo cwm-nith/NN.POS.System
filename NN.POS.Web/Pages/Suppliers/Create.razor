@@ -100,7 +100,7 @@
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.AddCircle"
-                                   OnClick="CreateSupplyAsync">
+                                   OnClick="@CreateSupplyAsync">
                             Save
                         </MudButton>
                     </MudItem>
@@ -125,7 +125,8 @@
 
     protected override void OnInitialized()
     {
-        NavbarStateService.SetExpendAsync(RouteName.Contact);
+        NavbarStateService.SetExpend(RouteName.Contact);
+        NavbarStateService.SetActive(RouteName.Supplier);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 

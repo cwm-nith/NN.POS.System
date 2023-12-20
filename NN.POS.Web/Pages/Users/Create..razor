@@ -101,7 +101,8 @@
 
     protected override void OnInitialized()
     {
-        NavbarStateService.SetExpendAsync(RouteName.UsersManagement);
+        NavbarStateService.SetExpend(RouteName.UsersManagement);
+        NavbarStateService.SetActive(RouteName.Users);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 
