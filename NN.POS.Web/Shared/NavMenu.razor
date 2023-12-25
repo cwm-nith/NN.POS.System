@@ -22,13 +22,17 @@
     </MudNavGroup>
 
     <MudNavGroup Title="Products" Expanded="@(NavbarStateService.Value is RouteName.Products or RouteName.UnitOfMeasure)">
-        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.ItemMasterData))" 
+        
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.PriceList))"
+                    Href="@RouteName.PriceList">Price Lists</MudNavLink>
+
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.ItemMasterData))"
                     Href="@RouteName.ItemMasterData">Item Master Data</MudNavLink>
 
         <MudNavGroup Title="Unit of Measure" Expanded="@(NavbarStateService.Value == RouteName.UnitOfMeasure)">
-            <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Uom))" 
+            <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Uom))"
                         Href="@RouteName.Uom">Uom</MudNavLink>
-            <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.UomGroup))" 
+            <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.UomGroup))"
                         Href="@RouteName.UomGroup">Uom Group</MudNavLink>
         </MudNavGroup>
     </MudNavGroup>

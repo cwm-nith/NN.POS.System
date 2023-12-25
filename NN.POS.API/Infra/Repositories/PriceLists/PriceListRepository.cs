@@ -41,6 +41,12 @@ public class PriceListRepository(
     public async Task<PagedResult<PriceListDto>> GetPageAsync(GetPagePriceListQuery q, CancellationToken cancellationToken = default)
     {
         var data = await readDbRepository.BrowseAsync(i => !i.IsDeleted, q, cancellationToken);
+
+        //var context = readDbRepository.Context;
+
+        //var d = from pl in context.PriceLists
+        //        join ccy in context.C
+
         return data.Map(i => i.ToDto());
     }
 }
