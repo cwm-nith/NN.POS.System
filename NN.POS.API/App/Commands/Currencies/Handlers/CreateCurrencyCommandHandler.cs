@@ -13,8 +13,8 @@ public class CreateCurrencyCommandHandler(ICurrencyRepository repository) : IReq
             CreatedAt = DateTime.UtcNow,
             Id = 0,
             IsDeleted = false,
-            Name = request.Dto.Name,
-            Symbol = request.Dto.Symbol
+            Name = request.Dto.Name ?? "",
+            Symbol = request.Dto.Symbol ?? ""
         }, cancellationToken);
     }
 }

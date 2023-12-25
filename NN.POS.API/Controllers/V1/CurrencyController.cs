@@ -13,4 +13,12 @@ public class CurrencyController(IMediator mediator) : BaseApiController
         await mediator.Send(new CreateCurrencyCommand(body));
         return Ok();
     }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] CreateCurrencyDto body)
+    {
+        await mediator.Send(new UpdateCurrencyCommand(id, body));
+        return Ok();
+    }
+
 }
