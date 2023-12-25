@@ -8,5 +8,5 @@ public class PriceListDto : IBaseDto
     public int CcyId { get; set; }
     public DateTime CreatedAt { get; set; }
 
-    public List<PriceListDetailDto> PriceListDetails { get; set; } = new();
+    public List<PriceListDetailDto> PriceListDetails { get; set; } = [];
 }
