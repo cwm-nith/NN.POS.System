@@ -41,4 +41,11 @@ public class CurrencyController(IMediator mediator) : BaseApiController
         });
         return Ok(data);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<CurrencyDto>> GetById(int id)
+    {
+        var data = await mediator.Send(new GetCurrencyByIdQuery(id));
+        return Ok(data);
+    }
 }
