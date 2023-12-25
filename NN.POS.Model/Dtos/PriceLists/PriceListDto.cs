@@ -6,6 +6,7 @@ public class PriceListDto : IBaseDto
     public string Name { get; set; } = string.Empty;
     public bool IsDeleted { get; set; }
     public int CcyId { get; set; }
+    public string CcyName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 
     public List<PriceListDetailDto> PriceListDetails { get; set; } = [];
