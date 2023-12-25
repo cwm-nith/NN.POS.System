@@ -11,6 +11,7 @@ using NN.POS.API.Infra.Repositories.Roles;
 using NN.POS.API.Infra.Repositories.UnitOfMeasures;
 using NN.POS.API.Infra.Repositories.Users;
 using NN.POS.API.Infra.Tables.BusinessPartners;
+using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
@@ -34,6 +35,7 @@ public static class Extensions
         services.AddPostgresRepository<PriceListTable>();
         services.AddPostgresRepository<PriceListDetailTable>();
         services.AddPostgresRepository<ItemMasterDataTable>();
+        services.AddPostgresRepository<CurrencyTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
