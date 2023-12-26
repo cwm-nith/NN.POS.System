@@ -2,7 +2,7 @@
 @using NN.POS.Web.Constants
 <MudNavMenu>
     
-    <MudNavGroup Title="Products" Expanded="@(NavbarStateService.Value is RouteName.Settings)">
+    <MudNavGroup Title="Settings" Expanded="@(NavbarStateService.Value is RouteName.Settings)">
 
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Currency))"
                     Href="@RouteName.Currency">Currency</MudNavLink>
