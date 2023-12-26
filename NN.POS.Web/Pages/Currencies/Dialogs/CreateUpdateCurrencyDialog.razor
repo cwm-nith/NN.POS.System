@@ -1,0 +1,122 @@
+﻿@using NN.POS.Web.Validations.Currencies
+@using NN.POS.Model.Dtos.Currencies
+@namespace NN.POS.Web.Pages.Currencies
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="_currencyModel" Validation="_currencyValidator.ValidateValue" @ref="_form">
+            <MudGrid Spacing="5" Justify="Justify.Center">
+                <MudItem lg="5" sm="12" xs="12">
+                    <MudTextField @bind-Value="_currencyModel.Name"
+                                  For="@(() => _currencyModel.Name)"
+                                  Immediate="true"
+                                  Label="Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"/>
+                </MudItem>
+                <MudItem lg="5" sm="12" xs="12">
+                    <MudTextField @bind-Value="_currencyModel.Symbol"
+                                  For="@(() => _currencyModel.Symbol)"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Label="Symbol" />
+                </MudItem>
+            </MudGrid>
+            
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Class="d-flex justify-center" Color="Color.Error">
+                    <p>@_apiErrorMessages</p>
+                </MudChip>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton Color="Color.Error" 
+                   Variant="Variant.Filled" 
+                   OnClick="@CreateUpdate">@(Data?.Id > 0 ? "Update" : "Create")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public CurrencyDto? Data { get; set; }
+
+    [Parameter]
+    public MudTable<CurrencyDto>? Table { get; set; }
+
+    private CreateCurrencyDto _currencyModel = new();
+
+    readonly CreateUpdateCurrencyValidation _currencyValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+
+    protected override void OnParametersSet()
+    {
+        _currencyModel = new CreateCurrencyDto
+            {
+                Name = Data?.Name,
+                Symbol = Data?.Symbol
+            };
+        base.OnParametersSet();
+    }
+
+    private async Task CreateUpdate()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_currencyModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            HttpResponseMessage response;
+
+            if (Data?.Id > 0)
+            {
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}currency/{Data?.Id}", requestContent);
+            }
+            else
+            {
+                response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}currency", requestContent);
+            }
+
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
+                        break;
+                    }
+                case HttpStatusCode.Unauthorized:
+                    {
+                        NavigationManager.NavigateTo(RouteName.Login);
+                        break;
+                    }
+                case HttpStatusCode.OK:
+                    {
+                        MudDialog?.Close(DialogResult.Ok(true));
+                        Table?.ReloadServerData();
+                        break;
+                    }
+                default:
+                    _apiErrorMessages = "Something went wrong, Please try after some time";
+                    break;
+            }
+
+        }
+
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+}

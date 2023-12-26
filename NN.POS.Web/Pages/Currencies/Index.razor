@@ -8,7 +8,7 @@
         <MudButton Variant="Variant.Filled"
                    StartIcon="@Icons.Material.Filled.AddCircle"
                    Color="Color.Primary"
-                   OnClick="@(() => { })">
+                   OnClick="@Create">
             Create
         </MudButton>
     </MudPaper>
@@ -38,7 +38,7 @@
                 <MudTd DataLabel="Display Name">@context.Symbol</MudTd>
                 <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
-                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))"></MudIconButton>
                 </MudTd>
             </RowTemplate>
@@ -87,9 +87,35 @@
             };
     }
 
-    protected void Update(int id)
+    protected void Create()
     {
-        NavigationManager.NavigateTo($"{RouteName.UpdateRole}/{id}");
+        var parameters = new DialogParameters<CreateUpdateCurrencyDialog>
+        {
+            {
+                x => x.Table, _table
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<CreateUpdateCurrencyDialog>("Create", parameters, options);
+    }
+
+    protected void Update(CurrencyDto data)
+    {
+        var parameters = new DialogParameters<CreateUpdateCurrencyDialog>
+        {
+            {
+                x => x.Table, _table
+            },
+            {
+                x => x.Data, data
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<CreateUpdateCurrencyDialog>("Update", parameters, options);
     }
 
     private void Delete(int id)
