@@ -1,6 +1,13 @@
 ﻿@using NN.POS.Web.Extensions
 @using NN.POS.Web.Constants
 <MudNavMenu>
+    
+    <MudNavGroup Title="Products" Expanded="@(NavbarStateService.Value is RouteName.Settings)">
+
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Currency))"
+                    Href="@RouteName.Currency">Currency</MudNavLink>
+    </MudNavGroup>
+
     <MudNavGroup Title="Contacts" Expanded="@(NavbarStateService.Value == RouteName.Contact)">
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Supplier))"
                     Href="@RouteName.Supplier">Suppliers</MudNavLink>
@@ -13,16 +20,16 @@
     </MudNavGroup>
 
     <MudNavGroup Title="User Management" Expanded="@(NavbarStateService.Value == RouteName.UsersManagement)">
-        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Users))" 
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Users))"
                     Href="@RouteName.Users">Users</MudNavLink>
 
-        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Roles))" 
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Roles))"
                     Href="@RouteName.Roles">Roles</MudNavLink>
 
     </MudNavGroup>
 
     <MudNavGroup Title="Products" Expanded="@(NavbarStateService.Value is RouteName.Products or RouteName.UnitOfMeasure)">
-        
+
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.PriceList))"
                     Href="@RouteName.PriceList">Price Lists</MudNavLink>
 
