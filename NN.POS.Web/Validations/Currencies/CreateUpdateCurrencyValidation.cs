@@ -3,9 +3,9 @@ using NN.POS.Model.Dtos.Currencies;
 
 namespace NN.POS.Web.Validations.Currencies;
 
-public class CreateUpdateValidation : BaseValidator<CreateCurrencyDto>
+public class CreateUpdateCurrencyValidation : BaseValidator<CreateCurrencyDto>
 {
-    public CreateUpdateValidation()
+    public CreateUpdateCurrencyValidation()
     {
         RuleFor(i => i.Name)
             .NotEmpty()
