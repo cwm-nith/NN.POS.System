@@ -48,4 +48,8 @@ public static class RouteName
     public const string UomDefine = $"{Products}/{UnitOfMeasure}/define";
 
     public const string PriceList = $"{Products}/price-list";
+
+    public const string Settings = "/settings";
+
+    public const string Currency = $"{Settings}/currency";
 }
