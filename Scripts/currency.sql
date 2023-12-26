@@ -8,7 +8,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[currencies](
-	[id] [int] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](150) NOT NULL,
 	[symbol] [nvarchar](10) NOT NULL,
 	[is_deleted] [bit] NOT NULL,
