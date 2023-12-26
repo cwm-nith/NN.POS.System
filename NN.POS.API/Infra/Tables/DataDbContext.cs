@@ -7,6 +7,7 @@ using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
 using NN.POS.API.Infra.Tables.User;
+using NN.POS.API.Infra.Tables.Warehouses;
 
 namespace NN.POS.API.Infra.Tables;
 
@@ -23,7 +24,8 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<UnitOfMeasureGroupTable>? UnitOfMeasureGroups { get; set; }
     public DbSet<UnitOfMeasureTable>? UnitOfMeasures { get; set; }
     public DbSet<ItemMasterDataTable>? ItemMasterData { get; set; }
-    public DbSet<CurrencyTable>? Currencies{ get; set; }
+    public DbSet<CurrencyTable>? Currencies { get; set; }
+    public DbSet<WarehouseTable>? Warehouses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
