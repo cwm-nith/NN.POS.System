@@ -24,7 +24,7 @@ ON [dbo].[currencies] ([name]);
 
 
 CREATE INDEX symbol_currencies
-ON [dbo].[currencies] ([name]);
+ON [dbo].[currencies] ([symbol]);
 
 GO
 
