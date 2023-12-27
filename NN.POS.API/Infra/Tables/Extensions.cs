@@ -1,15 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NN.POS.API.Core.IRepositories;
-using NN.POS.API.Core.IRepositories.BusinessPartners;
-using NN.POS.API.Core.IRepositories.PriceLists;
-using NN.POS.API.Core.IRepositories.Roles;
-using NN.POS.API.Core.IRepositories.UnitOfMeasures;
-using NN.POS.API.Core.IRepositories.Users;
-using NN.POS.API.Infra.Repositories.BusinessPartners;
-using NN.POS.API.Infra.Repositories.PriceLists;
-using NN.POS.API.Infra.Repositories.Roles;
-using NN.POS.API.Infra.Repositories.UnitOfMeasures;
-using NN.POS.API.Infra.Repositories.Users;
 using NN.POS.API.Infra.Tables.BusinessPartners;
 using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
@@ -17,6 +7,7 @@ using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
 using NN.POS.API.Infra.Tables.User;
+using NN.POS.API.Infra.Tables.Warehouses;
 
 namespace NN.POS.API.Infra.Tables;
 
@@ -36,6 +27,7 @@ public static class Extensions
         services.AddPostgresRepository<PriceListDetailTable>();
         services.AddPostgresRepository<ItemMasterDataTable>();
         services.AddPostgresRepository<CurrencyTable>();
+        services.AddPostgresRepository<WarehouseTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
