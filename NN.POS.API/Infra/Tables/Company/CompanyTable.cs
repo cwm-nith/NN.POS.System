@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NN.POS.API.Infra.Tables.Company;
 
-[Table("company")]
+[Table("companies")]
 public class CompanyTable : BaseTable
 {
     [Column("name"), StringLength(150)]
@@ -18,7 +18,7 @@ public class CompanyTable : BaseTable
     [Column("local_ccy_id")]
     public int LocalCcyId { get; set; }
 
-    [StringLength(50), Column("location")]
+    [StringLength(200), Column("location")]
     public string? Location { get; set; }
 
     [StringLength(220), Column("address")] 
