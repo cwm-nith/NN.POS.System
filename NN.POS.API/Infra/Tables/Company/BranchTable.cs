@@ -37,7 +37,7 @@ public static class BranchExtensions
         Name = b.Name
     };
 
-    public static BranchTable ToDto(this BranchDto b) => new()
+    public static BranchTable ToTable(this BranchDto b) => new()
     {
         Address = b.Address,
         CompanyId = b.CompanyId,
