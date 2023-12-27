@@ -14,4 +14,11 @@ public class BranchController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(query);
         return Ok(data);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<BranchDto>> GetById(int id)
+    {
+        var data = await mediator.Send(new GetBranchByIdQuery(id));
+        return Ok(data);
+    }
 }
