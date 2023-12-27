@@ -19,4 +19,11 @@ public class CompanyController(IMediator mediator) : BaseApiController
         });
         return Ok(data);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<CompanyDto>> GetById(int id)
+    {
+        var data = await mediator.Send(new GetCompanyByIdQuery(id));
+        return Ok(data);
+    }
 }
