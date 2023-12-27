@@ -19,4 +19,11 @@ public class WarehouseController(IMediator mediator) : BaseApiController
         });
         return Ok(data);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<WarehouseDto>> GetById(int id)
+    {
+        var data = await mediator.Send(new GetWarehouseByIdQuery(id));
+        return Ok(data);
+    }
 }
