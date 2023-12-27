@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NN.POS.API.Core.IRepositories;
 using NN.POS.API.Infra.Tables.BusinessPartners;
+using NN.POS.API.Infra.Tables.Company;
 using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PriceLists;
@@ -28,6 +29,7 @@ public static class Extensions
         services.AddPostgresRepository<ItemMasterDataTable>();
         services.AddPostgresRepository<CurrencyTable>();
         services.AddPostgresRepository<WarehouseTable>();
+        services.AddPostgresRepository<CompanyTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>

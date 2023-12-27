@@ -26,6 +26,7 @@
     <Folder Include="Infra\QueryHandlers\UserRoles\" />
     <Folder Include="Infra\Repositories\Roles\" />
     <Folder Include="Infra\Services\" />
+    <Folder Include="wwwroot\contents\company\" />
   </ItemGroup>
 
   <ItemGroup>
