@@ -36,4 +36,11 @@ public class BranchController(IMediator mediator) : BaseApiController
         await mediator.Send(new UpdateBranchCommand(id, body));
         return Ok();
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await mediator.Send(new DeleteBranchCommand(id));
+        return Ok();
+    }
 }
