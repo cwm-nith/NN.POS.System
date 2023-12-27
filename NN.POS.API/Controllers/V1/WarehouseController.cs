@@ -41,4 +41,11 @@ public class WarehouseController(IMediator mediator) : BaseApiController
         await mediator.Send(new UpdateWarehouseCommand(id, body));
         return Ok();
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await mediator.Send(new DeleteWarehouseCommand(id));
+        return Ok();
+    }
 }
