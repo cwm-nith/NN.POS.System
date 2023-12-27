@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using NN.POS.API.App.Commands.Company;
 using NN.POS.API.App.Queries.Company;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.Company;
@@ -26,4 +27,12 @@ public class CompanyController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(new GetCompanyByIdQuery(id));
         return Ok(data);
     }
+
+    [HttpPost]
+    public async Task<ActionResult> Create([FromForm] CreateCompanyDto body)
+    {
+        await mediator.Send(new CreateCompanyCommand(body));
+        return Ok();
+    }
+
 }
