@@ -35,10 +35,10 @@ public class WarehouseController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpPut("{id:int")]
-    public async Task<ActionResult> Update([FromBody] UpdateWarehouseDto body)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] UpdateWarehouseDto body)
     {
-        await mediator.Send(new UpdateWarehouseCommand(body));
+        await mediator.Send(new UpdateWarehouseCommand(id, body));
         return Ok();
     }
 }
