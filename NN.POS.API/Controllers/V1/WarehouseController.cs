@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using NN.POS.API.App.Commands.Warehouses;
 using NN.POS.API.App.Queries.Warehouses;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.Warehouses;
@@ -25,5 +26,12 @@ public class WarehouseController(IMediator mediator) : BaseApiController
     {
         var data = await mediator.Send(new GetWarehouseByIdQuery(id));
         return Ok(data);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateWarehouseDto body)
+    {
+        await mediator.Send(new CreateWarehouseCommand(body));
+        return Ok();
     }
 }
