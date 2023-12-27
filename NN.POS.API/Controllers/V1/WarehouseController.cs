@@ -34,4 +34,11 @@ public class WarehouseController(IMediator mediator) : BaseApiController
         await mediator.Send(new CreateWarehouseCommand(body));
         return Ok();
     }
+
+    [HttpPut("{id:int")]
+    public async Task<ActionResult> Update([FromBody] UpdateWarehouseDto body)
+    {
+        await mediator.Send(new UpdateWarehouseCommand(body));
+        return Ok();
+    }
 }
