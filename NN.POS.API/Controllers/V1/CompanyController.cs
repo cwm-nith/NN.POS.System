@@ -49,4 +49,11 @@ public class CompanyController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpPut("logo/{id:int}")]
+    public async Task<ActionResult> UpdateLogo(int id, [FromForm] UpdateCompanyLogoDto body)
+    {
+        await mediator.Send(new UpdateCompanyLogoCommand(id, body));
+        return Ok();
+    }
+
 }
