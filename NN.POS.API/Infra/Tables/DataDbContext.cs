@@ -28,6 +28,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<CurrencyTable>? Currencies { get; set; }
     public DbSet<WarehouseTable>? Warehouses { get; set; }
     public DbSet<CompanyTable>? Companies { get; set; }
+    public DbSet<BranchTable>? Branches { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
