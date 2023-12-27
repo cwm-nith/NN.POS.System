@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using NN.POS.API.App.Commands.Company;
 using NN.POS.API.App.Queries.Company;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.Company.Branches;
@@ -20,5 +21,12 @@ public class BranchController(IMediator mediator) : BaseApiController
     {
         var data = await mediator.Send(new GetBranchByIdQuery(id));
         return Ok(data);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateBranchDto body)
+    {
+        await mediator.Send(new CreateBranchCommand(body));
+        return Ok();
     }
 }
