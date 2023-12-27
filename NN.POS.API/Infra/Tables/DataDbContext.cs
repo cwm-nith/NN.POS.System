@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NN.POS.API.Infra.DbConfigs;
 using NN.POS.API.Infra.Tables.BusinessPartners;
+using NN.POS.API.Infra.Tables.Company;
 using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PriceLists;
@@ -26,6 +27,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<ItemMasterDataTable>? ItemMasterData { get; set; }
     public DbSet<CurrencyTable>? Currencies { get; set; }
     public DbSet<WarehouseTable>? Warehouses { get; set; }
+    public DbSet<CompanyTable>? Companies { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
