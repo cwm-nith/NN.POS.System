@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace NN.POS.Model.Dtos.Company;
+﻿namespace NN.POS.Model.Dtos.Company;
 
 public class CompanyDto : IBaseDto
 {
