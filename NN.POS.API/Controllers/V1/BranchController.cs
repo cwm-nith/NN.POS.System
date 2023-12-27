@@ -29,4 +29,11 @@ public class BranchController(IMediator mediator) : BaseApiController
         await mediator.Send(new CreateBranchCommand(body));
         return Ok();
     }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] CreateBranchDto body)
+    {
+        await mediator.Send(new UpdateBranchCommand(id, body));
+        return Ok();
+    }
 }
