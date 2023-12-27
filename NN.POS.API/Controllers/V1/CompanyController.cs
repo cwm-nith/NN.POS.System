@@ -35,4 +35,11 @@ public class CompanyController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] UpdateCompanyDto body)
+    {
+        await mediator.Send(new UpdateCompanyCommand(id, body));
+        return Ok();
+    }
+
 }
