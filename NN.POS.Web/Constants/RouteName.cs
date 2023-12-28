@@ -52,4 +52,9 @@ public static class RouteName
     public const string Settings = "/settings";
 
     public const string Currency = $"{Settings}/currency";
+    
+    public const string Company = $"{Settings}/company";
+    public const string CompanyCreate = $"{Settings}/company/create";
+    public const string CompanyUpdate = $"{Settings}/company/update";
+
 }
