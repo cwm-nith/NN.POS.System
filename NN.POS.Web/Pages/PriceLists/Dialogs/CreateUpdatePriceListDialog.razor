@@ -17,7 +17,7 @@
                                   Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem lg="5" sm="12" xs="12">
-                    @if (Data?.Id > 0)
+                    @if (Data.Id > 0)
                     {
                         <MudTextField @bind-Value="Data.CcyName"
                                       Immediate="true"
@@ -28,7 +28,7 @@
                     }
                     else
                     {
-                        <MudTextField @bind-Value="_currencyName"
+                        <MudTextField @bind-Value="Data.CcyName"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
@@ -58,7 +58,7 @@
         <MudButton OnClick="@(Cancel)">Cancel</MudButton>
         <MudButton Color="Color.Error"
                    Variant="Variant.Filled"
-                   OnClick="@CreateUpdate">@(Data?.Id > 0 ? "Update" : "Create")</MudButton>
+                   OnClick="@CreateUpdate">@(Data.Id > 0 ? "Update" : "Create")</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -66,13 +66,11 @@
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
 
-    [Parameter]
-    public PriceListDto? Data { get; set; }
+    [Parameter] 
+    public PriceListDto Data { get; set; } = new();
 
     [Parameter]
     public MudTable<PriceListDto>? Table { get; set; }
-
-    private string? _currencyName;
 
     private CreatePriceListDto _priceListModel = new();
 
@@ -87,8 +85,8 @@
     {
         _priceListModel = new CreatePriceListDto
             {
-                Name = Data?.Name ?? "",
-                CcyId = Data?.CcyId ?? 0
+                Name = Data.Name,
+                CcyId = Data.CcyId
             };
         base.OnParametersSet();
     }
@@ -102,7 +100,10 @@
                     x => x.OnRefresh,
                     new EventCallbackFactory().Create<CurrencyDto>(this, (ccy) =>
                     {
-                        _currencyName = ccy.Name;
+                        Data = new PriceListDto
+                        {
+                            CcyName = ccy.Name
+                        };
                         _priceListModel.CcyId = ccy.Id;
                     })
                 }
@@ -126,9 +127,9 @@
 
             HttpResponseMessage response;
 
-            if (Data?.Id > 0)
+            if (Data.Id > 0)
             {
-                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}priceList/{Data?.Id}", requestContent);
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}priceList/{Data.Id}", requestContent);
             }
             else
             {
