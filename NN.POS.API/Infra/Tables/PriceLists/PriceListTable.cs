@@ -30,12 +30,13 @@ public static class PriceListTableExtensions
         PriceListDetails = p.PriceListDetails.Select(i => i.ToTable()).ToList()
     };
 
-    public static PriceListDto ToDto(this PriceListTable p) => new()
+    public static PriceListDto ToDto(this PriceListTable p, string? ccyName = null) => new()
     {
         Id = p.Id,
         CcyId = p.CcyId,
         CreatedAt = p.CreatedAt,
         Name = p.Name,
+        CcyName = ccyName,
         IsDeleted = p.IsDeleted,
         PriceListDetails = p.PriceListDetails.Select(i => i.ToDto()).ToList()
     };
