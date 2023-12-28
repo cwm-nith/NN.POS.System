@@ -1,0 +1,153 @@
+﻿@using NN.POS.Model.Dtos.PriceLists
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Validations.PriceLists
+@using NN.POS.Model.Dtos.Currencies
+@namespace NN.POS.Web.Pages.PriceLists
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="_priceListModel" Validation="_priceListValidator.ValidateValue" @ref="_form">
+            <MudGrid Spacing="5" Justify="Justify.Center">
+                <MudItem lg="5" sm="12" xs="12">
+                    <MudTextField @bind-Value="_priceListModel.Name"
+                                  For="@(() => _priceListModel.Name)"
+                                  Immediate="true"
+                                  Label="Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem lg="5" sm="12" xs="12">
+                    @if (Data?.Id > 0)
+                    {
+                        <MudTextField @bind-Value="Data.CcyName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Currency"
+                                      ReadOnly="true" />
+                    }
+                    else
+                    {
+                        <MudTextField @bind-Value="_currencyName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseCurrency"
+                                      AdornmentAriaLabel="Choose Currency"
+                                      ReadOnly="true"
+                                      Label="Currency" />
+
+                        <MudTextField @bind-Value="_priceListModel.CcyId"
+                                      For="@(() => _priceListModel.CcyId)"
+                                      Style="display: none" />
+                    }
+                </MudItem>
+            </MudGrid>
+
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    @_apiErrorMessages
+                </MudChip>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Filled"
+                   OnClick="@CreateUpdate">@(Data?.Id > 0 ? "Update" : "Create")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public PriceListDto? Data { get; set; }
+
+    [Parameter]
+    public MudTable<PriceListDto>? Table { get; set; }
+
+    private string? _currencyName;
+
+    private CreatePriceListDto _priceListModel = new();
+
+    readonly CreateUpdatePriceListValidation _priceListValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+
+    protected override void OnParametersSet()
+    {
+        _priceListModel = new CreatePriceListDto
+            {
+                Name = Data?.Name ?? "",
+                CcyId = Data?.CcyId ?? 0
+            };
+        base.OnParametersSet();
+    }
+
+
+    private void ChooseCurrency()
+    {
+        var parameters = new DialogParameters<SelectCurrencyDialog>
+            {
+                {
+                    x => x.OnRefresh,
+                    new EventCallbackFactory().Create<CurrencyDto>(this, (ccy) =>
+                    {
+                        _currencyName = ccy.Name;
+                        _priceListModel.CcyId = ccy.Id;
+                    })
+                }
+            };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectCurrencyDialog>("Currency", parameters, options);
+
+    }
+
+    private async Task CreateUpdate()
+    {
+        await _form?.Validate()!;
+
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_priceListModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            HttpResponseMessage response;
+
+            if (Data?.Id > 0)
+            {
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}priceList/{Data?.Id}", requestContent);
+            }
+            else
+            {
+                response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}priceList", requestContent);
+            }
+
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
+                () =>
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                },
+                () =>
+                {
+                    MudDialog?.Close(DialogResult.Ok(true));
+                    Table?.ReloadServerData();
+                });
+        }
+
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+}

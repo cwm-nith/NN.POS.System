@@ -67,29 +67,16 @@
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}unitOfMeasure/{Data?.Id}", requestContent);
 
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                {
-                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                    break;
-                }
-                case HttpStatusCode.Unauthorized:
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
+                () =>
                 {
                     NavigationManager.NavigateTo(RouteName.Login);
-                    break;
-                }
-                case HttpStatusCode.OK:
+                },
+                () =>
                 {
                     MudDialog?.Close(DialogResult.Ok(true));
                     Table?.ReloadServerData();
-                    break;
-                }
-                default:
-                    _apiErrorMessages = "Something went wrong, Please try after some time";
-                    break;
-            }
+                });
 
         }
         

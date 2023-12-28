@@ -6,13 +6,12 @@
 <MudContainer Class="mt-2">
 
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
-        <MudLink Href="@RouteName.CreateRole">
-            <MudButton Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.AddCircle"
-                       Color="Color.Primary">
-                Create
-            </MudButton>
-        </MudLink>
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.AddCircle"
+                   Color="Color.Primary"
+                   OnClick="@Create">
+            Create
+        </MudButton>
     </MudPaper>
 
     <MudTable ServerData="@(new Func<TableState, Task<TableData<PriceListDto>>>(ServerReload))"
@@ -40,7 +39,7 @@
                 <MudTd DataLabel="Display Name">@context.CcyName</MudTd>
                 <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
-                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context.Id))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))"></MudIconButton>
                 </MudTd>
             </RowTemplate>
@@ -80,7 +79,7 @@
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
         var path = $"{Setting.PrefixEndpoint}priceList?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
-        
+
         var data = await httpClient.GetFromJsonAsync<PagedResult<PriceListDto>>(path);
 
         return new TableData<PriceListDto>
@@ -90,9 +89,35 @@
             };
     }
 
-    protected void Update(int id)
+    protected void Create()
     {
-        NavigationManager.NavigateTo($"{RouteName.UpdateRole}/{id}");
+        var parameters = new DialogParameters<CreateUpdatePriceListDialog>
+        {
+            {
+                x => x.Table, _table
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<CreateUpdatePriceListDialog>("Create", parameters, options);
+    }
+
+    protected void Update(PriceListDto data)
+    {
+        var parameters = new DialogParameters<CreateUpdatePriceListDialog>
+        {
+            {
+                x => x.Table, _table
+            },
+            {
+                x => x.Data, data
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<CreateUpdatePriceListDialog>("Update", parameters, options);
     }
 
     private void Delete(int id)
