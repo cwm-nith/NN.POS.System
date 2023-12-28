@@ -6,7 +6,6 @@ using NN.POS.API.Infra.Tables;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.PriceLists;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace NN.POS.API.Infra.Repositories.PriceLists;
 
@@ -45,8 +44,8 @@ public class PriceListRepository(
         var context = readDbRepository.Context;
         var data = await (from pl in context.PriceLists!
                 .Where(i => !i.IsDeleted && EF.Functions.Like(i.Name, $"%{q.Search}%"))
-                       join ccy in context.Currencies on pl.CcyId equals ccy.Id
-                       select pl.ToDto()).PaginateAsync(q, cancellationToken);
+                       join ccy in context.Currencies! on pl.CcyId equals ccy.Id
+                       select pl.ToDto(ccy.Name)).PaginateAsync(q, cancellationToken);
 
         return data;
     }

@@ -15,7 +15,7 @@ public class PriceListTable : BaseTable
     [Column("ccy_id")]
     public int CcyId { get; set; }
 
-    public List<PriceListDetailTable> PriceListDetails { get; set; } = new();
+    public List<PriceListDetailTable> PriceListDetails { get; set; } = [];
 }
 
 public static class PriceListTableExtensions
