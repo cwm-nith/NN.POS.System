@@ -30,6 +30,7 @@
         </ToolBarContent>
         <HeaderContent>
             <MudTh>Id</MudTh>
+            <MudTh>Logo</MudTh>
             <MudTh>Name</MudTh>
             <MudTh>Price List</MudTh>
             <MudTh>System Currency</MudTh>
@@ -41,6 +42,11 @@
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Logo">
+                    <MudAvatar>
+                        <MudImage Src="@($"{Setting.ApiUrl}/contents/company/{context.Logo}")" Alt="@context.Name"></MudImage>
+                    </MudAvatar>
+                </MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
                 <MudTd DataLabel="Price List">@context.PriceListName</MudTd>
                 <MudTd DataLabel="System Currency">@context.SysCcyName</MudTd>
@@ -91,10 +97,10 @@
         var data = await httpClient.GetFromJsonAsync<PagedResult<CompanyDto>>(path);
 
         return new TableData<CompanyDto>
-        {
-            Items = data?.Items,
-            TotalItems = Convert.ToInt32(data?.TotalResults)
-        };
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
     }
 
     protected void UpdatePage(int id)
