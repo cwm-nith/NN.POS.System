@@ -13,5 +13,4 @@
   <ItemGroup>
     <ProjectReference Include="..\NN.POS.Common\NN.POS.Common.csproj" />
   </ItemGroup>
-
 </Project>
