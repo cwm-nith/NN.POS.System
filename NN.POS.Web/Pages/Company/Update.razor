@@ -1,10 +1,11 @@
 ﻿@using NN.POS.Model.Dtos.Company
-@using NN.POS.Web.Validations.Company
 @using NN.POS.Model.Dtos.Currencies
 @using NN.POS.Model.Dtos.PriceLists
 @using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Validations.Company
 @using Newtonsoft.Json
-@attribute [Route(RouteName.CompanyCreate)]
+
+@attribute [Route($"{RouteName.CompanyUpdate}/{{Id:int}}")]
 
 <MudContainer Class="p-2">
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
@@ -21,7 +22,7 @@
             <MudCardContent>
                 <MudContainer Class="text-center">
                     <MudChip Color="Color.Primary" Class="p-4">
-                        <MudText Typo="Typo.h6">Create Company</MudText>
+                        <MudText Typo="Typo.h6">Update Company</MudText>
                     </MudChip>
                 </MudContainer>
                 <MudDivider Class="mt-2" />
@@ -36,7 +37,7 @@
                                       Label="Name" />
                     </MudItem>
                     <MudItem lg="6" xs="12" sm="12">
-                        <MudTextField @bind-Value="_priceListName"
+                        <MudTextField @bind-Value="@(_priceListName)"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
@@ -54,7 +55,7 @@
 
                 <MudGrid Justify="Justify.Center">
                     <MudItem lg="6" xs="12" sm="12">
-                        <MudTextField @bind-Value="_sysCcyName"
+                        <MudTextField @bind-Value="@(_sysCcyName)"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
@@ -69,7 +70,7 @@
                                       Style="display: none" />
                     </MudItem>
                     <MudItem lg="6" xs="12" sm="12">
-                        <MudTextField @bind-Value="_localCcyName"
+                        <MudTextField @bind-Value="@(_localCcyName)"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
@@ -86,53 +87,21 @@
                 </MudGrid>
 
                 <MudGrid Justify="Justify.Center">
-
-                    <MudItem lg="6" sm="12" xs="12">
-                        <MudStack Style="width: 100%">
-                            <MudFileUpload T="IBrowserFile"
-                                           OnFilesChanged="OnInputFileChanged"
-                                           Hidden="@false"
-                                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                                           InputStyle="opacity:0"
-                                           @ondragenter="@SetDragClass"
-                                           @ondragleave="@ClearDragClass"
-                                           @ondragend="@ClearDragClass">
-                                <ButtonTemplate>
-                                    <MudPaper Height="250px"
-                                              Outlined="true"
-                                              Class="@_dragClass">
-                                        <MudText Typo="Typo.body1">
-                                            Drag and drop files here or click
-                                        </MudText>
-                                        <MudImage Src="@(_fileImage)"
-                                                  Class="w-100 border-0"
-                                                  Style="height: 90%"
-                                                  ObjectFit="ObjectFit.Contain" />
-                                    </MudPaper>
-                                </ButtonTemplate>
-                            </MudFileUpload>
-                        </MudStack>
+                    <MudItem lg="6" xs="12" sm="12">
+                        <MudTextField @bind-Value="_comModel.Address"
+                                      For="@(() => _comModel.Address)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Address" />
                     </MudItem>
-
-                    <MudItem lg="6" sm="12" xs="12">
-                        <MudGrid>
-                            <MudItem lg="6" xs="12" sm="12">
-                                <MudTextField @bind-Value="_comModel.Address"
-                                              For="@(() => _comModel.Address)"
-                                              Immediate="true"
-                                              Variant="Variant.Outlined"
-                                              Margin="Margin.Dense"
-                                              Label="Address" />
-                            </MudItem>
-                            <MudItem lg="6" xs="12" sm="12">
-                                <MudTextField @bind-Value="_comModel.Location"
-                                              For="@(() => _comModel.Location)"
-                                              Immediate="true"
-                                              Variant="Variant.Outlined"
-                                              Margin="Margin.Dense"
-                                              Label="Location" />
-                            </MudItem>
-                        </MudGrid>
+                    <MudItem lg="6" xs="12" sm="12">
+                        <MudTextField @bind-Value="_comModel.Location"
+                                      For="@(() => _comModel.Location)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Location" />
                     </MudItem>
                 </MudGrid>
 
@@ -152,8 +121,8 @@
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.AddCircle"
-                                   OnClick="@CreateCompanyAsync">
-                            Add
+                                   OnClick="@UpdateCompanyAsync">
+                            Update
                         </MudButton>
                     </MudItem>
                 </MudGrid>
@@ -163,15 +132,9 @@
 </MudContainer>
 
 @code {
-    private readonly CreateCompanyDto _comModel = new();
+    private UpdateCompanyDto _comModel = new();
 
-    private readonly CreateCompanyValidation _comValidator = new();
-
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
-    private string _dragClass = DefaultDragClass;
-    private string? _fileImage;
-
-    private readonly FileData _logoFile = new();
+    private readonly UpdateCompanyValidation _comValidator = new();
 
     private string? _priceListName;
     private string? _sysCcyName;
@@ -180,6 +143,32 @@
     MudForm? _form;
 
     string? _apiErrorMessages;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var data = await httpClient.GetFromJsonAsync<CompanyDto>($"{Setting.PrefixEndpoint}company/{Id}");
+
+        if (data is not null)
+        {
+            _priceListName = data.PriceListName;
+            _sysCcyName = data.SysCcyName;
+            _localCcyName = data.LocalCcyName;
+
+            _comModel = new UpdateCompanyDto
+            {
+                Address = data.Address,
+                LocalCcyId = data.LocalCcyId,
+                Location = data.Location,
+                Name = data.Name,
+                PriceListId = data.PriceListId,
+                SysCcyId = data.SysCcyId
+            };
+        }
+    }
 
     protected override void OnInitialized()
     {
@@ -193,12 +182,11 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task CreateCompanyAsync()
+    private async Task UpdateCompanyAsync()
     {
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            _comModel.LogoFile = _logoFile;
             var jsonPayload = JsonConvert.SerializeObject(_comModel);
 
             Console.WriteLine(jsonPayload);
@@ -207,7 +195,7 @@
 
             var content = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
 
-            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}company", content);
+            var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}company/{Id}", content);
 
             _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(
                 response,
@@ -221,26 +209,6 @@
             });
         }
     }
-
-    private async Task OnInputFileChanged(InputFileChangeEventArgs e)
-    {
-        ClearDragClass();
-        var buffer = new byte[e.File.Size];
-        var logoStream = e.File.OpenReadStream(5000000);
-        _ = await logoStream.ReadAsync(buffer);
-        _fileImage = $"data:{e.File.ContentType};base64,{Convert.ToBase64String(buffer)}";
-
-        _logoFile.FileName = e.File.Name;
-        _logoFile.FileSize = e.File.Size;
-        _logoFile.FileType = e.File.ContentType;
-        _logoFile.ImageBytes = buffer;
-    }
-
-    private void SetDragClass()
-        => _dragClass = $"{DefaultDragClass} mud-border-primary";
-
-    private void ClearDragClass()
-        => _dragClass = DefaultDragClass;
 
     private void ChoosePriceList()
     {
