@@ -15,7 +15,7 @@ public class PriceListTable : BaseTable
     [Column("ccy_id")]
     public int CcyId { get; set; }
 
-    public List<PriceListDetailTable> PriceListDetails { get; set; } = new();
+    public List<PriceListDetailTable> PriceListDetails { get; set; } = [];
 }
 
 public static class PriceListTableExtensions
@@ -30,12 +30,13 @@ public static class PriceListTableExtensions
         PriceListDetails = p.PriceListDetails.Select(i => i.ToTable()).ToList()
     };
 
-    public static PriceListDto ToDto(this PriceListTable p) => new()
+    public static PriceListDto ToDto(this PriceListTable p, string? ccyName = null) => new()
     {
         Id = p.Id,
         CcyId = p.CcyId,
         CreatedAt = p.CreatedAt,
         Name = p.Name,
+        CcyName = ccyName,
         IsDeleted = p.IsDeleted,
         PriceListDetails = p.PriceListDetails.Select(i => i.ToDto()).ToList()
     };

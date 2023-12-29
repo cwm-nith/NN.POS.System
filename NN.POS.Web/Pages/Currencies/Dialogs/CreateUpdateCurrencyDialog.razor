@@ -26,8 +26,8 @@
             
             @if (!string.IsNullOrEmpty(_apiErrorMessages))
             {
-                <MudChip Class="d-flex justify-center" Color="Color.Error">
-                    <p>@_apiErrorMessages</p>
+                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    @_apiErrorMessages
                 </MudChip>
             }
         </MudForm>

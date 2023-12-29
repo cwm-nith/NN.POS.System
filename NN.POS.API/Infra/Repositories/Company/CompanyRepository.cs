@@ -35,9 +35,9 @@ public class CompanyRepository(
         var context = readDbRepository.Context;
 
         var com = await (from c in context.Companies!.Where(i => !i.IsDeleted && i.Id == id)
-                         join pl in context.PriceLists on c.PriceListId equals pl.Id
-                         join sysCcy in context.Currencies on c.SysCcyId equals sysCcy.Id
-                         join localCcy in context.Currencies on c.SysCcyId equals localCcy.Id
+                         join pl in context.PriceLists! on c.PriceListId equals pl.Id
+                         join sysCcy in context.Currencies! on c.SysCcyId equals sysCcy.Id
+                         join localCcy in context.Currencies! on c.SysCcyId equals localCcy.Id
                          select c.ToDto(localCcy.Name, pl.Name, sysCcy.Name)).FirstOrDefaultAsync(cancellationToken);
         return com ?? throw new CompanyNotFoundException(id);
     }
@@ -48,9 +48,9 @@ public class CompanyRepository(
 
         var com = await (from c in context.Companies!
                 .Where(i => !i.IsDeleted && EF.Functions.Like(i.Name, $"%{query.Search}%"))
-                         join pl in context.PriceLists on c.PriceListId equals pl.Id
-                         join sysCcy in context.Currencies on c.SysCcyId equals sysCcy.Id
-                         join localCcy in context.Currencies on c.SysCcyId equals localCcy.Id
+                         join pl in context.PriceLists! on c.PriceListId equals pl.Id
+                         join sysCcy in context.Currencies! on c.SysCcyId equals sysCcy.Id
+                         join localCcy in context.Currencies! on c.SysCcyId equals localCcy.Id
                          select c.ToDto(localCcy.Name, pl.Name, sysCcy.Name)).PaginateAsync(query, cancellationToken);
         return com;
     }

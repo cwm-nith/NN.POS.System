@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace NN.POS.Model.Dtos.Company;
+﻿namespace NN.POS.Model.Dtos.Company;
 
 public class CreateCompanyDto : IBaseDto
 {
@@ -10,5 +8,5 @@ public class CreateCompanyDto : IBaseDto
     public int LocalCcyId { get; set; }
     public string? Location { get; set; }
     public string? Address { get; set; }
-    public IFormFile? LogoFile { get; set; }
+    public FileData? LogoFile { get; set; }
 }

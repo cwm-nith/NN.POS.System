@@ -34,7 +34,7 @@ public class BranchRepository(
     {
         var context = readDbRepository.Context;
         var br = await (from b in context.Branches!.Where(i => !i.IsDeleted && i.Id == id)
-                        join com in context.Companies on b.CompanyId equals com.Id
+                        join com in context.Companies! on b.CompanyId equals com.Id
                         select b.ToDto(com.Name)).FirstOrDefaultAsync(cancellationToken);
         return br ?? throw new BranchNotFoundException(id);
     }
@@ -43,7 +43,7 @@ public class BranchRepository(
     {
         var context = readDbRepository.Context;
         var br = await (from b in context.Branches!.Where(i => !i.IsDeleted && EF.Functions.Like(i.Name, $"%{query.Search}%"))
-            join com in context.Companies on b.CompanyId equals com.Id
+            join com in context.Companies! on b.CompanyId equals com.Id
             select b.ToDto(com.Name)).PaginateAsync(query, cancellationToken);
         return br;
     }

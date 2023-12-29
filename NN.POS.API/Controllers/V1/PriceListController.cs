@@ -18,7 +18,7 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult> Update(int id, [FromBody] UpdatePriceListDto body)
     {
         await mediator.Send(new UpdatePriceListCommand
@@ -29,7 +29,7 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {
         await mediator.Send(new DeletePriceListCommand(id));
@@ -49,7 +49,7 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok(data);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<PriceListDto>> GetById(int id)
     {
         var query = new GetPriceListByIdQuery(id);
@@ -69,7 +69,7 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpPut("detail/{id}")]
+    [HttpPut("detail/{id:int}")]
     public async Task<ActionResult> CreateDetail(int id, [FromBody] UpdatePriceListDetailDto body)
     {
         var cmd = new UpdatePriceListDetailCommand(id, body);
@@ -77,7 +77,7 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpGet("detail/{id}")]
+    [HttpGet("detail/{id:int}")]
     public async Task<ActionResult> GetDetailById(int id)
     {
         var data = await mediator.Send(new GetPriceListDetailByIdQuery(id));

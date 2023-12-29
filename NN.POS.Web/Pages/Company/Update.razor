@@ -1,0 +1,269 @@
+﻿@using NN.POS.Model.Dtos.Company
+@using NN.POS.Model.Dtos.Currencies
+@using NN.POS.Model.Dtos.PriceLists
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Validations.Company
+@using Newtonsoft.Json
+
+@attribute [Route($"{RouteName.CompanyUpdate}/{{Id:int}}")]
+
+<MudContainer Class="p-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.Company">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Color="Color.Primary">
+                Back
+            </MudButton>
+        </MudLink>
+    </MudPaper>
+    <MudCard>
+        <MudForm Model="_comModel" Validation="_comValidator.ValidateValue" @ref="_form">
+            <MudCardContent>
+                <MudContainer Class="text-center">
+                    <MudChip Color="Color.Primary" Class="p-4">
+                        <MudText Typo="Typo.h6">Update Company</MudText>
+                    </MudChip>
+                </MudContainer>
+                <MudDivider Class="mt-2" />
+
+                <MudGrid Justify="Justify.Center">
+                    <MudItem lg="6" xs="12" sm="12">
+                        <MudTextField @bind-Value="_comModel.Name"
+                                      For="@(() => _comModel.Name)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Name" />
+                    </MudItem>
+                    <MudItem lg="6" xs="12" sm="12">
+                        <MudTextField @bind-Value="@(_priceListName)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChoosePriceList"
+                                      AdornmentAriaLabel="Choose Price List"
+                                      ReadOnly="true"
+                                      Label="Price List" />
+                        <MudTextField @bind-Value="_comModel.PriceListId"
+                                      For="@(() => _comModel.PriceListId)"
+                                      Style="display: none" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Justify="Justify.Center">
+                    <MudItem lg="6" xs="12" sm="12">
+                        <MudTextField @bind-Value="@(_sysCcyName)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseSysCcy"
+                                      AdornmentAriaLabel="Choose System Currency"
+                                      ReadOnly="true"
+                                      Label="System Currency" />
+                        <MudTextField @bind-Value="_comModel.SysCcyId"
+                                      For="@(() => _comModel.SysCcyId)"
+                                      Style="display: none" />
+                    </MudItem>
+                    <MudItem lg="6" xs="12" sm="12">
+                        <MudTextField @bind-Value="@(_localCcyName)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseLocalCcy"
+                                      AdornmentAriaLabel="Choose Local Currency"
+                                      ReadOnly="true"
+                                      Label="Local Currency" />
+                        <MudTextField @bind-Value="_comModel.LocalCcyId"
+                                      For="@(() => _comModel.LocalCcyId)"
+                                      Style="display: none" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Justify="Justify.Center">
+                    <MudItem lg="6" xs="12" sm="12">
+                        <MudTextField @bind-Value="_comModel.Address"
+                                      For="@(() => _comModel.Address)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Address" />
+                    </MudItem>
+                    <MudItem lg="6" xs="12" sm="12">
+                        <MudTextField @bind-Value="_comModel.Location"
+                                      For="@(() => _comModel.Location)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Location" />
+                    </MudItem>
+                </MudGrid>
+
+                @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                {
+                    <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                        @_apiErrorMessages
+                    </MudChip>
+                }
+
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudGrid>
+                    <MudItem sm="0" lg="9"></MudItem>
+                    <MudItem sm="12" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="@UpdateCompanyAsync">
+                            Update
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private UpdateCompanyDto _comModel = new();
+
+    private readonly UpdateCompanyValidation _comValidator = new();
+
+    private string? _priceListName;
+    private string? _sysCcyName;
+    private string? _localCcyName;
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var data = await httpClient.GetFromJsonAsync<CompanyDto>($"{Setting.PrefixEndpoint}company/{Id}");
+
+        if (data is not null)
+        {
+            _priceListName = data.PriceListName;
+            _sysCcyName = data.SysCcyName;
+            _localCcyName = data.LocalCcyName;
+
+            _comModel = new UpdateCompanyDto
+            {
+                Address = data.Address,
+                LocalCcyId = data.LocalCcyId,
+                Location = data.Location,
+                Name = data.Name,
+                PriceListId = data.PriceListId,
+                SysCcyId = data.SysCcyId
+            };
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpend(RouteName.Settings);
+        NavbarStateService.SetActive(RouteName.Company);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private async Task UpdateCompanyAsync()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonConvert.SerializeObject(_comModel);
+
+            Console.WriteLine(jsonPayload);
+
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            var content = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+            var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}company/{Id}", content);
+
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(
+                response,
+                () =>
+            {
+                NavigationManager.NavigateTo(RouteName.Login);
+            },
+            () =>
+            {
+                NavigationManager.NavigateTo(RouteName.Company);
+            });
+        }
+    }
+
+    private void ChoosePriceList()
+    {
+        var parameters = new DialogParameters<SelectPriceListDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<PriceListDto>(this, (pl) =>
+                {
+                    _priceListName = pl.Name;
+                    _comModel.PriceListId= pl.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectPriceListDialog>("Price List", parameters, options);
+    }
+
+    private void ChooseSysCcy()
+    {
+        var parameters = new DialogParameters<SelectCurrencyDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<CurrencyDto>(this, (ccy) =>
+                {
+                    _sysCcyName = ccy.Name;
+                    _comModel.SysCcyId= ccy.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectCurrencyDialog>("System Currency", parameters, options);
+    }
+
+    private void ChooseLocalCcy()
+    {
+        var parameters = new DialogParameters<SelectCurrencyDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<CurrencyDto>(this, (ccy) =>
+                {
+                    _localCcyName = ccy.Name;
+                    _comModel.LocalCcyId= ccy.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectCurrencyDialog>("Local Currency", parameters, options);
+    }
+}

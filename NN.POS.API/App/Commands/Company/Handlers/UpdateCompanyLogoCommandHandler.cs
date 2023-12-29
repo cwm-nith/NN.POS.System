@@ -22,7 +22,7 @@ public class UpdateCompanyLogoCommandHandler(ICompanyRepository repository, IWeb
             var uploadsPath = Path.Join(environment.WebRootPath, "contents/company");
             var filePath = Path.Join(uploadsPath, logo);
             await using Stream fileStream = new FileStream(filePath, FileMode.Create);
-            await r.LogoFile.CopyToAsync(fileStream, cancellationToken);
+            await fileStream.WriteAsync(r.LogoFile.ImageBytes, cancellationToken);
 
             var oldLogo = r.Logo.Split('\\')[^1];
 

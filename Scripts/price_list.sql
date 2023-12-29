@@ -9,7 +9,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[price_lists](
-	[id] [int] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](150) NOT NULL,
 	[ccy_id] [int] NOT NULL,
 	[is_deleted] [bit] NOT NULL,

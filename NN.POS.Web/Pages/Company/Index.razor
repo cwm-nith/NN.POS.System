@@ -1,45 +1,60 @@
-﻿@using NN.POS.Model.Dtos.PriceLists
+﻿@using NN.POS.Model.Dtos.Company
 @using NN.POS.Web.Components.Dialogs
-@attribute [Route(RouteName.PriceList)]
 
+@attribute [Route(RouteName.Company)]
 
 <MudContainer Class="mt-2">
 
     <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
-        <MudButton Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.AddCircle"
-                   Color="Color.Primary"
-                   OnClick="@Create">
-            Create
-        </MudButton>
+        <MudLink Href="@RouteName.CompanyCreate">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       Color="Color.Primary">
+                Create
+            </MudButton>
+        </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<PriceListDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<CompanyDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
               @ref="_table">
 
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Roles</MudText>
+            <MudText Typo="Typo.h6">Currencies</MudText>
             <MudSpacer />
             <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <HeaderContent>
             <MudTh>Id</MudTh>
+            <MudTh>Logo</MudTh>
             <MudTh>Name</MudTh>
-            <MudTh>Currency</MudTh>
+            <MudTh>Price List</MudTh>
+            <MudTh>System Currency</MudTh>
+            <MudTh>Local Currency</MudTh>
+            <MudTh>Location</MudTh>
+            <MudTh>Address</MudTh>
             <MudTh>Created At</MudTh>
             <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Logo">
+                    <MudAvatar>
+                        <MudImage Src="@($"{Setting.ApiUrl}/contents/company/{context.Logo}")" Alt="@context.Name"></MudImage>
+                    </MudAvatar>
+                </MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
-                <MudTd DataLabel="Display Name">@context.CcyName</MudTd>
+                <MudTd DataLabel="Price List">@context.PriceListName</MudTd>
+                <MudTd DataLabel="System Currency">@context.SysCcyName</MudTd>
+                <MudTd DataLabel="Local Currency">@context.LocalCcyName</MudTd>
+                <MudTd DataLabel="Location">@context.Location</MudTd>
+                <MudTd DataLabel="Address">@context.Address</MudTd>
                 <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
-                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => UpdatePage(context.Id))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))"></MudIconButton>
                 </MudTd>
             </RowTemplate>
@@ -55,17 +70,15 @@
             </PagerContent>
         </MudTable>
     </MudContainer>
-
-
     @code {
-    private MudTable<PriceListDto>? _table;
+    private MudTable<CompanyDto>? _table;
     private string _searchString = "";
 
 
     protected override void OnInitialized()
     {
-        NavbarStateService.SetExpend(RouteName.Products);
-        NavbarStateService.SetActive(RouteName.PriceList);
+        NavbarStateService.SetExpend(RouteName.Settings);
+        NavbarStateService.SetActive(RouteName.Company);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 
@@ -74,67 +87,41 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<PriceListDto>> ServerReload(TableState state)
+    private async Task<TableData<CompanyDto>> ServerReload(TableState state)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var path = $"{Setting.PrefixEndpoint}priceList?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+        var path = $"{Setting.PrefixEndpoint}company?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
 
-        var data = await httpClient.GetFromJsonAsync<PagedResult<PriceListDto>>(path);
+        var data = await httpClient.GetFromJsonAsync<PagedResult<CompanyDto>>(path);
 
-        return new TableData<PriceListDto>
+        return new TableData<CompanyDto>
             {
                 Items = data?.Items,
                 TotalItems = Convert.ToInt32(data?.TotalResults)
             };
     }
 
-    protected void Create()
+    protected void UpdatePage(int id)
     {
-        var parameters = new DialogParameters<CreateUpdatePriceListDialog>
-        {
-            {
-                x => x.Table, _table
-            }
-        };
-
-        var options = new DialogOptions { CloseButton = true };
-
-        Dialog.Show<CreateUpdatePriceListDialog>("Create", parameters, options);
-    }
-
-    protected void Update(PriceListDto data)
-    {
-        var parameters = new DialogParameters<CreateUpdatePriceListDialog>
-        {
-            {
-                x => x.Table, _table
-            },
-            {
-                x => x.Data, data
-            }
-        };
-
-        var options = new DialogOptions { CloseButton = true };
-
-        Dialog.Show<CreateUpdatePriceListDialog>("Update", parameters, options);
+        NavigationManager.NavigateTo($"{RouteName.CompanyUpdate}/{id}");
     }
 
     private void Delete(int id)
     {
-        var parameters = new DialogParameters<DeleteDialog<PriceListDto>>
+        var parameters = new DialogParameters<DeleteDialog<CompanyDto>>
+        {
             {
-                {
-                    x => x.Endpoint, $"priceList/{id}"
-                },
-                {
-                    x => x.Table, _table
-                }
-            };
+                x => x.Endpoint, $"company/{id}"
+            },
+            {
+                x => x.Table, _table
+            }
+        };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<PriceListDto>>("Delete", parameters, options);
+        Dialog.Show<DeleteDialog<CompanyDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)
