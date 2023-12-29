@@ -1,5 +1,4 @@
 ﻿@using NN.POS.Model.Dtos.Company
-@using NN.POS.Model.Dtos.Currencies
 @using NN.POS.Web.Components.Dialogs
 
 @attribute [Route(RouteName.Company)]
@@ -122,7 +121,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<CurrencyDto>>("Delete", parameters, options);
+        Dialog.Show<DeleteDialog<CompanyDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)
