@@ -29,7 +29,7 @@ public class CompanyController(IMediator mediator) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromForm] CreateCompanyDto body)
+    public async Task<ActionResult> Create([FromBody] CreateCompanyDto body)
     {
         await mediator.Send(new CreateCompanyCommand(body));
         return Ok();
@@ -50,7 +50,7 @@ public class CompanyController(IMediator mediator) : BaseApiController
     }
 
     [HttpPut("logo/{id:int}")]
-    public async Task<ActionResult> UpdateLogo(int id, [FromForm] UpdateCompanyLogoDto body)
+    public async Task<ActionResult> UpdateLogo(int id, [FromBody] UpdateCompanyLogoDto body)
     {
         await mediator.Send(new UpdateCompanyLogoCommand(id, body));
         return Ok();
