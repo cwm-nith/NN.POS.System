@@ -113,9 +113,9 @@
 
             HttpResponseMessage response;
 
-            if (Data?.Id > 0)
+            if (Data.Id > 0)
             {
-                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}branch/{Data?.Id}", requestContent);
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}branch/{Data.Id}", requestContent);
             }
             else
             {
