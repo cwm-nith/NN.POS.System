@@ -20,8 +20,7 @@
               Dense="true"
               Hover="true"
               Striped="true"
-              @ref="_table"
-              RowClassFunc="@RowClassFunc">
+              @ref="_table">
 
         <ToolBarContent>
             <MudText Typo="Typo.h6">Roles</MudText>
@@ -30,33 +29,27 @@
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh>№</MudTh>
             <MudTh>Id</MudTh>
             <MudTh>Code</MudTh>
             <MudTh>Barcode</MudTh>
             <MudTh>Name</MudTh>
             <MudTh>Other Name</MudTh>
-            <MudTh>UoM</MudTh>
-            <MudTh>Group</MudTh>
             <MudTh>Type</MudTh>
             <MudTh>Image</MudTh>
             <MudTh>Action</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="No">@_index</MudTd>
                 <MudTd DataLabel="Id">@context.Id</MudTd>
                 <MudTd DataLabel="Code">@context.Code</MudTd>
                 <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
                 <MudTd DataLabel="Other Name">@context.OtherName</MudTd>
-                <MudTd DataLabel="Uom">@context.BaseUomId</MudTd>
-                <MudTd DataLabel="Group">@context.Code</MudTd>
                 <MudTd DataLabel="Type">@context.Type.ToEnumString()</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage Src="@($"{Setting.ApiUrl}/contents/item-master/images/{context.Image}")"
-                              Class="w-25 h-25" />
+                    <MudAvatar>
+                        <MudImage Src="@($"{Setting.ApiUrl}/contents/item-master/images/{context.Image}")" />
+                    </MudAvatar>
                 </MudTd>
-                <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteRole(context.Id))"></MudIconButton>
@@ -78,12 +71,6 @@
     @code {
     private MudTable<ItemMasterDataDto>? _table;
     private string _searchString = "";
-    private int _index;
-    private string RowClassFunc(ItemMasterDataDto element, int rowNumber)
-    {
-        _index = 1 + rowNumber + (_table?.CurrentPage ?? 0) * (_table?.RowsPerPage ?? 0);
-        return string.Empty;
-    }
 
     protected override void OnInitialized()
     {
@@ -117,7 +104,7 @@
 
     protected void GoToUpdatePage(int id)
     {
-        NavigationManager.NavigateTo($"{RouteName.UpdateRole}/{id}");
+        NavigationManager.NavigateTo($"{RouteName.ItemMasterDataUpdate}/{id}");
     }
 
     private void DeleteRole(int id)

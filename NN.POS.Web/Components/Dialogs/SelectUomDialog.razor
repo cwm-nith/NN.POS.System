@@ -1,0 +1,92 @@
+﻿@using NN.POS.Model.Dtos.UnitOfMeasures
+
+@namespace NN.POS.Web.Components.Dialogs
+
+<MudDialog>
+    <DialogContent>
+        <MudTable ServerData="@(new Func<TableState, Task<TableData<UnitOfMeasureDto>>>(ServerReload))"
+                  Dense="true"
+                  Hover="true"
+                  Striped="true"
+                  @ref="_table">
+
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Uom</MudText>
+                <MudSpacer />
+                <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Id</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Id">@context.Id</MudTd>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Actions">
+                        <MudButton StartIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                   Color="Color.Info"
+                                   OnClick="@(() => HandleClick(context))"
+                                   Variant="Variant.Filled"
+                                   Size="Size.Small">Choose</MudButton>
+                    </MudTd>
+                </RowTemplate>
+
+                <NoRecordsContent>
+                    <MudText>No matching records found</MudText>
+                </NoRecordsContent>
+                <LoadingContent>
+                    <MudText>Loading...</MudText>
+                </LoadingContent>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="@(Cancel)">Close</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+
+    @code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public EventCallback<UnitOfMeasureDto> OnChooseUom { get; set; }
+
+    private MudTable<UnitOfMeasureDto>? _table;
+    private string _searchString = "";
+
+    private async Task<TableData<UnitOfMeasureDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}UnitOfMeasure?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+
+        Console.WriteLine(path);
+
+        var data =
+            await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureDto>>(path);
+
+        return new TableData<UnitOfMeasureDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    private async Task HandleClick(UnitOfMeasureDto unitOfMeasure)
+    {
+        await OnChooseUom.InvokeAsync(unitOfMeasure);
+        MudDialog?.Cancel();
+    }
+    private void Cancel() => MudDialog?.Cancel();
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+}

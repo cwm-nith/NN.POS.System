@@ -10,14 +10,14 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
 {
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromForm] CreateItemMasterDataDto body)
+    public async Task<ActionResult> Create([FromBody] CreateItemMasterDataDto body)
     {
         var cmd = new CreateItemMasterDataCommand(body);
         await mediator.Send(cmd);
         return Ok();
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult> Update(int id, [FromBody] UpdateItemMasterDataDto body)
     {
         var cmd = new UpdateItemMasterDataCommand(id, body);
@@ -25,7 +25,7 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {
         var cmd = new DeleteItemMasterDataCommand(id);
@@ -33,7 +33,7 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult> GetById(int id)
     {
         var q = new GetItemMasterDataByIdQuery(id);

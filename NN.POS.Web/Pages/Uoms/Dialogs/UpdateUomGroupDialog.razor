@@ -17,8 +17,8 @@
 
             @if (!string.IsNullOrEmpty(_apiErrorMessages))
             {
-                <MudChip Class="d-flex justify-center" Color="Color.Error">
-                    <p>@_apiErrorMessages</p>
+                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    @_apiErrorMessages
                 </MudChip>
             }
         </MudForm>
@@ -67,30 +67,12 @@
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-group/{Data?.Id}", requestContent);
 
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                    {
-                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                        break;
-                    }
-                case HttpStatusCode.Unauthorized:
-                    {
-                        NavigationManager.NavigateTo(RouteName.Login);
-                        break;
-                    }
-                case HttpStatusCode.OK:
-                    {
-                        MudDialog?.Close(DialogResult.Ok(true));
-                        Table?.ReloadServerData();
-                        break;
-                    }
-                default:
-                    _apiErrorMessages = "Something went wrong, Please try after some time";
-                    break;
-            }
-
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response, () => NavigationManager.NavigateTo(RouteName.Login),
+                () =>
+                {
+                    MudDialog?.Close(DialogResult.Ok(true));
+                    Table?.ReloadServerData();
+                });
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using NN.POS.API.Core.IRepositories.ItemMasters;
+using NN.POS.API.Core.Utils;
 using NN.POS.Model.Dtos.ItemMasters;
 
 namespace NN.POS.API.App.Commands.ItemMasterData.Handlers;
@@ -10,12 +11,12 @@ public class CreateItemMasterDataCommandHandler(IItemMasterDataRepository reposi
     {
         var r = request.Dto;
 
-        var fileName = r.File == null ? "" : Guid.NewGuid().ToString("N");
+        var fileName = r.File == null ? "" : $"{Guid.NewGuid()}{Path.GetExtension(r.File?.FileName)}";
 
         var dto = new ItemMasterDataDto
         {
-            Code = r.Code,
-            Barcode = r.Barcode,
+            Code = StringUtil.GetRandomString(prefix: "item-"),
+            Barcode = StringUtil.GetRandomString(prefix: "item-"),
             Name = r.Name,
             OtherName = r.OtherName,
             StockIn = r.StockIn,
@@ -43,9 +44,9 @@ public class CreateItemMasterDataCommandHandler(IItemMasterDataRepository reposi
         if (r.File != null)
         {
             var uploadsPath = Path.Join(environment.WebRootPath, "contents/item-master/images");
-            var filePath = Path.Join(uploadsPath, r.File.FileName);
+            var filePath = Path.Join(uploadsPath, fileName);
             await using Stream fileStream = new FileStream(filePath, FileMode.Create);
-            await r.File.CopyToAsync(fileStream, cancellationToken);
+            await fileStream.WriteAsync(r.File.ImageBytes, cancellationToken);
         }
     }
 }

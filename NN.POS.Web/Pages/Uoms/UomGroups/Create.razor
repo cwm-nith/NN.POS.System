@@ -36,8 +36,8 @@
                 
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
-                    <MudChip Class="d-flex justify-center" Color="Color.Error">
-                        <p>@_apiErrorMessages</p>
+                    <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                        @_apiErrorMessages
                     </MudChip>
                 }
 
@@ -93,29 +93,8 @@
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-group", requestContent);
 
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                {
-                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                    break;
-                }
-                case HttpStatusCode.Unauthorized:
-                {
-                    NavigationManager.NavigateTo(RouteName.Login);
-                    break;
-                }
-                case HttpStatusCode.OK:
-                {
-                    NavigationManager.NavigateTo(RouteName.UomGroup);
-                    break;
-                }
-                default:
-                    _apiErrorMessages = "Something went wrong, Please try after some time";
-                    break;
-            }
-
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response, () => NavigationManager.NavigateTo(RouteName.Login),
+                () => NavigationManager.NavigateTo(RouteName.UomGroup));
         }
     }
 }

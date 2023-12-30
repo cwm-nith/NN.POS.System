@@ -5,27 +5,17 @@ namespace NN.POS.Model.Dtos.ItemMasters;
 
 public class CreateItemMasterDataDto : IBaseDto
 {
-    public string Code { get; set; } = string.Empty;
-    public string Barcode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? OtherName { get; set; }
     public decimal StockIn { get; set; }
     public decimal StockCommit { get; set; }
     public decimal StockOnHand { get; set; }
     public int BaseUomId { get; set; }
-    public string? BaseUomName { get; set; }
-
     public int PriceListId { get; set; }
-    
     public int UomGroupId { get; set; }
-    public string? UomGroupName { get; set; }
-    
     public int? PurchaseUomId { get; set; }
-    public string? PurchaseUomName { get; set; }
     public int? SaleUomId { get; set; }
-    public string? SaleUomName { get; set; }
     public int? InventoryUomId { get; set; }
-    public string? InventoryUomName { get; set; }
     public int WarehouseId { get; set; }
 
     /// <summary>
@@ -49,5 +39,5 @@ public class CreateItemMasterDataDto : IBaseDto
     /// </summary>
     public ItemMasterDataProcess Process { get; set; }
 
-    public IFormFile? File { get; set; }
+    public FileData? File { get; set; }
 }

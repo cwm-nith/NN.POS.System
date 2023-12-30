@@ -5,7 +5,7 @@
 @using NN.POS.Model.Enums
 @using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Validations.ItemMasters
-@attribute [Route(RouteName.ItemMasterDataCreate)]
+@attribute [Route($"{RouteName.ItemMasterDataUpdate}/{{Id:int}}")]
 @implements IDisposable
 
 <MudContainer Class="p-2">
@@ -183,8 +183,8 @@
                                       ReadOnly="true"
                                       Label="Inventory Uom" />
 
-                        <MudTextField @bind-Value="_itemModel.InventoryUomId"
-                                      For="@(() => _itemModel.InventoryUomId)"
+                        <MudTextField @bind-Value="_itemModel.InventoryUoMid"
+                                      For="@(() => _itemModel.InventoryUoMid)"
                                       Style="display: none" />
                     </MudItem>
                     <MudItem lg="4" sm="4" xs="12">
@@ -214,34 +214,6 @@
                             }
                         </MudSelect>
                     </MudItem>
-                    <MudItem lg="4" sm="8" xs="12">
-                        <MudStack Style="width: 100%">
-                            <MudFileUpload T="IBrowserFile"
-                                              AppendMultipleFiles
-                                            OnFilesChanged="OnInputFileChanged"
-                                            Hidden="@false"
-                                            InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                                            InputStyle="opacity:0"
-                                            @ondragenter="@SetDragClass"
-                                            @ondragleave="@ClearDragClass"
-                                            @ondragend="@ClearDragClass">
-                                 <ButtonTemplate>
-                                     <MudPaper Height="250px"
-                                               Outlined="true"
-                                               Class="@_dragClass">
-                                         <MudText Typo="Typo.body1">
-                                             Drag and drop files here or click
-                                         </MudText>
-                                         <MudImage Src="@(_fileImage)"
-                                                   Class="w-100 border-0"
-                                                   Style="height: 90%"
-                                                   ObjectFit="ObjectFit.Contain" />
-                                     </MudPaper>
-                                 </ButtonTemplate>
-                             </MudFileUpload>
-                         </MudStack>
-                     </MudItem>
-
                  </MudGrid>
 
                  @if (!string.IsNullOrEmpty(_apiErrorMessages))
@@ -273,25 +245,66 @@
 
 @code {
 
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
-    private string _dragClass = DefaultDragClass;
-    private string? _fileImage;
+    [Parameter]
+    public int Id { get; set; }
 
-    readonly CreateItemMasterDataDto _itemModel = new();
+    private UpdateItemMasterDataDto _itemModel = new();
 
-    readonly CreateItemMasterDataValidator _itemValidator = new();
+    private readonly UpdateItemMasterDataValidator _itemValidator = new();
 
-    private string _warehouseName = "";
-    private string _priceListName = "";
-    private string _groupUomName = "";
-    private string _purchaseUomName = "";
-    private string _inventoryUomName = "";
-    private string _baseUomName = "";
-    private string _saleUomName = "";
+    private string? _warehouseName;
+    private string? _priceListName;
+    private string? _groupUomName;
+    private string? _purchaseUomName;
+    private string? _inventoryUomName;
+    private string? _baseUomName;
+    private string? _saleUomName;
 
     MudForm? _form;
 
     string? _apiErrorMessages;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var data = await httpClient.GetFromJsonAsync<ItemMasterDataDto>($"{Setting.PrefixEndpoint}itemMasterData/{Id}");
+
+        if (data is not null)
+        {
+            _warehouseName = data.WarehouseName;
+            _priceListName = data.PriceListName;
+            _groupUomName = data.UomGroupName;
+            _purchaseUomName = data.PurchaseUomName;
+            _inventoryUomName = data.InventoryUoMName;
+            _baseUomName = data.BaseUomName;
+            _saleUomName = data.SaleUomName;
+
+            _itemModel = new UpdateItemMasterDataDto
+            {
+                BaseUomId = data.BaseUomId,
+                Description = data.Description,
+                Image = data.Image,
+                InventoryUoMid = data.InventoryUoMid,
+                IsInventory = data.IsInventory,
+                IsPurchase = data.IsPurchase,
+                IsSale = data.IsSale,
+                Name = data.Name,
+                PriceListId = data.PriceListId,
+                UomGroupId = data.UomGroupId,
+                WarehouseId = data.WarehouseId,
+                StockIn = data.StockIn,
+                PurchaseUomId = data.PurchaseUomId,
+                SaleUomId = data.SaleUomId,
+                OtherName = data.OtherName,
+                Process = data.Process,
+                StockCommit = data.StockCommit,
+                StockOnHand = data.StockOnHand,
+                Type = data.Type
+            };
+        }
+
+        Console.WriteLine(data);
+    }
 
     protected override void OnInitialized()
     {
@@ -305,29 +318,6 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task OnInputFileChanged(InputFileChangeEventArgs e)
-    {
-        ClearDragClass();
-        var buffer = new byte[e.File.Size];
-        _ = await e.File.OpenReadStream().ReadAsync(buffer);
-        _fileImage = $"data:{e.File.ContentType};base64,{Convert.ToBase64String(buffer)}";
-
-        _itemModel.File = new FileData
-        {
-            FileName = e.File.Name,
-            FileSize = e.File.Size,
-            FileType = e.File.ContentType,
-            ImageBytes = buffer
-        };
-
-    }
-
-    private void SetDragClass()
-        => _dragClass = $"{DefaultDragClass} mud-border-primary";
-
-    private void ClearDragClass()
-        => _dragClass = DefaultDragClass;
-
     private async Task CreateItemAsync()
     {
         await _form?.Validate()!;
@@ -336,7 +326,7 @@
             var jsonPayload = JsonSerializer.Serialize(_itemModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}itemMasterData", requestContent);
+            var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}itemMasterData/{Id}", requestContent);
 
             _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(
                 response,
@@ -468,7 +458,7 @@
                 new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
                 {
                     _inventoryUomName = uom.Name;
-                    _itemModel.InventoryUomId = uom.Id;
+                    _itemModel.InventoryUoMid = uom.Id;
                 })
             }
         };

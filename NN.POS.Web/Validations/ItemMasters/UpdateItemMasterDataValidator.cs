@@ -4,9 +4,9 @@ using NN.POS.Model.Enums;
 
 namespace NN.POS.Web.Validations.ItemMasters;
 
-public class CreateItemMasterDataValidator : BaseValidator<CreateItemMasterDataDto>
+public class UpdateItemMasterDataValidator : BaseValidator<UpdateItemMasterDataDto>
 {
-    public CreateItemMasterDataValidator()
+    public UpdateItemMasterDataValidator()
     {
         RuleFor(i => i.Name)
             .NotEmpty()
