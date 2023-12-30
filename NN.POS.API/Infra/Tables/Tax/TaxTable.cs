@@ -1,6 +1,7 @@
 ﻿using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NN.POS.Model.Dtos.Tax;
 
 namespace NN.POS.API.Infra.Tables.Tax;
 
@@ -21,4 +22,29 @@ public class TaxTable : BaseTable
 
     [Column("is_deleted")]
     public bool IsDeleted { get; set; }
+}
+
+public static class TaxExtensions
+{
+    public static TaxDto ToDto(this TaxTable t) => new()
+    {
+        Name = t.Name,
+        CreatedAt = t.CreatedAt,
+        EffectiveDate = t.EffectiveDate,
+        Id = t.Id,
+        IsDeleted = t.IsDeleted,
+        Type = t.Type,
+        Rate = t.Rate
+    };
+
+    public static TaxTable ToTable(this TaxDto t) => new()
+    {
+        Name = t.Name,
+        CreatedAt = t.CreatedAt,
+        EffectiveDate = t.EffectiveDate,
+        Id = t.Id,
+        IsDeleted = t.IsDeleted,
+        Type = t.Type,
+        Rate = t.Rate
+    };
 }
