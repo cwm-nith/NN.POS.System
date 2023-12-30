@@ -38,6 +38,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
         modelBuilder
             .AddPriceListTableRelationship()
             .ItemMasterDataTableDbConfig()
-            .BusinessPartnerConfig();
+            .BusinessPartnerConfig()
+            .TaxTableDbConfig();
     }
 }
