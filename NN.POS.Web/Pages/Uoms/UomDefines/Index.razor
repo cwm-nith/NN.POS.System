@@ -2,7 +2,6 @@
 
 @using NN.POS.Model.Dtos.UnitOfMeasures
 @using NN.POS.Web.Components.Dialogs
-@using NN.POS.Web.Pages.Uoms.Dialogs
 @using NN.POS.Web.Validations.Uoms.UomDefines
 @using Newtonsoft.Json
 @implements IDisposable
@@ -28,7 +27,7 @@
                     </MudChip>
                 </MudContainer>
                 <MudDivider Class="mt-2" />
-                
+
                 <MudGrid Spacing="5" Justify="Justify.Center">
                     <MudItem lg="5" sm="12" xs="12">
                         <MudTextField @bind-Value="_uomDefine.BaseUomName"
@@ -101,15 +100,14 @@
     </MudCard>
     @if (!string.IsNullOrEmpty(_apiErrorMessages))
     {
-        <MudChip Class="d-flex justify-center" Color="Color.Error">
-            <p>@_apiErrorMessages</p>
+        <MudChip Variant="Variant.Outlined" Color="Color.Error">
+            @_apiErrorMessages
         </MudChip>
     }
     <MudTable Items="@_uomDefines"
               Dense="true"
               Hover="true"
-              Striped="true"
-              @ref="_table">
+              Striped="true">
 
         <HeaderContent>
             <MudTh>Alt Uom</MudTh>
@@ -159,17 +157,14 @@
 
     private CreateUomDefineDto _uomDefineModel = new();
     private UnitOfMeasureDefineDto _uomDefine = new();
-    private List<UnitOfMeasureDefineDto> _uomDefines = new();
+    private List<UnitOfMeasureDefineDto> _uomDefines = [];
 
     readonly CreateUomDefineValidation _uomDefineValidator = new();
 
     MudForm? _form;
 
     string? _apiErrorMessages;
-
-    private MudTable<UnitOfMeasureDefineDto>? _table;
-    // private string _searchString = "";
-
+    
     protected override async Task OnInitializedAsync()
     {
         NavbarStateService.SetExpend(RouteName.UnitOfMeasure);
@@ -223,20 +218,20 @@
             Console.WriteLine(JsonConvert.SerializeObject(res));
 
             _uomDefineModel = new CreateUomDefineDto
-            {
-                AltQty = res.AltQty,
-                AltUomId = res.AltUomId,
-                BaseQty = res.BaseQty,
-                BaseUomId = res.BaseUomId,
-                Factor = res.Factor,
-                GroupUomId = res.GroupUomId,
-                Id = res.Id
-            };
+                {
+                    AltQty = res.AltQty,
+                    AltUomId = res.AltUomId,
+                    BaseQty = res.BaseQty,
+                    BaseUomId = res.BaseUomId,
+                    Factor = res.Factor,
+                    GroupUomId = res.GroupUomId,
+                    Id = res.Id
+                };
             _uomDefine = new UnitOfMeasureDefineDto
-            {
-                AltUomName = res.AltUomName,
-                BaseUomName = res.BaseUomName
-            };
+                {
+                    AltUomName = res.AltUomName,
+                    BaseUomName = res.BaseUomName
+                };
         }
     }
 
