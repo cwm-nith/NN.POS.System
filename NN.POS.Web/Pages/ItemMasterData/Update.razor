@@ -1,0 +1,470 @@
+﻿@using NN.POS.Model.Dtos.ItemMasters
+@using NN.POS.Model.Dtos.PriceLists
+@using NN.POS.Model.Dtos.UnitOfMeasures
+@using NN.POS.Model.Dtos.Warehouses
+@using NN.POS.Model.Enums
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Validations.ItemMasters
+@attribute [Route($"{RouteName.ItemMasterDataUpdate}/{{Id:int}}")]
+@implements IDisposable
+
+<MudContainer Class="p-2">
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudLink Href="@RouteName.ItemMasterData">
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Color="Color.Primary">
+                Back
+            </MudButton>
+        </MudLink>
+        <MudContainer Class="text-center">
+            <MudChip Color="Color.Primary" Class="p-4">
+                <MudText Typo="Typo.body1">Create New Item</MudText>
+            </MudChip>
+        </MudContainer>
+    </MudPaper>
+    <MudCard>
+        <MudForm Model="_itemModel" Validation="_itemValidator.ValidateValue" @ref="_form">
+            <MudCardContent>
+                <MudGrid Justify="Justify.Center">
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudTextField @bind-Value="_warehouseName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseWarehouse"
+                                      AdornmentAriaLabel="Choose Warehouse"
+                                      ReadOnly="true"
+                                      Label="Warehouse" />
+
+                        <MudTextField @bind-Value="_itemModel.WarehouseId"
+                                      For="@(() => _itemModel.WarehouseId)"
+                                      Style="display: none" />
+                    </MudItem>
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudTextField @bind-Value="_itemModel.Name"
+                                      For="@(() => _itemModel.Name)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Name" />
+                    </MudItem>
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudTextField @bind-Value="_itemModel.OtherName"
+                                      For="@(() => _itemModel.OtherName)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Other Name" />
+                    </MudItem>
+                </MudGrid>
+                <MudGrid Justify="Justify.Center">
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudTextField @bind-Value="_itemModel.Description"
+                                      For="@(() => _itemModel.Description)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Label="Description" />
+                    </MudItem>
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudTextField @bind-Value="_priceListName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChoosePriceList"
+                                      AdornmentAriaLabel="Choose PriceList"
+                                      ReadOnly="true"
+                                      Label="PriceList" />
+
+                        <MudTextField @bind-Value="_itemModel.PriceListId"
+                                      For="@(() => _itemModel.PriceListId)"
+                                      Style="display: none" />
+                    </MudItem>
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudGrid>
+                            <MudItem lg="4" sm="4" xs="4">
+                                <MudCheckBox T="bool" @bind-Value="@_itemModel.IsPurchase"
+                                             Color="Color.Primary">Purchase</MudCheckBox>
+                            </MudItem>
+                            <MudItem lg="4" sm="4" xs="4">
+                                <MudCheckBox T="bool" @bind-Value="@_itemModel.IsSale"
+                                             Color="Color.Primary">Sale</MudCheckBox>
+                            </MudItem>
+                            <MudItem lg="4" sm="4" xs="4">
+                                <MudCheckBox T="bool" @bind-Value="@_itemModel.IsInventory"
+                                             Color="Color.Primary">Inventory</MudCheckBox>
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Justify="Justify.Center">
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudTextField @bind-Value="_groupUomName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseGroupUom"
+                                      AdornmentAriaLabel="Choose Group Uom"
+                                      ReadOnly="true"
+                                      Label="Group Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.UomGroupId"
+                                      For="@(() => _itemModel.UomGroupId)"
+                                      Style="display: none" />
+                    </MudItem>
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudTextField @bind-Value="_baseUomName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseBaseUom"
+                                      AdornmentAriaLabel="Choose Base Uom"
+                                      ReadOnly="true"
+                                      Label="Base Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.BaseUomId"
+                                      For="@(() => _itemModel.BaseUomId)"
+                                      Style="display: none" />
+                    </MudItem>
+                    <MudItem lg="4" sm="12" xs="12">
+                        <MudTextField @bind-Value="_saleUomName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseSaleUom"
+                                      AdornmentAriaLabel="Choose Sale Uom"
+                                      ReadOnly="true"
+                                      Label="Sale Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.SaleUomId"
+                                      For="@(() => _itemModel.SaleUomId)"
+                                      Style="display: none" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Justify="Justify.Center">
+                    <MudItem lg="4" sm="4" xs="12">
+                        <MudTextField @bind-Value="_purchaseUomName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChoosePurchaseUom"
+                                      AdornmentAriaLabel="Choose Purchase Uom"
+                                      ReadOnly="true"
+                                      Label="Purchase Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.PurchaseUomId"
+                                      For="@(() => _itemModel.PurchaseUomId)"
+                                      Style="display: none" />
+                    </MudItem>
+                    <MudItem lg="4" sm="4" xs="12">
+                        <MudTextField @bind-Value="_inventoryUomName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseInventoryUom"
+                                      AdornmentAriaLabel="Choose Inventory Uom"
+                                      ReadOnly="true"
+                                      Label="Inventory Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.InventoryUoMid"
+                                      For="@(() => _itemModel.InventoryUoMid)"
+                                      Style="display: none" />
+                    </MudItem>
+                    <MudItem lg="4" sm="4" xs="12">
+                        <MudSelect @bind-Value="_itemModel.Type"
+                                   For="@(() => _itemModel.Type)"
+                                   Label="Type"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense">
+                            @foreach (ItemMasterDataType option in Enum.GetValues(typeof(ItemMasterDataType)))
+                            {
+                                <MudSelectItem Value="option" />
+                            }
+                        </MudSelect>
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid Justify="Justify.FlexStart">
+                    <MudItem lg="4" sm="4" xs="12">
+                        <MudSelect @bind-Value="_itemModel.Process"
+                                   For="@(() => _itemModel.Process)"
+                                   Label="Process"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense">
+                            @foreach (ItemMasterDataProcess option in Enum.GetValues(typeof(ItemMasterDataProcess)))
+                            {
+                                <MudSelectItem Value="option" />
+                            }
+                        </MudSelect>
+                    </MudItem>
+                 </MudGrid>
+
+                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                {
+                    <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                        @_apiErrorMessages
+                    </MudChip>
+                }
+
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudGrid>
+                    <MudItem sm="0" lg="9"></MudItem>
+                    <MudItem sm="12" lg="3">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddCircle"
+                                   OnClick="@(CreateItemAsync)">
+                            Save
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</MudContainer>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private UpdateItemMasterDataDto _itemModel = new();
+
+    private readonly UpdateItemMasterDataValidator _itemValidator = new();
+
+    private string? _warehouseName;
+    private string? _priceListName;
+    private string? _groupUomName;
+    private string? _purchaseUomName;
+    private string? _inventoryUomName;
+    private string? _baseUomName;
+    private string? _saleUomName;
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var data = await httpClient.GetFromJsonAsync<ItemMasterDataDto>($"{Setting.PrefixEndpoint}itemMasterData/{Id}");
+
+        if (data is not null)
+        {
+            _warehouseName = data.WarehouseName;
+            _priceListName = data.PriceListName;
+            _groupUomName = data.UomGroupName;
+            _purchaseUomName = data.PurchaseUomName;
+            _inventoryUomName = data.InventoryUoMName;
+            _baseUomName = data.BaseUomName;
+            _saleUomName = data.SaleUomName;
+
+            _itemModel = new UpdateItemMasterDataDto
+            {
+                BaseUomId = data.BaseUomId,
+                Description = data.Description,
+                Image = data.Image,
+                InventoryUoMid = data.InventoryUoMid,
+                IsInventory = data.IsInventory,
+                IsPurchase = data.IsPurchase,
+                IsSale = data.IsSale,
+                Name = data.Name,
+                PriceListId = data.PriceListId,
+                UomGroupId = data.UomGroupId,
+                WarehouseId = data.WarehouseId,
+                StockIn = data.StockIn,
+                PurchaseUomId = data.PurchaseUomId,
+                SaleUomId = data.SaleUomId,
+                OtherName = data.OtherName,
+                Process = data.Process,
+                StockCommit = data.StockCommit,
+                StockOnHand = data.StockOnHand,
+                Type = data.Type
+            };
+        }
+
+        Console.WriteLine(data);
+    }
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpend(RouteName.Products);
+        NavbarStateService.SetActive(RouteName.ItemMasterData);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private async Task CreateItemAsync()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_itemModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+            var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}itemMasterData/{Id}", requestContent);
+
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(
+                response,
+                () => NavigationManager.NavigateTo(RouteName.Login),
+                () => NavigationManager.NavigateTo(RouteName.ItemMasterData));
+        }
+    }
+
+    private void ChooseWarehouse()
+    {
+        var parameters = new DialogParameters<SelectWarehouseDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<WarehouseDto>(this, (ws) =>
+                {
+                    _warehouseName = ws.Name;
+                    _itemModel.WarehouseId = ws.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectWarehouseDialog>("Warehouse", parameters, options);
+    }
+
+    private void ChooseGroupUom()
+    {
+        var parameters = new DialogParameters<SelectGroupUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureGroupDto>(this, (gUom) =>
+                {
+                    _groupUomName = gUom.Name;
+                    _itemModel.UomGroupId = gUom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectGroupUomDialog>("Unit Of Measure Group", parameters, options);
+    }
+
+    private void ChoosePriceList()
+    {
+        var parameters = new DialogParameters<SelectPriceListDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<PriceListDto>(this, (pl) =>
+                {
+                    _priceListName = pl.Name;
+                    _itemModel.PriceListId = pl.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectPriceListDialog>("Price List", parameters, options);
+    }
+
+    private void ChooseBaseUom()
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    _baseUomName = uom.Name;
+                    _itemModel.BaseUomId = uom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectUomDialog>("Base Uom", parameters, options);
+    }
+
+    private void ChooseSaleUom()
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    _saleUomName = uom.Name;
+                    _itemModel.SaleUomId= uom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectUomDialog>("Sale Uom", parameters, options);
+    }
+
+    private void ChoosePurchaseUom()
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    _purchaseUomName = uom.Name;
+                    _itemModel.PurchaseUomId = uom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectUomDialog>("Purchase Uom", parameters, options);
+    }
+
+    private void ChooseInventoryUom()
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    _inventoryUomName = uom.Name;
+                    _itemModel.InventoryUoMid = uom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectUomDialog>("Inventory Uom", parameters, options);
+    }
+}

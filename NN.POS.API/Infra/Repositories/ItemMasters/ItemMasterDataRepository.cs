@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NN.POS.API.App.Commands.ItemMasterData;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using NN.POS.API.App.Queries.ItemMasters;
 using NN.POS.API.Core.Exceptions.ItemMasters;
 using NN.POS.API.Core.IRepositories.ItemMasters;
@@ -55,9 +55,14 @@ public class ItemMasterDataRepository(
 
     public async Task<ItemMasterDataDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var item = await readDbRepository.FirstOrDefaultAsync(i => !i.IsDeleted && i.Id == id, cancellationToken) ??
+        var context = readDbRepository.Context;
+        var param = new SqlParameter("@id", id);
+
+        var item = context.Database.SqlQuery<ItemMasterDataDto>($"EXECUTE dbo.select_item_master_data_by_id {param}")
+                       .AsEnumerable().FirstOrDefault() ??
                    throw new ItemMasterDataNotFoundException(id);
-        return item.ToDto();
+
+        return await Task.FromResult(item);
     }
 
     public async Task<ItemMasterDataDto> GetByBarcodeAsync(string barcode, CancellationToken cancellationToken = default)

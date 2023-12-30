@@ -13,12 +13,19 @@ public class ItemMasterDataDto : IBaseDto
     public decimal StockCommit { get; set; }
     public decimal StockOnHand { get; set; }
     public int BaseUomId { get; set; }
+    public string? BaseUomName { get; set; }
     public int PriceListId { get; set; }
+    public string? PriceListName { get; set; }
     public int UomGroupId { get; set; }
+    public string? UomGroupName { get; set; }
     public int? PurchaseUomId { get; set; }
+    public string? PurchaseUomName { get; set; }
     public int? SaleUomId { get; set; }
+    public string? SaleUomName { get; set; }
     public int? InventoryUoMid { get; set; }
+    public string? InventoryUoMName { get; set; }
     public int WarehouseId { get; set; }
+    public string? WarehouseName { get; set; }
 
     /// <summary>
     /// None = 0,
