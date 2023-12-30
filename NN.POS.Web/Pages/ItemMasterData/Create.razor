@@ -15,7 +15,7 @@
         </MudLink>
         <MudContainer Class="text-center">
             <MudChip Color="Color.Primary" Class="p-4">
-                <MudText Typo="Typo.body1">Create New Role</MudText>
+                <MudText Typo="Typo.body1">Create New Item</MudText>
             </MudChip>
         </MudContainer>
     </MudPaper>
@@ -24,12 +24,20 @@
             <MudCardContent>
                 <MudGrid Justify="Justify.Center">
                     <MudItem lg="4" sm="12" xs="12">
-                        <MudTextField @bind-Value="_itemModel.WarehouseId"
-                                      For="@(() => _itemModel.WarehouseId)"
+                        <MudTextField @bind-Value="_warehouseName"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseWarehouse"
+                                      AdornmentAriaLabel="Choose Warehouse"
+                                      ReadOnly="true"
                                       Label="Warehouse" />
+
+                        <MudTextField @bind-Value="_itemModel.WarehouseId"
+                                      For="@(() => _itemModel.WarehouseId)"
+                                      Style="display: none" />
                     </MudItem>
                     <MudItem lg="4" sm="12" xs="12">
                         <MudTextField @bind-Value="_itemModel.Name"
@@ -58,15 +66,20 @@
                                       Label="Description" />
                     </MudItem>
                     <MudItem lg="4" sm="12" xs="12">
-                        <MudTextField @bind-Value="_itemModel.PriceListId"
-                                      For="@(() => _itemModel.PriceListId)"
+                        <MudTextField @bind-Value="_priceListName"
                                       Immediate="true"
-                                      ReadOnly="true"
-                                      Label="Price List"
-                                      Class="cursor-pointer"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      @onclick="@(() => SelectUomList(true))" />
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChoosePriceList"
+                                      AdornmentAriaLabel="Choose PriceList"
+                                      ReadOnly="true"
+                                      Label="PriceList" />
+
+                        <MudTextField @bind-Value="_itemModel.PriceListId"
+                                      For="@(() => _itemModel.PriceListId)"
+                                      Style="display: none" />
                     </MudItem>
                     <MudItem lg="4" sm="12" xs="12">
                         <MudGrid>
@@ -88,129 +101,144 @@
 
                 <MudGrid Justify="Justify.Center">
                     <MudItem lg="4" sm="12" xs="12">
-                        <MudTextField @bind-Value="_itemModel.UomGroupName"
-                                      For="@(() => _itemModel.UomGroupName)"
+                        <MudTextField @bind-Value="_groupUomName"
                                       Immediate="true"
-                                      ReadOnly="true"
-                                      Label="Uom Group"
-                                      Class="cursor-pointer"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      @onclick="@(() => SelectUomList(true))" />
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseGroupUom"
+                                      AdornmentAriaLabel="Choose Group Uom"
+                                      ReadOnly="true"
+                                      Label="Group Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.UomGroupId"
+                                      For="@(() => _itemModel.UomGroupId)"
+                                      Style="display: none" />
                     </MudItem>
                     <MudItem lg="4" sm="12" xs="12">
-                        <MudTextField @bind-Value="_itemModel.BaseUomName"
-                                      For="@(() => _itemModel.BaseUomName)"
+                        <MudTextField @bind-Value="_baseUomName"
                                       Immediate="true"
-                                      ReadOnly="true"
-                                      Label="Base Uom"
-                                      Class="cursor-pointer"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      @onclick="@(() => SelectUomList(true))" />
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseBaseUom"
+                                      AdornmentAriaLabel="Choose Base Uom"
+                                      ReadOnly="true"
+                                      Label="Base Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.BaseUomId"
+                                      For="@(() => _itemModel.BaseUomId)"
+                                      Style="display: none" />
                     </MudItem>
                     <MudItem lg="4" sm="12" xs="12">
-                        <MudTextField @bind-Value="_itemModel.SaleUomName"
-                                      For="@(() => _itemModel.SaleUomName)"
+                        <MudTextField @bind-Value="_saleUomName"
                                       Immediate="true"
-                                      ReadOnly="true"
-                                      Label="Sale Uom"
-                                      Class="cursor-pointer"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      @onclick="@(() => SelectUomList(true))" />
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseSaleUom"
+                                      AdornmentAriaLabel="Choose Sale Uom"
+                                      ReadOnly="true"
+                                      Label="Sale Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.SaleUomId"
+                                      For="@(() => _itemModel.SaleUomId)"
+                                      Style="display: none" />
                     </MudItem>
                 </MudGrid>
 
                 <MudGrid Justify="Justify.Center">
                     <MudItem lg="4" sm="4" xs="12">
-                        <MudTextField @bind-Value="_itemModel.PurchaseUomName"
-                                      For="@(() => _itemModel.PurchaseUomName)"
+                        <MudTextField @bind-Value="_purchaseUomName"
                                       Immediate="true"
-                                      ReadOnly="true"
-                                      Label="Purchase Uom"
-                                      Class="cursor-pointer"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      @onclick="@(() => SelectUomList(true))" />
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChoosePurchaseUom"
+                                      AdornmentAriaLabel="Choose Purchase Uom"
+                                      ReadOnly="true"
+                                      Label="Purchase Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.PurchaseUomId"
+                                      For="@(() => _itemModel.PurchaseUomId)"
+                                      Style="display: none" />
                     </MudItem>
                     <MudItem lg="4" sm="4" xs="12">
-                        <MudTextField @bind-Value="_itemModel.SaleUomName"
-                                      For="@(() => _itemModel.SaleUomName)"
+                        <MudTextField @bind-Value="_inventoryUomName"
                                       Immediate="true"
-                                      ReadOnly="true"
-                                      Label="Sale Uom"
-                                      Class="cursor-pointer"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      @onclick="@(() => SelectUomList(true))" />
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseInventoryUom"
+                                      AdornmentAriaLabel="Choose Inventory Uom"
+                                      ReadOnly="true"
+                                      Label="Inventory Uom" />
+
+                        <MudTextField @bind-Value="_itemModel.InventoryUomId"
+                                      For="@(() => _itemModel.InventoryUomId)"
+                                      Style="display: none" />
                     </MudItem>
                     <MudItem lg="4" sm="4" xs="12">
-                        <MudTextField @bind-Value="_itemModel.InventoryUomName"
-                                      For="@(() => _itemModel.InventoryUomName)"
-                                      Immediate="true"
-                                      ReadOnly="true"
-                                      Label="Inventory Uom"
-                                      Class="cursor-pointer"
-                                      Variant="Variant.Outlined"
-                                      Margin="Margin.Dense"
-                                      @onclick="@(() => SelectUomList(true))" />
+                        <MudSelect @bind-Value="_itemModel.Type"
+                                   For="@(() => _itemModel.Type)"
+                                   Label="Type"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense">
+                            @foreach (ItemMasterDataType option in Enum.GetValues(typeof(ItemMasterDataType)))
+                            {
+                                <MudSelectItem Value="option" />
+                            }
+                        </MudSelect>
                     </MudItem>
                 </MudGrid>
 
-                <MudGrid Justify="Justify.FlexStart">
-                    <MudItem lg="4" sm="12" xs="12">
-                        <MudStack Style="width: 100%">
-                            <MudFileUpload T="IBrowserFile"
-                                              AppendMultipleFiles
-                                            OnFilesChanged="OnInputFileChanged"
-                                            Hidden="@false"
-                                            InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                                            InputStyle="opacity:0"
-                                            @ondragenter="@SetDragClass"
-                                            @ondragleave="@ClearDragClass"
-                                            @ondragend="@ClearDragClass">
-                                 <ButtonTemplate>
-                                     <MudPaper Height="250px"
-                                               Outlined="true"
-                                               Class="@_dragClass">
-                                         <MudText Typo="Typo.body1">
-                                             Drag and drop files here or click
-                                         </MudText>
-                                         <MudImage Src="@(_fileImage)"
-                                                   Class="w-100 border-0"
-                                                   Style="height: 90%"
-                                                   ObjectFit="ObjectFit.Contain" />
-                                     </MudPaper>
-                                 </ButtonTemplate>
-                             </MudFileUpload>
-                         </MudStack>
-                     </MudItem>
-                     <MudItem lg="4" sm="4" xs="12">
-                         <MudSelect @bind-Value="_itemModel.Type" 
-                                    For="@(() => _itemModel.Type)" 
-                                    Label="Type"
-                                    Variant="Variant.Outlined"
-                                    Margin="Margin.Dense">
-                             @foreach (ItemMasterDataType option in Enum.GetValues(typeof(ItemMasterDataType)))
-                            {
-                                <MudSelectItem Value="option" />
-                            }
-                        </MudSelect>
-                    </MudItem>
-                    <MudItem lg="4" sm="4" xs="12">
-                        <MudSelect @bind-Value="_itemModel.Process" 
-                                   For="@(() => _itemModel.Process)" 
-                                   Label="Process"
-                                   Variant="Variant.Outlined"
-                                   Margin="Margin.Dense">
-                            @foreach (ItemMasterDataProcess option in Enum.GetValues(typeof(ItemMasterDataProcess)))
-                            {
-                                <MudSelectItem Value="option" />
-                            }
-                        </MudSelect>
-                    </MudItem>
-                </MudGrid>
+            <MudGrid Justify="Justify.FlexStart">
+                <MudItem lg="4" sm="4" xs="12">
+                    <MudSelect @bind-Value="_itemModel.Process" 
+                               For="@(() => _itemModel.Process)" 
+                               Label="Process"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense">
+                        @foreach (ItemMasterDataProcess option in Enum.GetValues(typeof(ItemMasterDataProcess)))
+                        {
+                            <MudSelectItem Value="option" />
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem lg="4" sm="8" xs="12">
+                    <MudStack Style="width: 100%">
+                        <MudFileUpload T="IBrowserFile"
+                                       AppendMultipleFiles
+                                       OnFilesChanged="OnInputFileChanged"
+                                       Hidden="@false"
+                                       InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                                       InputStyle="opacity:0"
+                                       @ondragenter="@SetDragClass"
+                                       @ondragleave="@ClearDragClass"
+                                       @ondragend="@ClearDragClass">
+                            <ButtonTemplate>
+                                <MudPaper Height="250px"
+                                          Outlined="true"
+                                          Class="@_dragClass">
+                                    <MudText Typo="Typo.body1">
+                                        Drag and drop files here or click
+                                    </MudText>
+                                    <MudImage Src="@(_fileImage)"
+                                              Class="w-100 border-0"
+                                              Style="height: 90%"
+                                              ObjectFit="ObjectFit.Contain"/>
+                                </MudPaper>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                    </MudStack>
+                </MudItem>
+
+            </MudGrid>
 
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
@@ -248,6 +276,14 @@
     readonly CreateItemMasterDataDto _itemModel = new();
 
     readonly CreateItemMasterDataValidator _itemValidator = new();
+
+    private string _warehouseName = "";
+    private string _priceListName = "";
+    private string _groupUomName = "";
+    private string _purchaseUomName = "";
+    private string _inventoryUomName = "";
+    private string _baseUomName = "";
+    private string _saleUomName = "";
 
     MudForm? _form;
 
@@ -314,5 +350,11 @@
         }
     }
 
-    private async Task SelectUomList(bool a) { }
+    private void ChooseWarehouse() { }
+    private void ChooseGroupUom() { }
+    private void ChoosePriceList() { }
+    private void ChooseBaseUom() { }
+    private void ChooseSaleUom() { }
+    private void ChoosePurchaseUom() { }
+    private void ChooseInventoryUom() { }
 }
