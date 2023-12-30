@@ -10,7 +10,7 @@ public class CreateItemMasterDataCommandHandler(IItemMasterDataRepository reposi
     {
         var r = request.Dto;
 
-        var fileName = r.File == null ? "" : Guid.NewGuid().ToString("N");
+        var fileName = r.File == null ? "" : $"{Guid.NewGuid()}{Path.GetExtension(r.File?.FileName)}";
 
         var dto = new ItemMasterDataDto
         {
@@ -45,7 +45,7 @@ public class CreateItemMasterDataCommandHandler(IItemMasterDataRepository reposi
             var uploadsPath = Path.Join(environment.WebRootPath, "contents/item-master/images");
             var filePath = Path.Join(uploadsPath, r.File.FileName);
             await using Stream fileStream = new FileStream(filePath, FileMode.Create);
-            await r.File.CopyToAsync(fileStream, cancellationToken);
+            await fileStream.WriteAsync(r.File.ImageBytes, cancellationToken);
         }
     }
 }
