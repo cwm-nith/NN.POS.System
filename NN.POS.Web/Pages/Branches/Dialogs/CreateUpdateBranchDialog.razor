@@ -1,0 +1,158 @@
+﻿@using NN.POS.Model.Dtos.Company.Branches
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Validations.Branches
+@using NN.POS.Model.Dtos.Company
+@namespace NN.POS.Web.Pages.Currencies
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="_branchModel" Validation="_branchValidator.ValidateValue" @ref="_form">
+            <MudGrid Justify="Justify.Center">
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_branchModel.Name"
+                                  For="@(() => _branchModel.Name)"
+                                  Immediate="true"
+                                  Label="Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_companyName"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                  OnAdornmentClick="@ChooseCompany"
+                                  AdornmentAriaLabel="Choose Company"
+                                  ReadOnly="true"
+                                  Label="Company" />
+                    <MudTextField @bind-Value="_branchModel.CompanyId"
+                                  For="@(() => _branchModel.CompanyId)"
+                                  Style="display: none" />
+                </MudItem>
+            </MudGrid>
+            
+            <MudGrid Justify="Justify.Center">
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_branchModel.Location"
+                                  For="@(() => _branchModel.Location)"
+                                  Immediate="true"
+                                  Label="Location"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_branchModel.Address"
+                                  For="@(() => _branchModel.Address)"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Label="Address" />
+                </MudItem>
+            </MudGrid>
+
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    @_apiErrorMessages
+                </MudChip>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Filled"
+                   OnClick="@CreateUpdate">@(Data.Id > 0 ? "Update" : "Create")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter] 
+    public BranchDto Data { get; set; } = new();
+
+    [Parameter]
+    public MudTable<BranchDto>? Table { get; set; }
+
+    private CreateBranchDto _branchModel = new();
+
+    readonly CreateUpdateBranchValidation _branchValidator = new();
+
+    private string? _companyName;
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+
+    protected override void OnParametersSet()
+    {
+        _branchModel = new CreateBranchDto
+            {
+                Name = Data.Name,
+                Location = Data.Location,
+                Address = Data.Address,
+                CompanyId = Data.CompanyId
+            };
+        _companyName = Data.CompanyName;
+        base.OnParametersSet();
+    }
+
+    private async Task CreateUpdate()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_branchModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            HttpResponseMessage response;
+
+            if (Data?.Id > 0)
+            {
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}branch/{Data?.Id}", requestContent);
+            }
+            else
+            {
+                response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}branch", requestContent);
+            }
+
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(
+                response,
+                () => NavigationManager.NavigateTo(RouteName.Login),
+                () =>
+                {
+                    MudDialog?.Close(DialogResult.Ok(true));
+                    Table?.ReloadServerData();
+                }
+            );
+        }
+
+    }
+
+    private void ChooseCompany()
+    {
+        var parameters = new DialogParameters<SelectCompanyDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<CompanyDto>(this, (com) =>
+                {
+                    _companyName = com.Name;
+                    _branchModel.CompanyId = com.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectCompanyDialog>("Company", parameters, options);
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+}
