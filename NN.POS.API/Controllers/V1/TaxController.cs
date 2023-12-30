@@ -30,4 +30,11 @@ public class TaxController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] CreateTaxDto body)
+    {
+        await mediator.Send(new UpdateTaxCommand(id, body));
+        return Ok();
+    }
+
 }
