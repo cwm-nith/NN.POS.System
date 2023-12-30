@@ -5,8 +5,6 @@ namespace NN.POS.Model.Dtos.ItemMasters;
 
 public class CreateItemMasterDataDto : IBaseDto
 {
-    public string Code { get; set; } = string.Empty;
-    public string Barcode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? OtherName { get; set; }
     public decimal StockIn { get; set; }
@@ -41,5 +39,5 @@ public class CreateItemMasterDataDto : IBaseDto
     /// </summary>
     public ItemMasterDataProcess Process { get; set; }
 
-    public IFormFile? File { get; set; }
+    public FileData? File { get; set; }
 }

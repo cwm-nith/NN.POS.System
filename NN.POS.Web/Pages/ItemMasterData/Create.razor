@@ -1,4 +1,6 @@
 ﻿@using NN.POS.Model.Dtos.ItemMasters
+@using NN.POS.Model.Dtos.PriceLists
+@using NN.POS.Model.Dtos.UnitOfMeasures
 @using NN.POS.Model.Dtos.Warehouses
 @using NN.POS.Model.Enums
 @using NN.POS.Web.Components.Dialogs
@@ -199,50 +201,50 @@
                     </MudItem>
                 </MudGrid>
 
-            <MudGrid Justify="Justify.FlexStart">
-                <MudItem lg="4" sm="4" xs="12">
-                    <MudSelect @bind-Value="_itemModel.Process" 
-                               For="@(() => _itemModel.Process)" 
-                               Label="Process"
-                               Variant="Variant.Outlined"
-                               Margin="Margin.Dense">
-                        @foreach (ItemMasterDataProcess option in Enum.GetValues(typeof(ItemMasterDataProcess)))
-                        {
-                            <MudSelectItem Value="option" />
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem lg="4" sm="8" xs="12">
-                    <MudStack Style="width: 100%">
-                        <MudFileUpload T="IBrowserFile"
-                                       AppendMultipleFiles
-                                       OnFilesChanged="OnInputFileChanged"
-                                       Hidden="@false"
-                                       InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                                       InputStyle="opacity:0"
-                                       @ondragenter="@SetDragClass"
-                                       @ondragleave="@ClearDragClass"
-                                       @ondragend="@ClearDragClass">
-                            <ButtonTemplate>
-                                <MudPaper Height="250px"
-                                          Outlined="true"
-                                          Class="@_dragClass">
-                                    <MudText Typo="Typo.body1">
-                                        Drag and drop files here or click
-                                    </MudText>
-                                    <MudImage Src="@(_fileImage)"
-                                              Class="w-100 border-0"
-                                              Style="height: 90%"
-                                              ObjectFit="ObjectFit.Contain"/>
-                                </MudPaper>
-                            </ButtonTemplate>
-                        </MudFileUpload>
-                    </MudStack>
-                </MudItem>
+                <MudGrid Justify="Justify.FlexStart">
+                    <MudItem lg="4" sm="4" xs="12">
+                        <MudSelect @bind-Value="_itemModel.Process"
+                                   For="@(() => _itemModel.Process)"
+                                   Label="Process"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense">
+                            @foreach (ItemMasterDataProcess option in Enum.GetValues(typeof(ItemMasterDataProcess)))
+                            {
+                                <MudSelectItem Value="option" />
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem lg="4" sm="8" xs="12">
+                        <MudStack Style="width: 100%">
+                            <MudFileUpload T="IBrowserFile"
+                                              AppendMultipleFiles
+                                            OnFilesChanged="OnInputFileChanged"
+                                            Hidden="@false"
+                                            InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                                            InputStyle="opacity:0"
+                                            @ondragenter="@SetDragClass"
+                                            @ondragleave="@ClearDragClass"
+                                            @ondragend="@ClearDragClass">
+                                 <ButtonTemplate>
+                                     <MudPaper Height="250px"
+                                               Outlined="true"
+                                               Class="@_dragClass">
+                                         <MudText Typo="Typo.body1">
+                                             Drag and drop files here or click
+                                         </MudText>
+                                         <MudImage Src="@(_fileImage)"
+                                                   Class="w-100 border-0"
+                                                   Style="height: 90%"
+                                                   ObjectFit="ObjectFit.Contain" />
+                                     </MudPaper>
+                                 </ButtonTemplate>
+                             </MudFileUpload>
+                         </MudStack>
+                     </MudItem>
 
-            </MudGrid>
+                 </MudGrid>
 
-                @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
                     <MudChip Variant="Variant.Outlined" Color="Color.Error">
                         @_apiErrorMessages
@@ -258,7 +260,7 @@
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.AddCircle"
-                                   OnClick="@(CreateRoleAsync)">
+                                   OnClick="@(CreateItemAsync)">
                             Save
                         </MudButton>
                     </MudItem>
@@ -309,6 +311,15 @@
         var buffer = new byte[e.File.Size];
         _ = await e.File.OpenReadStream().ReadAsync(buffer);
         _fileImage = $"data:{e.File.ContentType};base64,{Convert.ToBase64String(buffer)}";
+
+        _itemModel.File = new FileData
+        {
+            FileName = e.File.Name,
+            FileSize = e.File.Size,
+            FileType = e.File.ContentType,
+            ImageBytes = buffer
+        };
+
     }
 
     private void SetDragClass()
@@ -317,7 +328,7 @@
     private void ClearDragClass()
         => _dragClass = DefaultDragClass;
 
-    private async Task CreateRoleAsync()
+    private async Task CreateItemAsync()
     {
         await _form?.Validate()!;
         if (_form.IsValid)
@@ -327,28 +338,10 @@
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}itemMasterData", requestContent);
 
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                    {
-                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                        break;
-                    }
-                case HttpStatusCode.Unauthorized:
-                    {
-                        NavigationManager.NavigateTo(RouteName.Login);
-                        break;
-                    }
-                case HttpStatusCode.OK:
-                    {
-                        NavigationManager.NavigateTo(RouteName.ItemMasterData);
-                        break;
-                    }
-                default:
-                    _apiErrorMessages = "Login Failed Please try after some time";
-                    break;
-            }
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(
+                response,
+                () => NavigationManager.NavigateTo(RouteName.Login),
+                () => NavigationManager.NavigateTo(RouteName.ItemMasterData));
         }
     }
 
@@ -370,10 +363,118 @@
 
         Dialog.Show<SelectWarehouseDialog>("Warehouse", parameters, options);
     }
-    private void ChooseGroupUom() { }
-    private void ChoosePriceList() { }
-    private void ChooseBaseUom() { }
-    private void ChooseSaleUom() { }
-    private void ChoosePurchaseUom() { }
-    private void ChooseInventoryUom() { }
+
+    private void ChooseGroupUom()
+    {
+        var parameters = new DialogParameters<SelectGroupUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureGroupDto>(this, (gUom) =>
+                {
+                    _groupUomName = gUom.Name;
+                    _itemModel.UomGroupId = gUom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectGroupUomDialog>("Unit Of Measure Group", parameters, options);
+    }
+
+    private void ChoosePriceList()
+    {
+        var parameters = new DialogParameters<SelectPriceListDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<PriceListDto>(this, (pl) =>
+                {
+                    _priceListName = pl.Name;
+                    _itemModel.PriceListId = pl.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectPriceListDialog>("Price List", parameters, options);
+    }
+
+    private void ChooseBaseUom()
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    _baseUomName = uom.Name;
+                    _itemModel.BaseUomId = uom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectUomDialog>("Base Uom", parameters, options);
+    }
+
+    private void ChooseSaleUom()
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    _saleUomName = uom.Name;
+                    _itemModel.SaleUomId= uom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectUomDialog>("Sale Uom", parameters, options);
+    }
+
+    private void ChoosePurchaseUom()
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    _purchaseUomName = uom.Name;
+                    _itemModel.PurchaseUomId = uom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectUomDialog>("Purchase Uom", parameters, options);
+    }
+
+    private void ChooseInventoryUom()
+    {
+        var parameters = new DialogParameters<SelectUomDialog>
+        {
+            {
+                x => x.OnChooseUom,
+                new EventCallbackFactory().Create<UnitOfMeasureDto>(this, (uom) =>
+                {
+                    _inventoryUomName = uom.Name;
+                    _itemModel.InventoryUomId = uom.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectUomDialog>("Inventory Uom", parameters, options);
+    }
 }

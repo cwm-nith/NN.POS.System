@@ -12,14 +12,6 @@ public class CreateItemMasterDataValidator : BaseValidator<CreateItemMasterDataD
             .NotEmpty()
             .WithMessage("Name cannot be empty!");
 
-        RuleFor(i => i.Code)
-            .NotEmpty()
-            .WithMessage("Code cannot be empty!");
-
-        RuleFor(i => i.Barcode)
-            .NotEmpty()
-            .WithMessage("Barcode cannot be empty!");
-
         RuleFor(i => i.PriceListId)
             .Must(i => i > 0)
             .WithMessage("Please choose price list!");

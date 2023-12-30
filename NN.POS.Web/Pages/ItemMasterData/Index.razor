@@ -36,8 +36,6 @@
             <MudTh>Barcode</MudTh>
             <MudTh>Name</MudTh>
             <MudTh>Other Name</MudTh>
-            <MudTh>UoM</MudTh>
-            <MudTh>Group</MudTh>
             <MudTh>Type</MudTh>
             <MudTh>Image</MudTh>
             <MudTh>Action</MudTh>
@@ -49,14 +47,12 @@
                 <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
                 <MudTd DataLabel="Other Name">@context.OtherName</MudTd>
-                <MudTd DataLabel="Uom">@context.BaseUomId</MudTd>
-                <MudTd DataLabel="Group">@context.Code</MudTd>
                 <MudTd DataLabel="Type">@context.Type.ToEnumString()</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage Src="@($"{Setting.ApiUrl}/contents/item-master/images/{context.Image}")"
-                              Class="w-25 h-25" />
+                    <MudAvatar>
+                        <MudImage Src="@($"{Setting.ApiUrl}/contents/item-master/images/{context.Image}")" />
+                    </MudAvatar>
                 </MudTd>
-                <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => GoToUpdatePage(context.Id))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteRole(context.Id))"></MudIconButton>
