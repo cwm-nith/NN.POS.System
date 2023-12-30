@@ -57,4 +57,6 @@ public static class RouteName
     public const string CompanyCreate = $"{Settings}/company/create";
     public const string CompanyUpdate = $"{Settings}/company/update";
 
+    public const string Branch = $"{Settings}/branch";
+
 }

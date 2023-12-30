@@ -1,0 +1,148 @@
+﻿@using NN.POS.Model.Dtos.Company.Branches
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Pages.Currencies
+@attribute [Route(RouteName.Branch)]
+
+<MudContainer Class="mt-2">
+
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.AddCircle"
+                   Color="Color.Primary"
+                   OnClick="@Create">
+            Create
+        </MudButton>
+    </MudPaper>
+
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<BranchDto>>>(ServerReload))"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              @ref="_table">
+
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Currencies</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Company</MudTh>
+            <MudTh>Location</MudTh>
+            <MudTh>Address</MudTh>
+            <MudTh>Created At</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Price List">@context.CompanyName</MudTd>
+                <MudTd DataLabel="Location">@context.Location</MudTd>
+                <MudTd DataLabel="Address">@context.Address</MudTd>
+                <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+
+    @code {
+    private MudTable<BranchDto>? _table;
+    private string _searchString = "";
+
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpend(RouteName.Settings);
+        NavbarStateService.SetActive(RouteName.Branch);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private async Task<TableData<BranchDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}branch?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+
+        var data = await httpClient.GetFromJsonAsync<PagedResult<BranchDto>>(path);
+
+        return new TableData<BranchDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    protected void Create()
+    {
+        var parameters = new DialogParameters<CreateUpdateBranchDialog>
+        {
+            {
+                x => x.Table, _table
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<CreateUpdateBranchDialog>("Create", parameters, options);
+    }
+
+    protected void Update(BranchDto data)
+    {
+        var parameters = new DialogParameters<CreateUpdateBranchDialog>
+        {
+            {
+                x => x.Data, data
+            },
+            {
+                x => x.Table, _table
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<CreateUpdateBranchDialog>("Update", parameters, options);
+    }
+
+    private void Delete(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog<BranchDto>>
+            {
+                {
+                    x => x.Endpoint, $"branch/{id}"
+                },
+                {
+                    x => x.Table, _table
+                }
+            };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<DeleteDialog<BranchDto>>("Delete", parameters, options);
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+}

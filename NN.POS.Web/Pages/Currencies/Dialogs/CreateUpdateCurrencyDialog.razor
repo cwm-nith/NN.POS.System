@@ -12,7 +12,7 @@
                                   Immediate="true"
                                   Label="Name"
                                   Variant="Variant.Outlined"
-                                  Margin="Margin.Dense"/>
+                                  Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem lg="5" sm="12" xs="12">
                     <MudTextField @bind-Value="_currencyModel.Symbol"
@@ -23,7 +23,7 @@
                                   Label="Symbol" />
                 </MudItem>
             </MudGrid>
-            
+
             @if (!string.IsNullOrEmpty(_apiErrorMessages))
             {
                 <MudChip Variant="Variant.Outlined" Color="Color.Error">
@@ -34,8 +34,8 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="@(Cancel)">Cancel</MudButton>
-        <MudButton Color="Color.Error" 
-                   Variant="Variant.Filled" 
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Filled"
                    OnClick="@CreateUpdate">@(Data?.Id > 0 ? "Update" : "Create")</MudButton>
     </DialogActions>
 </MudDialog>
@@ -89,31 +89,12 @@
                 response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}currency", requestContent);
             }
 
-
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                    {
-                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                        _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                        break;
-                    }
-                case HttpStatusCode.Unauthorized:
-                    {
-                        NavigationManager.NavigateTo(RouteName.Login);
-                        break;
-                    }
-                case HttpStatusCode.OK:
-                    {
-                        MudDialog?.Close(DialogResult.Ok(true));
-                        Table?.ReloadServerData();
-                        break;
-                    }
-                default:
-                    _apiErrorMessages = "Something went wrong, Please try after some time";
-                    break;
-            }
-
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response, () => NavigationManager.NavigateTo(RouteName.Login),
+                () =>
+                {
+                    MudDialog?.Close(DialogResult.Ok(true));
+                    Table?.ReloadServerData();
+                });
         }
 
     }

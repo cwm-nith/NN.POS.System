@@ -5,6 +5,9 @@
     <MudNavGroup Title="Settings" Expanded="@(NavbarStateService.Value is RouteName.Settings)">
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Company))"
                     Href="@RouteName.Company">Company</MudNavLink>
+        
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Branch))"
+                    Href="@RouteName.Branch">Branch</MudNavLink>
 
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Currency))"
                     Href="@RouteName.Currency">Currency</MudNavLink>
