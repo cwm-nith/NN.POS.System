@@ -37,4 +37,11 @@ public class TaxController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await mediator.Send(new DeleteTaxCommand(id));
+        return Ok();
+    }
+
 }
