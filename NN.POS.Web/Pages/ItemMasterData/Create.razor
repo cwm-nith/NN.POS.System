@@ -1,5 +1,7 @@
 ﻿@using NN.POS.Model.Dtos.ItemMasters
+@using NN.POS.Model.Dtos.Warehouses
 @using NN.POS.Model.Enums
+@using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Validations.ItemMasters
 @attribute [Route(RouteName.ItemMasterDataCreate)]
 @implements IDisposable
@@ -350,7 +352,24 @@
         }
     }
 
-    private void ChooseWarehouse() { }
+    private void ChooseWarehouse()
+    {
+        var parameters = new DialogParameters<SelectWarehouseDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<WarehouseDto>(this, (ws) =>
+                {
+                    _warehouseName = ws.Name;
+                    _itemModel.WarehouseId = ws.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectWarehouseDialog>("Warehouse", parameters, options);
+    }
     private void ChooseGroupUom() { }
     private void ChoosePriceList() { }
     private void ChooseBaseUom() { }
