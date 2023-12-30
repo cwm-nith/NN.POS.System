@@ -1,0 +1,100 @@
+﻿@using NN.POS.Model.Dtos.Company.Branches
+
+@namespace NN.POS.Web.Components.Dialogs
+
+<MudDialog>
+    <DialogContent>
+        <MudTable ServerData="@(new Func<TableState, Task<TableData<BranchDto>>>(ServerReload))"
+                  Dense="true"
+                  Hover="true"
+                  Striped="true"
+                  @ref="_table">
+
+            <ToolBarContent>
+                <MudSpacer />
+                <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Id</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Company</MudTh>
+                <MudTh>Location</MudTh>
+                <MudTh>Address</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Id">@context.Id</MudTd>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Company">@context.CompanyName</MudTd>
+                    <MudTd DataLabel="Location">@context.Location</MudTd>
+                    <MudTd DataLabel="Address">@context.Address</MudTd>
+                    <MudTd DataLabel="Actions">
+                        <MudButton StartIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                   Color="Color.Info"
+                                   OnClick="@(() => Submit(context))"
+                                   Variant="Variant.Filled"
+                                   Size="Size.Small">Choose</MudButton>
+                    </MudTd>
+                </RowTemplate>
+
+                <NoRecordsContent>
+                    <MudText>No matching records found</MudText>
+                </NoRecordsContent>
+                <LoadingContent>
+                    <MudText>Loading...</MudText>
+                </LoadingContent>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="@(Cancel)">Close</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+    @code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public EventCallback<BranchDto>? OnRefresh { get; set; }
+
+
+    private MudTable<BranchDto>? _table;
+    private string _searchString = "";
+
+    private async Task<TableData<BranchDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}branch?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+
+        var data = await httpClient.GetFromJsonAsync<PagedResult<BranchDto>>(path);
+
+        return new TableData<BranchDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+
+
+    private async Task Submit(BranchDto context)
+    {
+        MudDialog?.Close(DialogResult.Ok(true));
+        if (OnRefresh is not null)
+        {
+            await OnRefresh?.InvokeAsync(context)!;
+        }
+
+    }
+    private void Cancel() => MudDialog?.Cancel();
+}

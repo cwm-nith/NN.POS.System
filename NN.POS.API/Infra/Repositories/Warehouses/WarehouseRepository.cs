@@ -39,24 +39,18 @@ public class WarehouseRepository(
 
     public async Task<PagedResult<WarehouseDto>> GetPageAsync(GetPageWarehouseQuery query, CancellationToken cancellationToken = default)
     {
-        PagedResult<WarehouseTable> data;
-        if (string.IsNullOrWhiteSpace(query.Search))
-        {
-            data = await readDbRepository.BrowseAsync(i => !i.IsDeleted, query, cancellationToken);
-        }
-        else
-        {
-            data = await readDbRepository.BrowseAsync(i =>
+        var context = readDbRepository.Context;
+
+        var data = await (from ws in context.Warehouses!.Where(i =>
                 !i.IsDeleted && (
-                    EF.Functions.Like(i.Name, $"%{query.Search}%") || 
+                    EF.Functions.Like(i.Name, $"%{query.Search}%") ||
                     EF.Functions.Like(i.Code, $"%{query.Search}%") ||
                     EF.Functions.Like(i.Address, $"%{query.Search}%") ||
                     EF.Functions.Like(i.Location, $"%{query.Search}%")
-                    ),
-                query,
-                cancellationToken);
-        }
+                ))
+                          join br in context.Branches! on ws.BranchId equals br.Id
+                          select ws.ToDto(br.Name)).PaginateAsync(query, cancellationToken);
 
-        return data.Map(i => i.ToDto());
+        return data;
     }
 }

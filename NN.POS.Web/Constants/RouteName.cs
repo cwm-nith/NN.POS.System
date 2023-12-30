@@ -59,4 +59,6 @@ public static class RouteName
 
     public const string Branch = $"{Settings}/branch";
 
+    public const string Warehouse = $"{Settings}/warehouse";
+
 }
