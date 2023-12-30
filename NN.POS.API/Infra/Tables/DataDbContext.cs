@@ -6,6 +6,7 @@ using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
+using NN.POS.API.Infra.Tables.Tax;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
 using NN.POS.API.Infra.Tables.User;
 using NN.POS.API.Infra.Tables.Warehouses;
@@ -29,6 +30,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<WarehouseTable>? Warehouses { get; set; }
     public DbSet<CompanyTable>? Companies { get; set; }
     public DbSet<BranchTable>? Branches { get; set; }
+    public DbSet<TaxTable>? Tax { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

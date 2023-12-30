@@ -6,6 +6,7 @@ using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
+using NN.POS.API.Infra.Tables.Tax;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
 using NN.POS.API.Infra.Tables.User;
 using NN.POS.API.Infra.Tables.Warehouses;
@@ -31,6 +32,7 @@ public static class Extensions
         services.AddPostgresRepository<WarehouseTable>();
         services.AddPostgresRepository<CompanyTable>();
         services.AddPostgresRepository<BranchTable>();
+        services.AddPostgresRepository<TaxTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
