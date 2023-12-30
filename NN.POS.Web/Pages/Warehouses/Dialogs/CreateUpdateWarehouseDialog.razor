@@ -1,0 +1,182 @@
+﻿@using NN.POS.Model.Dtos.Warehouses
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Validations.Warehouses
+@using NN.POS.Model.Dtos.Company.Branches
+
+@namespace NN.POS.Web.Pages.Warehouses
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="_warehouseModel" Validation="_warehouseValidator.ValidateValue" @ref="_form">
+            <MudGrid Justify="Justify.Center">
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_warehouseModel.Code"
+                                  For="@(() => _warehouseModel.Code)"
+                                  Immediate="true"
+                                  Label="Code"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_warehouseModel.Name"
+                                  For="@(() => _warehouseModel.Name)"
+                                  Immediate="true"
+                                  Label="Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"/>
+                </MudItem>
+            </MudGrid>
+            
+            <MudGrid Justify="Justify.Center">
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_warehouseModel.StockIn"
+                                  For="@(() => _warehouseModel.StockIn)"
+                                  Immediate="true"
+                                  Label="Stock In"
+                                  InputType="InputType.Number"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="Data.BranchName"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                  OnAdornmentClick="@ChooseBranch"
+                                  AdornmentAriaLabel="Choose Branch"
+                                  ReadOnly="true"
+                                  Label="Branch" />
+
+                    <MudTextField @bind-Value="_warehouseModel.BranchId"
+                                  For="@(() => _warehouseModel.BranchId)"
+                                  Style="display: none" />
+                </MudItem>
+            </MudGrid>
+            
+            <MudGrid Justify="Justify.Center">
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_warehouseModel.Location"
+                                  For="@(() => _warehouseModel.Location)"
+                                  Immediate="true"
+                                  Label="Location"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem lg="6" sm="12" xs="12">
+                    <MudTextField @bind-Value="_warehouseModel.Address"
+                                  For="@(() => _warehouseModel.Address)"
+                                  Immediate="true"
+                                  Label="Address"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+            </MudGrid>
+
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    @_apiErrorMessages
+                </MudChip>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Filled"
+                   OnClick="@CreateUpdate">@(Data.Id > 0 ? "Update" : "Create")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public WarehouseDto Data { get; set; } = new();
+
+    [Parameter]
+    public MudTable<WarehouseDto>? Table { get; set; }
+
+    private CreateWarehouseDto _warehouseModel = new();
+
+    readonly CreateUpdateWarehouseValidation _warehouseValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+
+    protected override void OnParametersSet()
+    {
+        _warehouseModel = new CreateWarehouseDto
+            {
+                Name = Data.Name,
+                BranchId = Data.BranchId
+            };
+        base.OnParametersSet();
+    }
+
+
+    private void ChooseBranch()
+    {
+        var parameters = new DialogParameters<SelectBranchDialog>
+            {
+                {
+                    x => x.OnRefresh,
+                    new EventCallbackFactory().Create<BranchDto>(this, (br) =>
+                    {
+                        Data = new WarehouseDto
+                        {
+                            BranchName = br.Name
+                        };
+                        _warehouseModel.BranchId = br.Id;
+                    })
+                }
+            };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectBranchDialog>("Branch", parameters, options);
+
+    }
+
+    private async Task CreateUpdate()
+    {
+        await _form?.Validate()!;
+
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_warehouseModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            HttpResponseMessage response;
+
+            if (Data.Id > 0)
+            {
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}warehouse/{Data.Id}", requestContent);
+            }
+            else
+            {
+                response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}warehouse", requestContent);
+            }
+
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
+                () =>
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                },
+                () =>
+                {
+                    MudDialog?.Close(DialogResult.Ok(true));
+                    Table?.ReloadServerData();
+                });
+        }
+
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+}
