@@ -14,4 +14,11 @@ public class TaxController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(query);
         return Ok(data);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<TaxDto>> GetById(int id)
+    {
+        var data = await mediator.Send(new GetTaxByIdQuery(id));
+        return Ok(data);
+    }
 }
