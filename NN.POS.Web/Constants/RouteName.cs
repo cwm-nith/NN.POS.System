@@ -61,4 +61,6 @@ public static class RouteName
 
     public const string Warehouse = $"{Settings}/warehouse";
 
+    public const string Tax = $"{Settings}/tax";
+
 }
