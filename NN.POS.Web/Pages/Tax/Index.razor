@@ -1,5 +1,6 @@
 ﻿@using NN.POS.Model.Dtos.Tax
 @using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Pages.Tax.Dialogs
 
 @attribute [Route(RouteName.Tax)]
 
@@ -94,16 +95,16 @@
 
     protected void Create()
     {
-        // var parameters = new DialogParameters<CreateUpdateTaxDialog>
-        // {
-        //     {
-        //         x => x.Table, _table
-        //     }
-        // };
+        var parameters = new DialogParameters<CreateUpdateTaxDialog>
+        {
+            {
+                x => x.Table, _table
+            }
+        };
 
-        // var options = new DialogOptions { CloseButton = true };
+        var options = new DialogOptions { CloseButton = true };
 
-        // Dialog.Show<CreateUpdateTaxDialog>("Create", parameters, options);
+        Dialog.Show<CreateUpdateTaxDialog>("Create", parameters, options);
     }
 
     protected void Update(TaxDto data)
