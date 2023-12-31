@@ -33,10 +33,9 @@
             <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Id">@context.Id</MudTd>
                 <MudTd DataLabel="Currency">@context.CcyName</MudTd>
-                <MudTd DataLabel="Rate">@context.Rate</MudTd>
-                <MudTd DataLabel="Set Rate">@context.SetRate</MudTd>
+                <MudTd DataLabel="Rate">@context.Rate.ToString("N6")</MudTd>
+                <MudTd DataLabel="Set Rate">@context.SetRate.ToString("N3")</MudTd>
                 <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context))"></MudIconButton>
@@ -90,21 +89,21 @@
 
     protected void Create()
     {
-        // var parameters = new DialogParameters<CreateUpdateCurrencyDialog>
-        // {
-        //     {
-        //         x => x.Table, _table
-        //     }
-        // };
+        var parameters = new DialogParameters<CreateUpdateExchangeRateDialog>
+        {
+            {
+                x => x.Table, _table
+            }
+        };
 
-        // var options = new DialogOptions { CloseButton = true };
+        var options = new DialogOptions { CloseButton = true };
 
-        // Dialog.Show<CreateUpdateCurrencyDialog>("Create", parameters, options);
+        Dialog.Show<CreateUpdateExchangeRateDialog>("Create", parameters, options);
     }
 
     protected void Update(ExchangeRateDto data)
     {
-        // var parameters = new DialogParameters<CreateUpdateCurrencyDialog>
+        // var parameters = new DialogParameters<CreateUpdateExchangeRateDialog>
         // {
         //     {
         //         x => x.Table, _table
@@ -116,7 +115,7 @@
 
         // var options = new DialogOptions { CloseButton = true };
 
-        // Dialog.Show<CreateUpdateCurrencyDialog>("Update", parameters, options);
+        // Dialog.Show<CreateUpdateExchangeRateDialog>("Update", parameters, options);
     }
 
     private void Delete(int id)
