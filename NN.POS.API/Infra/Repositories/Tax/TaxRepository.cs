@@ -19,7 +19,7 @@ public class TaxRepository(IReadDbRepository<TaxTable> readDbRepository,
 
     public async Task UpdateAsync(TaxDto body, CancellationToken cancellationToken = default)
     {
-        await writeDbRepository.AddAsync(body.ToTable(), cancellationToken);
+        await writeDbRepository.UpdateAsync(body.ToTable(), cancellationToken);
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)

@@ -13,7 +13,7 @@ CREATE TABLE [dbo].[tax](
 	[name] [nvarchar](50) NOT NULL,
 	[rate] [decimal](18, 3) NOT NULL,
   [type] [nvarchar](20) NOT NULL,
-  [effective_date] [datetime] NOT NULL,
+  [effective_date] [datetime] NULL,
 	[is_deleted] [bit] NOT NULL,
 	[created_at] [datetime] NOT NULL,
  CONSTRAINT [PK_tax] PRIMARY KEY CLUSTERED 
