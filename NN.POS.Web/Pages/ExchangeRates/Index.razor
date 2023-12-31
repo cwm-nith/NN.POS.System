@@ -1,0 +1,144 @@
+﻿@using NN.POS.Model.Dtos.Currencies
+@using NN.POS.Web.Components.Dialogs
+@attribute [Route(RouteName.ExchangeRate)]
+
+<MudContainer Class="mt-2">
+
+    <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 mb-2" Elevation="0">
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.AddCircle"
+                   Color="Color.Primary"
+                   OnClick="@Create">
+            Create
+        </MudButton>
+    </MudPaper>
+
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<ExchangeRateDto>>>(ServerReload))"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              @ref="_table">
+
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Currencies</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Currency</MudTh>
+            <MudTh>Rate</MudTh>
+            <MudTh>Set Rate</MudTh>
+            <MudTh>Created At</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Currency">@context.CcyName</MudTd>
+                <MudTd DataLabel="Rate">@context.Rate</MudTd>
+                <MudTd DataLabel="Set Rate">@context.SetRate</MudTd>
+                <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context))"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+
+    @code {
+    private MudTable<ExchangeRateDto>? _table;
+    private string _searchString = "";
+
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpend(RouteName.Settings);
+        NavbarStateService.SetActive(RouteName.ExchangeRate);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private async Task<TableData<ExchangeRateDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}exchangeRate?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+
+        var data = await httpClient.GetFromJsonAsync<PagedResult<ExchangeRateDto>>(path);
+
+        return new TableData<ExchangeRateDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    protected void Create()
+    {
+        // var parameters = new DialogParameters<CreateUpdateCurrencyDialog>
+        // {
+        //     {
+        //         x => x.Table, _table
+        //     }
+        // };
+
+        // var options = new DialogOptions { CloseButton = true };
+
+        // Dialog.Show<CreateUpdateCurrencyDialog>("Create", parameters, options);
+    }
+
+    protected void Update(ExchangeRateDto data)
+    {
+        // var parameters = new DialogParameters<CreateUpdateCurrencyDialog>
+        // {
+        //     {
+        //         x => x.Table, _table
+        //     },
+        //     {
+        //         x => x.Data, data
+        //     }
+        // };
+
+        // var options = new DialogOptions { CloseButton = true };
+
+        // Dialog.Show<CreateUpdateCurrencyDialog>("Update", parameters, options);
+    }
+
+    private void Delete(int id)
+    {
+        var parameters = new DialogParameters<DeleteDialog<ExchangeRateDto>>
+            {
+                {
+                    x => x.Endpoint, $"currency/{id}"
+                },
+                {
+                    x => x.Table, _table
+                }
+            };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<DeleteDialog<ExchangeRateDto>>("Delete", parameters, options);
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+}
