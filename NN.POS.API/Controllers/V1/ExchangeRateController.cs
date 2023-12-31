@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using NN.POS.API.App.Commands.Currencies;
 using NN.POS.API.App.Queries.Currencies;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.Currencies;
@@ -20,5 +21,12 @@ public class ExchangeRateController(IMediator mediator) : BaseApiController
     {
         var data = await mediator.Send(new GetExchangeRateByIdQuery(id));
         return Ok(data);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateExchangeRateDto exchangeRateDto)
+    {
+        await mediator.Send(new CreateExchangeRateCommand(exchangeRateDto));
+        return Ok();
     }
 }
