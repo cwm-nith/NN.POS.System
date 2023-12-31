@@ -1,0 +1,137 @@
+﻿@using NN.POS.Model.Dtos.Currencies
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Validations.Currencies
+@namespace NN.POS.Web.Pages.ExchangeRates
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="_exchangeRateModel" Validation="_exchangeRateValidator.ValidateValue" @ref="_form">
+            <MudGrid Spacing="5" Justify="Justify.Center">
+                <MudItem lg="5" sm="12" xs="12">
+                    <MudTextField @bind-Value="Data.CcyName"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                  OnAdornmentClick="@ChooseCurrency"
+                                  AdornmentAriaLabel="Choose Currency"
+                                  ReadOnly="true"
+                                  Label="Currency" />
+
+                    <MudTextField @bind-Value="_exchangeRateModel.CcyId"
+                                  For="@(() => _exchangeRateModel.CcyId)"
+                                  Style="display: none" />
+                </MudItem>
+                <MudItem lg="5" sm="12" xs="12">
+                    <MudTextField @bind-Value="_exchangeRateModel.SetRate"
+                                  For="@(() => _exchangeRateModel.SetRate)"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Label="Set Rate" />
+                </MudItem>
+            </MudGrid>
+
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    @_apiErrorMessages
+                </MudChip>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Filled"
+                   OnClick="@CreateUpdate">@(Data.Id > 0 ? "Update" : "Create")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter] 
+    public ExchangeRateDto Data { get; set; } = new();
+
+    [Parameter]
+    public MudTable<ExchangeRateDto>? Table { get; set; }
+
+    private CreateExchangeRateDto _exchangeRateModel = new();
+
+    readonly CreateUpdateExchangeRateValidation _exchangeRateValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+
+    protected override void OnParametersSet()
+    {
+        _exchangeRateModel = new CreateExchangeRateDto
+            {
+                Rate = Data.Rate,
+                CcyId = Data.CcyId,
+                SetRate = Data.SetRate
+            };
+        base.OnParametersSet();
+    }
+
+    private async Task CreateUpdate()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            _exchangeRateModel.Rate = 1 / _exchangeRateModel.SetRate;
+            var jsonPayload = JsonSerializer.Serialize(_exchangeRateModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            HttpResponseMessage response;
+
+            if (Data.Id > 0)
+            {
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}exchangeRate/{Data.Id}", requestContent);
+            }
+            else
+            {
+                response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}exchangeRate", requestContent);
+            }
+
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response, () => NavigationManager.NavigateTo(RouteName.Login),
+                () =>
+                {
+                    MudDialog?.Close(DialogResult.Ok(true));
+                    Table?.ReloadServerData();
+                });
+        }
+
+    }
+
+    private void ChooseCurrency()
+    {
+        var parameters = new DialogParameters<SelectCurrencyDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<CurrencyDto>(this, (ccy) =>
+                {
+                    Data = new ExchangeRateDto
+                    {
+                        CcyName = ccy.Name
+                    };
+                    _exchangeRateModel.CcyId = ccy.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectCurrencyDialog>("Currency", parameters, options);
+
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+}
