@@ -103,19 +103,19 @@
 
     protected void Update(ExchangeRateDto data)
     {
-        // var parameters = new DialogParameters<CreateUpdateExchangeRateDialog>
-        // {
-        //     {
-        //         x => x.Table, _table
-        //     },
-        //     {
-        //         x => x.Data, data
-        //     }
-        // };
+        var parameters = new DialogParameters<CreateUpdateExchangeRateDialog>
+        {
+            {
+                x => x.Table, _table
+            },
+            {
+                x => x.Data, data
+            }
+        };
 
-        // var options = new DialogOptions { CloseButton = true };
+        var options = new DialogOptions { CloseButton = true };
 
-        // Dialog.Show<CreateUpdateExchangeRateDialog>("Update", parameters, options);
+        Dialog.Show<CreateUpdateExchangeRateDialog>("Update", parameters, options);
     }
 
     private void Delete(int id)
