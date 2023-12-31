@@ -14,4 +14,11 @@ public class ExchangeRateController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(query);
         return Ok(data);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ExchangeRateDto>> GetById(int id)
+    {
+        var data = await mediator.Send(new GetExchangeRateByIdQuery(id));
+        return Ok(data);
+    }
 }
