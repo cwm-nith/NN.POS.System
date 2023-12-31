@@ -31,6 +31,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<CompanyTable>? Companies { get; set; }
     public DbSet<BranchTable>? Branches { get; set; }
     public DbSet<TaxTable>? Tax { get; set; }
+    public DbSet<ExchangeRateTable>? ExchangeRates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

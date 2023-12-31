@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NN.POS.API.App.Queries.Company;
 using NN.POS.API.Core.Exceptions.Company;
-using NN.POS.API.Core.IRepositories.Currencies;
+using NN.POS.API.Core.IRepositories.Company;
 using NN.POS.API.Infra.Tables;
 using NN.POS.API.Infra.Tables.Company;
 using NN.POS.Common.Pagination;

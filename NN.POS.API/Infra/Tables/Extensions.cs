@@ -33,6 +33,7 @@ public static class Extensions
         services.AddPostgresRepository<CompanyTable>();
         services.AddPostgresRepository<BranchTable>();
         services.AddPostgresRepository<TaxTable>();
+        services.AddPostgresRepository<ExchangeRateTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
