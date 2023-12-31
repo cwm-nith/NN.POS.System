@@ -29,4 +29,11 @@ public class ExchangeRateController(IMediator mediator) : BaseApiController
         await mediator.Send(new CreateExchangeRateCommand(exchangeRateDto));
         return Ok();
     }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] CreateExchangeRateDto exchangeRateDto)
+    {
+        await mediator.Send(new UpdateExchangeRateCommand(id, exchangeRateDto));
+        return Ok();
+    }
 }
