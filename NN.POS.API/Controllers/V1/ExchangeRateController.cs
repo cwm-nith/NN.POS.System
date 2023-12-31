@@ -36,4 +36,11 @@ public class ExchangeRateController(IMediator mediator) : BaseApiController
         await mediator.Send(new UpdateExchangeRateCommand(id, exchangeRateDto));
         return Ok();
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await mediator.Send(new DeleteExchangeRateCommand(id));
+        return Ok();
+    }
 }
