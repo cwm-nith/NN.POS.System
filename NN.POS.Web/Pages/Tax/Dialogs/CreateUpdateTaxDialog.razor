@@ -17,13 +17,12 @@
                                   Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem lg="6" sm="12" xs="12">
-                    <MudTextField @bind-Value="_taxModel.EffectiveDate"
-                                  For="@(() => _taxModel.EffectiveDate)"
-                                  Immediate="true"
-                                  Label="Effective Date"
-                                  InputType="InputType.Date"
-                                  Variant="Variant.Outlined"
-                                  Margin="Margin.Dense" />
+                    <MudDatePicker @bind-Date="_taxModel.EffectiveDate"
+                                   For="@(() => _taxModel.EffectiveDate)"
+                                   Immediate="true"
+                                   Label="Effective Date"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"/>
                 </MudItem>
             </MudGrid>
             
@@ -45,7 +44,6 @@
                                   For="@(() => _taxModel.Rate)"
                                   Immediate="true"
                                   Label="Rate"
-                                  InputType="InputType.Date"
                                   Variant="Variant.Outlined"
                                   Margin="Margin.Dense" />
                 </MudItem>
