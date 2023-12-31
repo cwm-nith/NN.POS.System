@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using NN.POS.API.Core.IRepositories.Currencies;
+using NN.POS.API.Core.IRepositories.Company;
 
 namespace NN.POS.API.App.Commands.Company.Handlers;
 

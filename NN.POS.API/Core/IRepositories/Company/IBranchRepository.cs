@@ -2,7 +2,7 @@
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.Company.Branches;
 
-namespace NN.POS.API.Core.IRepositories.Currencies;
+namespace NN.POS.API.Core.IRepositories.Company;
 
 public interface IBranchRepository : IRepository
 {

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using NN.POS.API.App.Queries.Company;
-using NN.POS.API.Core.IRepositories.Currencies;
+using NN.POS.API.Core.IRepositories.Company;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.Company.Branches;
 
