@@ -39,7 +39,7 @@
         <RowTemplate>
             <MudTd DataLabel="Id">@context.Id</MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
-                <MudTd DataLabel="Rate">@context.Rate</MudTd>
+                <MudTd DataLabel="Rate">@context.Rate.ToString("N")</MudTd>
                 <MudTd DataLabel="Rate Type">@context.Type</MudTd>
                 <MudTd DataLabel="Effective Date">@context.EffectiveDate.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
@@ -109,19 +109,19 @@
 
     protected void Update(TaxDto data)
     {
-        // var parameters = new DialogParameters<CreateUpdatePriceListDialog>
-        // {
-        //     {
-        //         x => x.Table, _table
-        //     },
-        //     {
-        //         x => x.Data, data
-        //     }
-        // };
+        var parameters = new DialogParameters<CreateUpdateTaxDialog>
+        {
+            {
+                x => x.Table, _table
+            },
+            {
+                x => x.Data, data
+            }
+        };
 
-        // var options = new DialogOptions { CloseButton = true };
+        var options = new DialogOptions { CloseButton = true };
 
-        // Dialog.Show<CreateUpdatePriceListDialog>("Update", parameters, options);
+        Dialog.Show<CreateUpdateTaxDialog>("Update", parameters, options);
     }
 
     private void Delete(int id)
