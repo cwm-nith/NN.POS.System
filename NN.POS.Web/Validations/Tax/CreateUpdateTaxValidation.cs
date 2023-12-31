@@ -11,7 +11,7 @@ public class CreateUpdateTaxValidation : BaseValidator<CreateTaxDto>
         RuleFor(i => i.EffectiveDate)
             .NotEmpty()
             .WithMessage("Please select Effective Date")
-            .Must(i=> i > DateTime.Now.Date)
+            .GreaterThanOrEqualTo(DateTime.Today)
             .WithMessage("Effective Date must be greater than current date");
 
         RuleFor(i => i.Name)

@@ -18,7 +18,7 @@ public class TaxTable : BaseTable
     public TaxType Type { get; set; }
 
     [Column("effective_date")]
-    public DateTime EffectiveDate { get; set; }
+    public DateTime? EffectiveDate { get; set; }
 
     [Column("is_deleted")]
     public bool IsDeleted { get; set; }
