@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using NN.POS.Model.Dtos.Currencies;
 
 namespace NN.POS.API.Infra.Tables.Currencies;
@@ -6,10 +7,10 @@ namespace NN.POS.API.Infra.Tables.Currencies;
 [Table("currencies")]
 public class CurrencyTable : BaseTable
 {
-    [Column("symbol")]
+    [Column("symbol"), StringLength(10)]
     public string Symbol { get; set; } = string.Empty;
 
-    [Column("Name")]
+    [Column("name"), StringLength(150)]
     public string Name { get; set; } = string.Empty;
 
     [Column("is_deleted")]
