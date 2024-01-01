@@ -1,4 +1,5 @@
-﻿using NN.POS.API.App.Queries.PaymentTypes;
+﻿using Microsoft.EntityFrameworkCore;
+using NN.POS.API.App.Queries.PaymentTypes;
 using NN.POS.API.Core.Exceptions.PaymentTypes;
 using NN.POS.API.Core.IRepositories;
 using NN.POS.API.Infra.Tables;
@@ -39,7 +40,7 @@ public class PaymentTypeRepository(
 
     public async Task<PagedResult<PaymentTypeDto>> GetPageAsync(GetPaymentTypePageQuery query, CancellationToken cancellationToken = default)
     {
-        var pmts = await readDbRepository.BrowseAsync(i => !i.IsDeleted, i => i.CreatedAt, query, cancellationToken);
+        var pmts = await readDbRepository.BrowseAsync(i => !i.IsDeleted && EF.Functions.Like(i.Name, $"%{query.Search}%"), i => i.CreatedAt, query, cancellationToken);
         return pmts.Map(i => i.ToDto());
     }
 }
