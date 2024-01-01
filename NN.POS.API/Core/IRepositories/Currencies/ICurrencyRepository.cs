@@ -12,4 +12,5 @@ public interface ICurrencyRepository : IRepository
     Task<CurrencyDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<PagedResult<CurrencyDto>> GetPageAsync(GetCurrenciesPageQuery query, CancellationToken cancellationToken= default);
     Task<CurrencyDto> GetBaseCurrencyAsync(CancellationToken cancellationToken= default);
+    Task<CurrencyDto> GetLocalCurrencyAsync(CancellationToken cancellationToken= default);
 }

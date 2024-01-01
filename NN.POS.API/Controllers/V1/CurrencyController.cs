@@ -55,4 +55,11 @@ public class CurrencyController(IMediator mediator) : BaseApiController
         var data = await mediator.Send(new GetBaseCurrencyQuery());
         return Ok(data);
     }
+
+    [HttpGet("local-currency")]
+    public async Task<ActionResult<CurrencyDto>> GetLocalCurrency()
+    {
+        var data = await mediator.Send(new GetLocalCurrencyQuery());
+        return Ok(data);
+    }
 }
