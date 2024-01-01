@@ -55,4 +55,24 @@ public class CurrencyRepository(
 
         return data.Map(i => i.ToDto());
     }
+
+    public async Task<CurrencyDto> GetBaseCurrencyAsync(CancellationToken cancellationToken = default)
+    {
+        var context = readDbRepository.Context;
+        var baseCurr = await (from ccy in context.Currencies!.Where(i => !i.IsDeleted)
+                join com in context.Companies!.Where(i => !i.IsDeleted) on ccy.Id equals com.SysCcyId
+                select ccy.ToDto()).FirstOrDefaultAsync(cancellationToken);
+
+        return baseCurr ?? throw new BaseCurrencyNotFoundException();
+    }
+
+    public async Task<CurrencyDto> GetLocalCurrencyAsync(CancellationToken cancellationToken = default)
+    {
+        var context = readDbRepository.Context;
+        var baseCurr = await (from ccy in context.Currencies!.Where(i => !i.IsDeleted)
+            join com in context.Companies!.Where(i => !i.IsDeleted) on ccy.Id equals com.LocalCcyId
+            select ccy.ToDto()).FirstOrDefaultAsync(cancellationToken);
+
+        return baseCurr ?? throw new LocalCurrencyNotFoundException();
+    }
 }

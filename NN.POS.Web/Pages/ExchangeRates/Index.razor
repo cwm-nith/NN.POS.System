@@ -20,22 +20,26 @@
               @ref="_table">
 
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Currencies</MudText>
+            <MudText Typo="Typo.h6">Exchange Rate</MudText>
             <MudSpacer />
             <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh>Currency</MudTh>
-            <MudTh>Rate</MudTh>
+            <MudTh>Base Currency</MudTh>
+            <MudTh></MudTh>
+            <MudTh>Exchange Currency</MudTh>
             <MudTh>Set Rate</MudTh>
+            <MudTh>Rate</MudTh>
             <MudTh>Created At</MudTh>
             <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
+            <MudTd DataLabel="Base Currency">@context.BaseCcy</MudTd>
+                <MudTd DataLabel="">=></MudTd>
                 <MudTd DataLabel="Currency">@context.CcyName</MudTd>
-                <MudTd DataLabel="Rate">@context.Rate.ToString("N6")</MudTd>
                 <MudTd DataLabel="Set Rate">@context.SetRate.ToString("N3")</MudTd>
+                <MudTd DataLabel="Rate">@context.Rate.ToString("N6")</MudTd>
                 <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context))"></MudIconButton>

@@ -11,7 +11,8 @@ namespace NN.POS.API.Infra.Repositories.Currencies;
 
 public class ExchangeRateRepository(
     IReadDbRepository<ExchangeRateTable> readDbRepository,
-    IWriteDbRepository<ExchangeRateTable> writeDbRepository) : IExchangeRateRepository
+    IWriteDbRepository<ExchangeRateTable> writeDbRepository,
+    ICurrencyRepository ccyRepository) : IExchangeRateRepository
 {
     public async Task CreateAsync(ExchangeRateDto exRate, CancellationToken cancellationToken = default)
     {
@@ -32,19 +33,21 @@ public class ExchangeRateRepository(
 
     public async Task<ExchangeRateDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
+        var baseCcy = await ccyRepository.GetBaseCurrencyAsync(cancellationToken);
         var context = readDbRepository.Context;
         var data = await (from ex in context.ExchangeRates!.Where(i => !i.IsDeleted && i.Id == id)
                           join ccy in context.Currencies! on ex.CcyId equals ccy.Id
-                          select ex.ToDto(ccy.Name)).FirstOrDefaultAsync(cancellationToken);
+                          select ex.ToDto(ccy.Name, baseCcy.Name)).FirstOrDefaultAsync(cancellationToken);
         return data ?? throw new ExchangeRateNotFoundException(id);
     }
 
     public async Task<PagedResult<ExchangeRateDto>> GetPageAsync(GetExchangeRatePageQuery query, CancellationToken cancellationToken = default)
     {
+        var baseCcy = await ccyRepository.GetBaseCurrencyAsync(cancellationToken);
         var context = readDbRepository.Context;
         var data = await(from ex in context.ExchangeRates!.Where(i => !i.IsDeleted)
             join ccy in context.Currencies!.Where(i => !i.IsDeleted && EF.Functions.Like(i.Name, $"%{query.Search}%")) on ex.CcyId equals ccy.Id
-            select ex.ToDto(ccy.Name)).PaginateAsync(query, cancellationToken);
+            select ex.ToDto(ccy.Name, baseCcy.Name)).PaginateAsync(query, cancellationToken);
         return data;
     }
 }

@@ -1,13 +1,22 @@
 ﻿@using NN.POS.Model.Dtos.Currencies
 @using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Validations.Currencies
+@using Newtonsoft.Json
 @namespace NN.POS.Web.Pages.ExchangeRates
 
 <MudDialog>
     <DialogContent>
         <MudForm Model="_exchangeRateModel" Validation="_exchangeRateValidator.ValidateValue" @ref="_form">
-            <MudGrid Spacing="5" Justify="Justify.Center">
-                <MudItem lg="5" sm="12" xs="12">
+            <MudGrid Justify="Justify.Center">
+                <MudItem lg="4" sm="4" xs="12">
+                    <MudTextField @bind-Value="BaseCurrency.Name"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  ReadOnly
+                                  Label="Base Currency" />
+                </MudItem>
+                <MudItem lg="4" sm="4" xs="12">
                     <MudTextField @bind-Value="Data.CcyName"
                                   Immediate="true"
                                   Variant="Variant.Outlined"
@@ -17,19 +26,19 @@
                                   OnAdornmentClick="@ChooseCurrency"
                                   AdornmentAriaLabel="Choose Currency"
                                   ReadOnly="true"
-                                  Label="Currency" />
+                                  Label="Currency"/>
 
                     <MudTextField @bind-Value="_exchangeRateModel.CcyId"
                                   For="@(() => _exchangeRateModel.CcyId)"
-                                  Style="display: none" />
+                                  Style="display: none"/>
                 </MudItem>
-                <MudItem lg="5" sm="12" xs="12">
+                <MudItem lg="4" sm="4" xs="12">
                     <MudTextField @bind-Value="_exchangeRateModel.SetRate"
                                   For="@(() => _exchangeRateModel.SetRate)"
                                   Immediate="true"
                                   Variant="Variant.Outlined"
                                   Margin="Margin.Dense"
-                                  Label="Set Rate" />
+                                  Label="Set Rate"/>
                 </MudItem>
             </MudGrid>
 
@@ -67,6 +76,8 @@
 
     string? _apiErrorMessages;
 
+    private CurrencyDto BaseCurrency { get; set; } = new ();
+
 
     protected override void OnParametersSet()
     {
@@ -79,13 +90,24 @@
         base.OnParametersSet();
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var baseCurr = await httpClient.GetFromJsonAsync<CurrencyDto>($"{Setting.PrefixEndpoint}currency/base-currency");
+        if (baseCurr is not null)
+        {
+            BaseCurrency = baseCurr;
+        }
+        await base.OnInitializedAsync();
+    }
+
     private async Task CreateUpdate()
     {
         await _form?.Validate()!;
         if (_form.IsValid)
         {
             _exchangeRateModel.Rate = 1 / _exchangeRateModel.SetRate;
-            var jsonPayload = JsonSerializer.Serialize(_exchangeRateModel);
+            var jsonPayload = JsonConvert.SerializeObject(_exchangeRateModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
@@ -118,10 +140,7 @@
                 x => x.OnRefresh,
                 new EventCallbackFactory().Create<CurrencyDto>(this, (ccy) =>
                 {
-                    Data = new ExchangeRateDto
-                    {
-                        CcyName = ccy.Name
-                    };
+                    Data.CcyName = ccy.Name;
                     _exchangeRateModel.CcyId = ccy.Id;
                 })
             }

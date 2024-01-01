@@ -22,7 +22,7 @@
               @ref="_table">
 
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Currencies</MudText>
+            <MudText Typo="Typo.h6">Company</MudText>
             <MudSpacer />
             <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -36,7 +36,6 @@
             <MudTh>Local Currency</MudTh>
             <MudTh>Location</MudTh>
             <MudTh>Address</MudTh>
-            <MudTh>Created At</MudTh>
             <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -52,7 +51,6 @@
                 <MudTd DataLabel="Local Currency">@context.LocalCcyName</MudTd>
                 <MudTd DataLabel="Location">@context.Location</MudTd>
                 <MudTd DataLabel="Address">@context.Address</MudTd>
-                <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => UpdatePage(context.Id))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))"></MudIconButton>
