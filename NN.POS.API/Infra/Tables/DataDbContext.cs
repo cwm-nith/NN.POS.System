@@ -6,6 +6,7 @@ using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
+using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
 using NN.POS.API.Infra.Tables.Roles;
 using NN.POS.API.Infra.Tables.Tax;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
@@ -34,6 +35,8 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<TaxTable>? Tax { get; set; }
     public DbSet<ExchangeRateTable>? ExchangeRates { get; set; }
     public DbSet<PaymentTypeTable>? PaymentTypes { get; set; }
+    public DbSet<PurchaseOrderTable>? PurchaseOrders { get; set; }
+    public DbSet<PurchaseOrderDetailTable>? PurchaseOrderDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
