@@ -22,7 +22,7 @@
               @ref="_table">
 
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Suppliers</MudText>
+            <MudText Typo="Typo.h6">Customers</MudText>
             <MudSpacer />
             <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -73,7 +73,7 @@
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
         var data =
-            await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>($"{Setting.PrefixEndpoint}BusinessPartner?ContactType=2&Page={state.Page + 1}&Results={state.PageSize}");
+            await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>($"{Setting.PrefixEndpoint}BusinessPartner?ContactType=2&Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}");
 
         return new TableData<BusinessPartnerDto>
             {
