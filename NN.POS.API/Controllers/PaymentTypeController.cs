@@ -13,4 +13,10 @@ public class PaymentTypeController(IMediator mediator) : BaseApiController
     {
         return Ok(await mediator.Send(query));
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<PaymentTypeDto>> GetById(int id)
+    {
+        return Ok(await mediator.Send(new GetPaymentTypeByIdQuery(id)));
+    }
 }
