@@ -1,6 +1,7 @@
 ﻿@using NN.POS.Model.Dtos.Currencies
 @using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Validations.Currencies
+@using Newtonsoft.Json
 @namespace NN.POS.Web.Pages.ExchangeRates
 
 <MudDialog>
@@ -106,7 +107,7 @@
         if (_form.IsValid)
         {
             _exchangeRateModel.Rate = 1 / _exchangeRateModel.SetRate;
-            var jsonPayload = JsonSerializer.Serialize(_exchangeRateModel);
+            var jsonPayload = JsonConvert.SerializeObject(_exchangeRateModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
@@ -139,10 +140,7 @@
                 x => x.OnRefresh,
                 new EventCallbackFactory().Create<CurrencyDto>(this, (ccy) =>
                 {
-                    Data = new ExchangeRateDto
-                    {
-                        CcyName = ccy.Name
-                    };
+                    Data.CcyName = ccy.Name;
                     _exchangeRateModel.CcyId = ccy.Id;
                 })
             }
