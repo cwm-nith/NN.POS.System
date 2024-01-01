@@ -100,19 +100,19 @@
 
     protected void Update(PaymentTypeDto data)
     {
-        // var parameters = new DialogParameters<CreateUpdatePaymentTypeDialog>
-        // {
-        //     {
-        //         x => x.Table, _table
-        //     },
-        //     {
-        //         x => x.Data, data
-        //     }
-        // };
+        var parameters = new DialogParameters<CreateUpdatePaymentTypeDialog>
+        {
+            {
+                x => x.Table, _table
+            },
+            {
+                x => x.Data, data
+            }
+        };
 
-        // var options = new DialogOptions { CloseButton = true };
+        var options = new DialogOptions { CloseButton = true };
 
-        // Dialog.Show<CreateUpdatePaymentTypeDialog>("Update", parameters, options);
+        Dialog.Show<CreateUpdatePaymentTypeDialog>("Update", parameters, options);
     }
 
     private void Delete(int id)
