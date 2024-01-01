@@ -65,4 +65,6 @@ public static class RouteName
 
     public const string ExchangeRate = $"{Settings}/exchange-rate";
 
+    public const string PaymentType = $"{Settings}/payment-type";
+
 }

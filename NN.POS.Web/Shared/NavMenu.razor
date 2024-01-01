@@ -16,6 +16,9 @@
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.ExchangeRate))"
                     Href="@RouteName.ExchangeRate">Exchange Rate</MudNavLink>
         
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.PaymentType))"
+                    Href="@RouteName.PaymentType">Payment Type</MudNavLink>
+        
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Tax))"
                     Href="@RouteName.Tax">Tax</MudNavLink>
     </MudNavGroup>
