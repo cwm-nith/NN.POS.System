@@ -4,6 +4,7 @@ using NN.POS.API.Infra.Tables.BusinessPartners;
 using NN.POS.API.Infra.Tables.Company;
 using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
+using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
 using NN.POS.API.Infra.Tables.Tax;
@@ -34,6 +35,7 @@ public static class Extensions
         services.AddPostgresRepository<BranchTable>();
         services.AddPostgresRepository<TaxTable>();
         services.AddPostgresRepository<ExchangeRateTable>();
+        services.AddPostgresRepository<PaymentTypeTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
