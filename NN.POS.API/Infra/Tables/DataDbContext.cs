@@ -4,6 +4,7 @@ using NN.POS.API.Infra.Tables.BusinessPartners;
 using NN.POS.API.Infra.Tables.Company;
 using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.ItemMasters;
+using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Roles;
 using NN.POS.API.Infra.Tables.Tax;
@@ -32,6 +33,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<BranchTable>? Branches { get; set; }
     public DbSet<TaxTable>? Tax { get; set; }
     public DbSet<ExchangeRateTable>? ExchangeRates { get; set; }
+    public DbSet<PaymentTypeTable>? PaymentTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
