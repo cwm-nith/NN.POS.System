@@ -1,0 +1,100 @@
+﻿@using NN.POS.Model.Dtos.PaymentTypes
+@using NN.POS.Web.Validations.PaymentTypes
+
+@namespace NN.POS.Web.Pages.PaymentType
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="_paymentTypeModel" Validation="_paymentTypeValidator.ValidateValue" @ref="_form">
+            <MudGrid Justify="Justify.Center">
+                <MudItem lg="12" sm="12" xs="12">
+                    <MudTextField @bind-Value="_paymentTypeModel.Name"
+                                  For="@(() => _paymentTypeModel.Name)"
+                                  Immediate="true"
+                                  Label="Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+            </MudGrid>
+
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    @_apiErrorMessages
+                </MudChip>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Cancel</MudButton>
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Filled"
+                   OnClick="@CreateUpdate">@(Data.Id > 0 ? "Update" : "Create")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public PaymentTypeDto Data { get; set; } = new();
+
+    [Parameter]
+    public MudTable<PaymentTypeDto>? Table { get; set; }
+
+    private CreatePaymentTypeDto _paymentTypeModel = new();
+
+    readonly CreateUpdatePaymentTypeValidation _paymentTypeValidator = new();
+
+    MudForm? _form;
+
+    string? _apiErrorMessages;
+
+
+    protected override void OnParametersSet()
+    {
+        _paymentTypeModel = new CreatePaymentTypeDto
+            {
+                Name = Data.Name
+            };
+        base.OnParametersSet();
+    }
+
+    private async Task CreateUpdate()
+    {
+        await _form?.Validate()!;
+
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonSerializer.Serialize(_paymentTypeModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            HttpResponseMessage response;
+
+            if (Data.Id > 0)
+            {
+                response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}paymentType/{Data.Id}", requestContent);
+            }
+            else
+            {
+                response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}paymentType", requestContent);
+            }
+
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
+                () =>
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                },
+                () =>
+                {
+                    MudDialog?.Close(DialogResult.Ok(true));
+                    Table?.ReloadServerData();
+                });
+        }
+
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+}

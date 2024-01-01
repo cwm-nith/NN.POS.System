@@ -1,5 +1,6 @@
 ﻿@using NN.POS.Model.Dtos.PaymentTypes
 @using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Pages.PaymentType
 @attribute [Route(RouteName.PaymentType)]
 
 <MudContainer Class="mt-2">
@@ -85,16 +86,16 @@
 
     protected void Create()
     {
-        // var parameters = new DialogParameters<CreateUpdatePaymentTypeDialog>
-        // {
-        //     {
-        //         x => x.Table, _table
-        //     }
-        // };
+        var parameters = new DialogParameters<CreateUpdatePaymentTypeDialog>
+        {
+            {
+                x => x.Table, _table
+            }
+        };
 
-        // var options = new DialogOptions { CloseButton = true };
+        var options = new DialogOptions { CloseButton = true };
 
-        // Dialog.Show<CreateUpdatePaymentTypeDialog>("Create", parameters, options);
+        Dialog.Show<CreateUpdatePaymentTypeDialog>("Create", parameters, options);
     }
 
     protected void Update(PaymentTypeDto data)
