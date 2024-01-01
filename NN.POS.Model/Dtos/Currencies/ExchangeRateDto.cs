@@ -9,4 +9,5 @@ public class ExchangeRateDto : IBaseDto
     public bool IsDeleted { get; set; }
     public decimal SetRate { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string? BaseCcy { get; set; }
 }

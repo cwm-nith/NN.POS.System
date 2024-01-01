@@ -21,7 +21,7 @@ public class ExchangeRateTable : BaseTable
 
 public static class ExchangeRateExtensions
 {
-    public static ExchangeRateDto ToDto(this ExchangeRateTable e, string? ccyName = null) => new()
+    public static ExchangeRateDto ToDto(this ExchangeRateTable e, string? ccyName = null, string? baseCcy = null) => new()
     {
         CreatedAt = e.CreatedAt,
         CcyId = e.CcyId,
@@ -29,7 +29,8 @@ public static class ExchangeRateExtensions
         IsDeleted = e.IsDeleted,
         Rate = e.Rate,
         SetRate = e.SetRate,
-        CcyName = ccyName
+        CcyName = ccyName,
+        BaseCcy = baseCcy
     };
     public static ExchangeRateTable ToTable(this ExchangeRateDto e) => new()
     {
