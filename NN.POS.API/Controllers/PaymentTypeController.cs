@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using NN.POS.API.App.Commands.PaymentTypes;
 using NN.POS.API.App.Queries.PaymentTypes;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.PaymentTypes;
@@ -18,5 +19,12 @@ public class PaymentTypeController(IMediator mediator) : BaseApiController
     public async Task<ActionResult<PaymentTypeDto>> GetById(int id)
     {
         return Ok(await mediator.Send(new GetPaymentTypeByIdQuery(id)));
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreatePaymentTypeDto body)
+    {
+        await mediator.Send(new CreatePaymentTypeCommand(body));
+        return Ok();
     }
 }
