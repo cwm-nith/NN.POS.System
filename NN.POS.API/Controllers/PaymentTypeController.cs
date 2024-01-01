@@ -27,4 +27,11 @@ public class PaymentTypeController(IMediator mediator) : BaseApiController
         await mediator.Send(new CreatePaymentTypeCommand(body));
         return Ok();
     }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] CreatePaymentTypeDto body)
+    {
+        await mediator.Send(new UpdatePaymentTypeCommand(id, body));
+        return Ok();
+    }
 }
