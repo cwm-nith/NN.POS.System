@@ -48,12 +48,3 @@ ON [dbo].[purchase_orders] ([invoice_no]);
 
 GO
 
-ALTER TABLE [dbo].[purchase_order_details]  WITH CHECK ADD  CONSTRAINT [FK_purchase_order_details_price_lists] FOREIGN KEY([purchase_order_id])
-REFERENCES [dbo].[purchase_orders]([id])
-GO
-
-ALTER TABLE [dbo].[purchase_order_details] CHECK CONSTRAINT [FK_purchase_order_details_price_lists]
-GO
-
-
-
