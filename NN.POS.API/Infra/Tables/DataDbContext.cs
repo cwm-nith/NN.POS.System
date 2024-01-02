@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NN.POS.API.Infra.DbConfigs;
+using NN.POS.API.Infra.DbConfigs.Purchases;
 using NN.POS.API.Infra.Tables.BusinessPartners;
 using NN.POS.API.Infra.Tables.Company;
 using NN.POS.API.Infra.Tables.Currencies;
@@ -45,6 +46,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
             .AddPriceListTableRelationship()
             .ItemMasterDataTableDbConfig()
             .BusinessPartnerConfig()
-            .TaxTableDbConfig();
+            .TaxTableDbConfig()
+            .PurchaseOrderTableConfig();
     }
 }

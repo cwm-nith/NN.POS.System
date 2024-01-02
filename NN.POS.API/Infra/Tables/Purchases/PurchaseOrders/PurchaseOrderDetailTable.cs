@@ -41,4 +41,6 @@ public class PurchaseOrderDetailTable : BaseTable
 
     [Column("is_deleted")]
     public bool IsDeleted { get; set; }
+
+    public PurchaseOrderTable? PurchaseOrder { get; set; }
 }
