@@ -29,6 +29,14 @@ public static class PurchaseOrderTableDbConfig
                 v => v.ToEnumString(),
                 v => v.ToEnum<DiscountType>(false));
 
+        modelBuilder.Entity<PurchaseOrderDetailTable>()
+            .Property(x => x.DiscountType)
+            .HasColumnType("varchar")
+            .HasMaxLength(20)
+            .HasConversion(
+                v => v.ToEnumString(),
+                v => v.ToEnum<DiscountType>(false));
+
         return modelBuilder;
     }
 }

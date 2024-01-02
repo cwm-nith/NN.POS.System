@@ -25,7 +25,7 @@ public class PurchaseOrderDetailTable : BaseTable
     public decimal DiscountValue { get; set; }
 
     [Column("discount_type")]
-    public DiscountType TypeDis { get; set; }
+    public DiscountType DiscountType { get; set; }
 
     [Column("qty", TypeName = "decimal(18,3)")]
     public decimal Qty { get; set; }
