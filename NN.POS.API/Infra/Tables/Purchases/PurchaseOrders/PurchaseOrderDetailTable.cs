@@ -41,10 +41,4 @@ public class PurchaseOrderDetailTable : BaseTable
 
     [Column("is_deleted")]
     public bool IsDeleted { get; set; }
-
-    [Column("open_qty", TypeName = "decimal(18,3)")]
-    public decimal OpenQty { get; set; }
-
-    [Column("old_qty", TypeName = "decimal(18,3)")]
-    public decimal OldQty { get; set; }
 }
