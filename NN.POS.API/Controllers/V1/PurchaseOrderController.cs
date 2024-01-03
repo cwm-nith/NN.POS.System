@@ -25,4 +25,11 @@ public class PurchaseOrderController(IMediator mediator) : BaseApiController
     {
         return Ok(await mediator.Send(new GetPurchaseOrderByIdOrInvoiceQuery(invoice, false)));
     }
+
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreatePurchaseOrderDto body)
+    {
+        await mediator.Send(new CreatePurchaseOrderCommand(body))
+        return Ok();
+    }
 }
