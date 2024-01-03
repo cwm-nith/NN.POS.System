@@ -13,4 +13,12 @@ public class PurchaseOrderController(IMediator mediator) : BaseApiController
     {
         return Ok(await mediator.Send(query));
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<PurchaseOrderDto>> GetById(int id)
+    {
+        return Ok(await mediator.Send(new GetPurchaseOrderByIdOrInvoiceQuery(id, true)));
+    }
+
+    
 }
