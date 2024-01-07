@@ -9,14 +9,8 @@ public class UpdatePriceListDetailCommandHandler(IPriceListDetailRepository repo
     {
         var r = request.Dto;
         var pld = await repository.GetByIdAsync(request.Id, cancellationToken);
-        pld.CcyId = r.CcyId;
         pld.Cost = r.Cost;
         pld.Price = r.Price;
-        pld.DiscountType = r.DiscountType;
-        pld.DiscountValue = r.DiscountValue;
-        pld.Price = r.Price;
-        pld.PromotionId = r.PromotionId;
-        pld.UomId = r.UomId;
 
         await repository.UpdateAsync(pld, cancellationToken);
     }
