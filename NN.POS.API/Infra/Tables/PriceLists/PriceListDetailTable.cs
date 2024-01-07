@@ -54,18 +54,26 @@ public static class PriceListDetailTableExtensions
         UomId = p.UomId
     };
 
-    public static PriceListDetailDto ToDto(this PriceListDetailTable p) => new()
+    public static PriceListDetailDto ToDto(this PriceListDetailTable p, 
+        string? plName = null, 
+        string? ccy = null, 
+        string? itemName = null, 
+        string? uom = null) => new()
     {
         Id = p.Id,
         PriceListId = p.PriceListId,
+        PriceListName = plName,
         CreatedAt = p.CreatedAt,
         CcyId = p.CcyId,
+        CcyName = ccy,
         Cost = p.Cost,
         DiscountType = p.DiscountType,
         PromotionId = p.PromotionId,
         DiscountValue = p.DiscountValue,
         ItemId = p.ItemId,
+        ItemName = itemName,
         Price = p.Price,
-        UomId = p.UomId
+        UomId = p.UomId,
+        UomName = uom
     };
 }
