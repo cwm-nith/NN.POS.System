@@ -31,6 +31,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<ItemMasterDataTable>? ItemMasterData { get; set; }
     public DbSet<CurrencyTable>? Currencies { get; set; }
     public DbSet<WarehouseTable>? Warehouses { get; set; }
+    public DbSet<WarehouseSummaryTable>? WarehouseSummaries { get; set; }
     public DbSet<CompanyTable>? Companies { get; set; }
     public DbSet<BranchTable>? Branches { get; set; }
     public DbSet<TaxTable>? Tax { get; set; }

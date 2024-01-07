@@ -32,6 +32,7 @@ public static class Extensions
         services.AddPostgresRepository<ItemMasterDataTable>();
         services.AddPostgresRepository<CurrencyTable>();
         services.AddPostgresRepository<WarehouseTable>();
+        services.AddPostgresRepository<WarehouseSummaryTable>();
         services.AddPostgresRepository<CompanyTable>();
         services.AddPostgresRepository<BranchTable>();
         services.AddPostgresRepository<TaxTable>();
