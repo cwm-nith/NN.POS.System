@@ -9,6 +9,8 @@ public class PriceListDetailDto : IBaseDto
     public string? PriceListName { get; set; }
     public int ItemId { get; set; }
     public string? ItemName { get; set; }
+    public string? ItemBarcode { get; set; }
+    public ItemMasterDataProcess? ItemProcess { get; set; }
     public int? UomId { get; set; }
     public string? UomName { get; set; }
     public int CcyId { get; set; }

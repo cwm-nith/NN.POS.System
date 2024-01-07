@@ -26,14 +26,14 @@ public class PriceListDetailRepository(
     public async Task<PagedResult<PriceListDetailDto>> GetPageAsync(GetPagePriceListDetailQuery q, CancellationToken cancellationToken = default)
     {
         var context = readDbRepository.Context;
-        var data = await (from item in context.ItemMasterData!.Where(
-                i => i.Type != ItemMasterDataType.Group && i.IsSale)
-                          join pld in context.PriceListDetails!.Where(i => i.PriceListId == q.PriceListId) on item.Id equals pld
-                              .ItemId
+        var data = await (from pld in context.PriceListDetails!.Where(i => i.PriceListId == q.PriceListId)
+                          join item in context.ItemMasterData!.Where(
+                              i => i.Type != ItemMasterDataType.Group && i.IsSale) on pld
+                              .ItemId equals item.Id
                           join pl in context.PriceLists! on pld.PriceListId equals pl.Id
                           join ccy in context.Currencies! on pld.CcyId equals ccy.Id
                           join uom in context.UnitOfMeasures! on pld.UomId equals uom.Id
-                          select pld.ToDto(pl.Name, ccy.Name, item.Name, uom.Name)).PaginateAsync(q, cancellationToken);
+                          select pld.ToDto(pl.Name, ccy.Name, item, uom.Name)).PaginateAsync(q, cancellationToken);
         return data;
     }
 
