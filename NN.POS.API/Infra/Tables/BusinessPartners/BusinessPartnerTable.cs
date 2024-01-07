@@ -29,4 +29,9 @@ public class BusinessPartnerTable : BaseTable
 
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; }
+
+    public override string ToString()
+    {
+        return $"{FirstName} {LastName}";
+    }
 }

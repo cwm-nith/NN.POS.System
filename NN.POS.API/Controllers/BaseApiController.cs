@@ -13,7 +13,7 @@ public class BaseApiController : ControllerBase
     private const string IdentityHeader = "X-Identity";
 
 
-    protected string UserId => User?.Identity?.Name ?? string.Empty;
+    protected int UserId => int.Parse(User?.Identity?.Name ?? "0");
 
     protected string UserRole
     {

@@ -19,13 +19,14 @@ public class CurrencyTable : BaseTable
 
 public static class CurrencyTableExtensions
 {
-    public static CurrencyDto ToDto(this CurrencyTable c) => new()
+    public static CurrencyDto ToDto(this CurrencyTable c, ExchangeRateTable? exchangeRate = null) => new()
     {
         CreatedAt = c.CreatedAt,
         Id = c.Id,
         IsDeleted = c.IsDeleted,
         Name = c.Name,
-        Symbol = c.Symbol
+        Symbol = c.Symbol,
+        ExchangeRate = exchangeRate?.ToDto()
     };
 
     public static CurrencyTable ToTable(this CurrencyDto c) => new()

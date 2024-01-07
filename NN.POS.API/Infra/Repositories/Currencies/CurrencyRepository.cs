@@ -10,7 +10,7 @@ using NN.POS.Model.Dtos.Currencies;
 namespace NN.POS.API.Infra.Repositories.Currencies;
 
 public class CurrencyRepository(
-    IReadDbRepository<CurrencyTable> readDbRepository, 
+    IReadDbRepository<CurrencyTable> readDbRepository,
     IWriteDbRepository<CurrencyTable> writeDbRepository) : ICurrencyRepository
 {
     public async Task CreateAsync(CurrencyDto ccy, CancellationToken cancellationToken = default)
@@ -47,9 +47,9 @@ public class CurrencyRepository(
         }
         else
         {
-            data = await readDbRepository.BrowseAsync(i => 
-                !i.IsDeleted && EF.Functions.Like(i.Name, $"%{query.Search}%"), 
-                query, 
+            data = await readDbRepository.BrowseAsync(i =>
+                !i.IsDeleted && EF.Functions.Like(i.Name, $"%{query.Search}%"),
+                query,
                 cancellationToken);
         }
 
@@ -60,8 +60,9 @@ public class CurrencyRepository(
     {
         var context = readDbRepository.Context;
         var baseCurr = await (from ccy in context.Currencies!.Where(i => !i.IsDeleted)
-                join com in context.Companies!.Where(i => !i.IsDeleted) on ccy.Id equals com.SysCcyId
-                select ccy.ToDto()).FirstOrDefaultAsync(cancellationToken);
+                              join com in context.Companies!.Where(i => !i.IsDeleted) on ccy.Id equals com.SysCcyId
+                              join ex in context.ExchangeRates!.Where(i => !i.IsDeleted) on ccy.Id equals ex.CcyId
+                              select ccy.ToDto(ex)).FirstOrDefaultAsync(cancellationToken);
 
         return baseCurr ?? throw new BaseCurrencyNotFoundException();
     }
@@ -70,8 +71,9 @@ public class CurrencyRepository(
     {
         var context = readDbRepository.Context;
         var baseCurr = await (from ccy in context.Currencies!.Where(i => !i.IsDeleted)
-            join com in context.Companies!.Where(i => !i.IsDeleted) on ccy.Id equals com.LocalCcyId
-            select ccy.ToDto()).FirstOrDefaultAsync(cancellationToken);
+                              join com in context.Companies!.Where(i => !i.IsDeleted) on ccy.Id equals com.LocalCcyId
+                              join ex in context.ExchangeRates!.Where(i => !i.IsDeleted) on ccy.Id equals ex.CcyId
+                              select ccy.ToDto(ex)).FirstOrDefaultAsync(cancellationToken);
 
         return baseCurr ?? throw new LocalCurrencyNotFoundException();
     }
