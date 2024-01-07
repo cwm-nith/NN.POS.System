@@ -87,45 +87,4 @@ public static class PurchaseOrderExtensions
         TaxValue = p.TaxValue,
         UserId = p.UserId
     };
-
-    public static PurchaseOrderDetailTable ToTable(this PurchaseOrderDetailDto p) => new()
-    {
-        CreatedAt = p.CreatedAt,
-        Id = p.Id,
-        IsDeleted = p.IsDeleted,
-        LocalCcyId = p.LocalCcyId,
-        DiscountRate = p.DiscountRate,
-        DiscountType = p.DiscountType,
-        DiscountValue = p.DiscountValue,
-        ItemId = p.ItemId,
-        PurchaseOrderId = p.PurchaseOrderId,
-        PurchasePrice = p.PurchasePrice,
-        Qty = p.Qty,
-        Total = p.Total,
-        TotalSys = p.TotalSys,
-        UomId = p.UomId
-    };
-
-    public static PurchaseOrderDetailDto ToDto(
-        this PurchaseOrderDetailTable p,
-        string? localCcyName = null, string? itemName = null, string? uomName = null) => new()
-        {
-            CreatedAt = p.CreatedAt,
-            Id = p.Id,
-            IsDeleted = p.IsDeleted,
-            LocalCcyId = p.LocalCcyId,
-            LocalCcyName = localCcyName,
-            DiscountRate = p.DiscountRate,
-            DiscountType = p.DiscountType,
-            DiscountValue = p.DiscountValue,
-            ItemId = p.ItemId,
-            ItemName = itemName,
-            PurchaseOrderId = p.PurchaseOrderId,
-            PurchasePrice = p.PurchasePrice,
-            Qty = p.Qty,
-            Total = p.Total,
-            TotalSys = p.TotalSys,
-            UomId = p.UomId,
-            UomName = uomName
-        };
 }

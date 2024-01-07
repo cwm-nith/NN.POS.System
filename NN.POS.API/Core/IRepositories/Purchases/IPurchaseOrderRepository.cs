@@ -6,8 +6,8 @@ namespace NN.POS.API.Core.IRepositories.Purchases;
 
 public interface IPurchaseOrderRepository : IRepository
 {
-    Task Create(PurchaseOrderDto body, CancellationToken cancellationToken = default);
-    Task Update(PurchaseOrderDto body, CancellationToken cancellationToken = default);
+    Task CreateAsync(PurchaseOrderDto body, CancellationToken cancellationToken = default);
+    Task UpdateAsync(PurchaseOrderDto body, CancellationToken cancellationToken = default);
     Task<PurchaseOrderDto> GetByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default);
     Task<PurchaseOrderDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<PagedResult<PurchaseOrderDto>> GetPageAsync(GetPurchaseOrderPageQuery query, CancellationToken cancellationToken = default);

@@ -7,9 +7,7 @@ public class CreatePurchaseOrderDto : IBaseDto
     public int SupplyId { get; set; }
     public int BranchId { get; set; }
     public int PurCcyId { get; set; }
-    public int SysCcyId { get; set; }
     public int WarehouseId { get; set; }
-    public int UserId { get; set; }
     public string InvoiceNo { get; set; } = string.Empty;
     public DateTime PostingDate { get; set; }
     public DateTime DocumentDate { get; set; }
@@ -29,7 +27,5 @@ public class CreatePurchaseOrderDto : IBaseDto
     public decimal AppliedAmount { get; set; }
     public decimal ReturnAmount { get; set; }
     public PurchaseStatus Status { get; set; }
-    public decimal LocalSetRate { get; set; }
-    public int LocalCcyId { get; set; }
     public List<CreatePurchaseOrderDetailDto> PurchaseOrderDetails { get; set; } = [];
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NN.POS.API.App.Queries.Purchases;
+using NN.POS.API.Core.Commons.Helpers;
 using NN.POS.API.Core.Exceptions.Purchases;
+using NN.POS.API.Core.IRepositories.Currencies;
 using NN.POS.API.Core.IRepositories.Purchases;
 using NN.POS.API.Infra.Tables;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
@@ -12,14 +14,35 @@ namespace NN.POS.API.Infra.Repositories.Purchases;
 
 public class PurchaseOrderRepository(
     IReadDbRepository<PurchaseOrderTable> readDbRepository,
-    IWriteDbRepository<PurchaseOrderTable> writeDbRepository) : IPurchaseOrderRepository
+    IWriteDbRepository<PurchaseOrderTable> writeDbRepository,
+    ICurrencyRepository currencyRepository) : IPurchaseOrderRepository
 {
-    public async Task Create(PurchaseOrderDto body, CancellationToken cancellationToken = default)
+    public async Task CreateAsync(PurchaseOrderDto body, CancellationToken cancellationToken = default)
     {
+        var context = writeDbRepository.Context;
+
+        var (localCcy, sysCcy) = await TaskHelper.Run(
+            currencyRepository.GetLocalCurrencyAsync(cancellationToken),
+            currencyRepository.GetBaseCurrencyAsync(cancellationToken));
+
+        await using var t = await context.Database.BeginTransactionAsync(cancellationToken);
+
+        body.LocalCcyId = localCcy.Id;
+        body.LocalSetRate = localCcy.ExchangeRate?.SetRate ?? 0;
+
+        body.SysCcyId = sysCcy.Id;
+
+        foreach (var pd in body.PurchaseOrderDetails)
+        {
+            await context.Database.ExecuteSqlAsync($"[dbo].[update_item_master_data_stock] @itemId={pd.ItemId}, @uomId={pd.UomId}, @wsId={body.WarehouseId}, @qty={pd.Qty}",cancellationToken);
+        }
+
         await writeDbRepository.AddAsync(body.ToTable(), cancellationToken);
+
+        await t.CommitAsync(cancellationToken);
     }
 
-    public async Task Update(PurchaseOrderDto body, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(PurchaseOrderDto body, CancellationToken cancellationToken = default)
     {
         await writeDbRepository.UpdateAsync(body.ToTable(), cancellationToken);
     }
@@ -38,13 +61,8 @@ public class PurchaseOrderRepository(
                           join purCcy in context.Currencies! on pOrder.PurCcyId equals purCcy.Id
                           join user in context.Users! on pOrder.UserId equals user.Id
                           select pOrder.ToDto(
-                              branchName: br.Name,
-                              supplyName: supplier.ToString(),
-                              sysCcyName: sysCcy.Name,
-                              localCcyName: localCcy.Name,
-                              wsName: ws.Name,
-                              purCcyName: purCcy.Name,
-                              userName: user.Name)).FirstOrDefaultAsync(cancellationToken);
+                              br.Name,supplier.ToString(),sysCcy.Name, localCcy.Name,
+                              ws.Name,purCcy.Name,user.Name)).FirstOrDefaultAsync(cancellationToken);
         return data ?? throw new PurchaseOrderNotFoundException(invoiceNo);
     }
 
@@ -62,13 +80,13 @@ public class PurchaseOrderRepository(
                           join purCcy in context.Currencies! on pOrder.PurCcyId equals purCcy.Id
                           join user in context.Users! on pOrder.UserId equals user.Id
                           select pOrder.ToDto(
-                              branchName: br.Name,
-                              supplyName: supplier.ToString(),
-                              sysCcyName: sysCcy.Name,
-                              localCcyName: localCcy.Name,
-                              wsName: ws.Name,
-                              purCcyName: purCcy.Name,
-                              userName: user.Name)).FirstOrDefaultAsync(cancellationToken);
+                              br.Name,
+                              supplier.ToString(),
+                              sysCcy.Name,
+                              localCcy.Name,
+                              ws.Name,
+                              purCcy.Name,
+                              user.Name)).FirstOrDefaultAsync(cancellationToken);
         return data ?? throw new PurchaseOrderNotFoundException(id);
     }
 
@@ -91,13 +109,13 @@ public class PurchaseOrderRepository(
                           join purCcy in context.Currencies! on pOrder.PurCcyId equals purCcy.Id
                           join user in context.Users! on pOrder.UserId equals user.Id
                           select pOrder.ToDto(
-                              branchName: br.Name,
-                              supplyName: supplier.ToString(),
-                              sysCcyName: sysCcy.Name,
-                              localCcyName: localCcy.Name,
-                              wsName: ws.Name,
-                              purCcyName: purCcy.Name,
-                              userName: user.Name)).PaginateAsync(query, cancellationToken);
+                              br.Name,
+                              supplier.ToString(),
+                              sysCcy.Name,
+                              localCcy.Name,
+                              ws.Name,
+                              purCcy.Name,
+                              user.Name)).PaginateAsync(query, cancellationToken);
         return data;
     }
 }

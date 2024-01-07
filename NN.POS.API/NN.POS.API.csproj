@@ -15,7 +15,6 @@
     <Folder Include="App\Queries\UserRoles\" />
     <Folder Include="App\Queries\Users\" />
     <Folder Include="Controllers\V2\" />
-    <Folder Include="Core\Commons\" />
     <Folder Include="Core\Constants\" />
     <Folder Include="Core\Entities\Roles\" />
     <Folder Include="Core\Exceptions\Roles\" />
