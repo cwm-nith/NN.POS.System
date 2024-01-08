@@ -35,7 +35,7 @@ public class PriceListDetailTable : BaseTable
     [Column("price", TypeName = "decimal(18,4)")]
     public decimal Price { get; set; } // sale price
 
-    public PriceListTable PriceList { get; set; } = new();
+    public PriceListTable? PriceList { get; set; }
 }
 
 public static class PriceListDetailTableExtensions

@@ -26,7 +26,8 @@ public class PriceListDetailRepository(
     public async Task<PagedResult<PriceListDetailDto>> GetPageAsync(GetPagePriceListDetailQuery q, CancellationToken cancellationToken = default)
     {
         var context = readDbRepository.Context;
-        var data = await (from pld in context.PriceListDetails!.Where(i => i.PriceListId == q.PriceListId)
+        var data = await (from pld in context.PriceListDetails!
+                .Where(i => i.PriceListId == q.PriceListId)
                           join item in context.ItemMasterData!.Where(
                               i => i.Type != ItemMasterDataType.Group && i.IsSale) on pld
                               .ItemId equals item.Id
