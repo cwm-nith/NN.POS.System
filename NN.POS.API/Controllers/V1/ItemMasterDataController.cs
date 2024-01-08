@@ -12,7 +12,7 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] CreateItemMasterDataDto body)
     {
-        var cmd = new CreateItemMasterDataCommand(body);
+        var cmd = new CreateItemMasterDataCommand(UserId, body);
         await mediator.Send(cmd);
         return Ok();
     }
