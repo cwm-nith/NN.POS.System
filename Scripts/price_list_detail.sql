@@ -1,7 +1,7 @@
 USE [NN.POS.System]
 GO
 
-/****** Object:  Table [dbo].[price_list_details]    Script Date: 12/12/2023 22:22:59 ******/
+/****** Object:  Table [dbo].[price_list_details]    Script Date: 09/01/2024 00:22:26 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -27,8 +27,10 @@ CREATE TABLE [dbo].[price_list_details](
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[price_list_details]  WITH CHECK ADD  CONSTRAINT [FK_price_list_details_price_lists] FOREIGN KEY([price_list_id])
-REFERENCES [dbo].[price_lists]([id])
+ALTER TABLE [dbo].[price_list_details]  WITH NOCHECK ADD  CONSTRAINT [FK_price_list_details_price_lists] FOREIGN KEY([price_list_id])
+REFERENCES [dbo].[price_lists] ([id])
+ON UPDATE CASCADE
+ON DELETE CASCADE
 GO
 
 ALTER TABLE [dbo].[price_list_details] CHECK CONSTRAINT [FK_price_list_details_price_lists]
