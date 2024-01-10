@@ -70,7 +70,7 @@ public class PriceListController(IMediator mediator) : BaseApiController
     }
 
     [HttpPut("detail/{id:int}")]
-    public async Task<ActionResult> CreateDetail(int id, [FromBody] UpdatePriceListDetailDto body)
+    public async Task<ActionResult> UpdateDetail(int id, [FromBody] UpdatePriceListDetailDto body)
     {
         var cmd = new UpdatePriceListDetailCommand(id, body);
         await mediator.Send(cmd);
