@@ -1,0 +1,35 @@
+﻿@namespace NN.POS.Web.Components.Dialogs
+<MudDialog>
+    <DialogContent>
+        <MudCard>
+            <MudCardContent>
+                <MudContainer>
+                    <MudText>@(Content ?? "Something went wrong, please try again later.")</MudText>
+                </MudContainer>
+                <MudText>@(Code)</MudText>
+            </MudCardContent>
+        </MudCard>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">OK</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public string? Code { get; set; }
+
+    [Parameter]
+    public string? Content { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Code = !string.IsNullOrEmpty(Code) ? $"[{Code}]" : "";
+        base.OnParametersSet();
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+}
