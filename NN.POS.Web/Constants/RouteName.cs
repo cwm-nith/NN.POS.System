@@ -49,6 +49,7 @@ public static class RouteName
 
     public const string PriceList = $"{Products}/price-list";
     public const string SetPriceList = $"{Products}/set-price-list";
+    public const string CopyPriceList = $"{Products}/copy-price-list";
 
     public const string Settings = "/settings";
 

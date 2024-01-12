@@ -39,9 +39,10 @@
                 <MudTd DataLabel="Display Name">@context.CcyName</MudTd>
                 <MudTd DataLabel="Created At">@context.CreatedAt.ToLocalTime().ToString("f")</MudTd>
                 <MudTd DataLabel="Actions">
+                    <MudIconButton Icon="@Icons.Material.Filled.CopyAll" Color="Color.Info" OnClick="@(() => CopyPriceList(context.Id))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Color="Color.Warning" OnClick="@(() => Update(context))"></MudIconButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))"></MudIconButton>
-                    <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="@(() => SetPriceList(context.Id))">Set Price List</MudButton>
+                    <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="@(() => SetPriceList(context.Id))">Set Price</MudButton>
                 </MudTd>
             </RowTemplate>
 
@@ -141,6 +142,11 @@
     private void SetPriceList(int plId)
     {
         NavigationManager.NavigateTo($"{RouteName.SetPriceList}/{plId}");
+    }
+
+    private void CopyPriceList(int plId)
+    {
+        NavigationManager.NavigateTo($"{RouteName.CopyPriceList}/{plId}");
     }
 
     private void OnSearch(string text)

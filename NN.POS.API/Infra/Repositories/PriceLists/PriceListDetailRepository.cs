@@ -1,4 +1,6 @@
-﻿using NN.POS.API.App.Queries.PriceLists;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using NN.POS.API.App.Queries.PriceLists;
 using NN.POS.API.Core.Exceptions.PriceLists;
 using NN.POS.API.Core.IRepositories.PriceLists;
 using NN.POS.API.Infra.Tables;
@@ -6,6 +8,7 @@ using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.PriceLists;
 using NN.POS.Model.Enums;
+using System.Data;
 
 namespace NN.POS.API.Infra.Repositories.PriceLists;
 
@@ -42,5 +45,22 @@ public class PriceListDetailRepository(
     {
         var data = await readDbRepository.FirstOrDefaultAsync(i => i.Id == id, cancellationToken) ?? throw new PriceListDetailNotFoundException(id);
         return data.ToDto();
+    }
+
+    public async Task<List<PriceListDetailDto>> GetCopyAsync(GetPriceListCopyQuery q, CancellationToken cancellationToken = default)
+    {
+        var context = readDbRepository.Context;
+        var sqlParams = new List<SqlParameter>
+        {
+            new("@priceListId", q.PriceListId),
+            new("@priceListIdCopyFrom", q.PriceListIdCopyFrom)
+        };
+        
+        var item = await context.Database.SqlQuery<PriceListDetailDto>($"[dbo].[get_copy_price_list] @priceListId, @priceListIdCopyFrom",
+                new SqlParameter("@priceListId", q.PriceListId),
+                new SqlParameter("@priceListIdCopyFrom", q.PriceListIdCopyFrom))
+            .ToListAsync(cancellationToken);
+
+        return item;
     }
 }

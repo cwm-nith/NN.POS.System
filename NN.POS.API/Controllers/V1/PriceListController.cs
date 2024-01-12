@@ -97,5 +97,12 @@ public class PriceListController(IMediator mediator) : BaseApiController
         return Ok(data);
     }
 
+    [HttpGet("detail/copy/{priceListId:int}")]
+    public async Task<ActionResult<List<PriceListDetailDto>>> GetPriceListCopy(int priceListId,
+        [FromQuery] int priceListIdCopyFrom)
+    {
+        return Ok(await mediator.Send(new GetPriceListCopyQuery(priceListId, priceListIdCopyFrom)));
+    }
+
     #endregion
 }

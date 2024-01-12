@@ -1,5 +1,72 @@
-﻿<h3>CopyItem</h3>
+﻿@using NN.POS.Model.Dtos.PriceLists
+@using NN.POS.Model.Enums
 
-@code {
+@attribute [Route($"{RouteName.CopyPriceList}/{{PriceListId:int}}")]
 
+<MudTable @ref="_table" T="PriceListDetailDto" Items="@_priceListDetails" MultiSelection="true" Hover="true"
+          OnRowClick="@OnRowClick" @bind-SelectOnRowClick="@_selectOnRowClick">
+    <HeaderContent>
+        <MudTh>Item</MudTh>
+        <MudTh>Uom</MudTh>
+        <MudTh>Cost</MudTh>
+        <MudTh>Price</MudTh>
+        <MudTh>Currency</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Item">@context.ItemName</MudTd>
+            <MudTd DataLabel="Uom">@context.UomName</MudTd>
+            <MudTd DataLabel="Cost">
+                @if (context.ItemProcess == ItemMasterDataProcess.Standard)
+            {
+                <MudTextField @bind-Value="context.Cost"
+                              For="@(() => context.Cost)"
+                              Immediate="true"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            }
+            else
+            {
+                @context.Cost
+            }
+        </MudTd>
+        <MudTd DataLabel="Price">
+            <MudTextField @bind-Value="context.Price"
+                          For="@(() => context.Price)"
+                          Immediate="true"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense" />
+        </MudTd>
+        <MudTd DataLabel="Currency">@context.CcyName</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new[] { 10, 25, 50, 100 }" />
+        </PagerContent>
+        <FooterContent>
+            <MudTd colspan="5">Select All</MudTd>
+        </FooterContent>
+    </MudTable>
+
+    @code {
+
+    [Parameter]
+    public int PriceListId { get; set; }
+
+    private MudTable<PriceListDetailDto> _table;
+    private bool _selectOnRowClick = true;
+    private List<PriceListDetailDto> _priceListDetails = [];
+    private int PriceListIdCopyFrom { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}priceList/detail/copy/{PriceListId}?priceListIdCopyFrom={PriceListIdCopyFrom}";
+
+        var data = await httpClient.GetFromJsonAsync<List<PriceListDetailDto>>(path);
+        if (data is not null) _priceListDetails = data;
+    }
+
+    private void OnRowClick(TableRowClickEventArgs<PriceListDetailDto> args)
+    {
+    }
 }
