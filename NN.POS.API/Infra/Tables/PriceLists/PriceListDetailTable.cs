@@ -1,5 +1,6 @@
 ﻿using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.Model.Dtos.PriceLists;
 
 namespace NN.POS.API.Infra.Tables.PriceLists;
@@ -34,7 +35,7 @@ public class PriceListDetailTable : BaseTable
     [Column("price", TypeName = "decimal(18,4)")]
     public decimal Price { get; set; } // sale price
 
-    public PriceListTable PriceList { get; set; } = new();
+    public PriceListTable? PriceList { get; set; }
 }
 
 public static class PriceListDetailTableExtensions
@@ -57,7 +58,7 @@ public static class PriceListDetailTableExtensions
     public static PriceListDetailDto ToDto(this PriceListDetailTable p, 
         string? plName = null, 
         string? ccy = null, 
-        string? itemName = null, 
+        ItemMasterDataTable? item = null, 
         string? uom = null) => new()
     {
         Id = p.Id,
@@ -71,9 +72,11 @@ public static class PriceListDetailTableExtensions
         PromotionId = p.PromotionId,
         DiscountValue = p.DiscountValue,
         ItemId = p.ItemId,
-        ItemName = itemName,
+        ItemName = item?.Name,
         Price = p.Price,
         UomId = p.UomId,
-        UomName = uom
+        UomName = uom,
+        ItemBarcode = item?.Barcode,
+        ItemProcess = item?.Process
     };
 }

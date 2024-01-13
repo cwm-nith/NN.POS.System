@@ -1,5 +1,4 @@
-﻿@using NN.POS.Model.Dtos.Currencies
-@using NN.POS.Model.Dtos.PriceLists
+﻿@using NN.POS.Model.Dtos.PriceLists
 
 @namespace NN.POS.Web.Components.Dialogs
 
@@ -58,6 +57,9 @@
     [Parameter]
     public EventCallback<PriceListDto>? OnRefresh { get; set; }
 
+    [Parameter]
+    public int? ExcludeId { get; set; }
+
 
     private MudTable<PriceListDto>? _table;
     private string _searchString = "";
@@ -66,7 +68,7 @@
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var path = $"{Setting.PrefixEndpoint}priceList?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+        var path = $"{Setting.PrefixEndpoint}priceList?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}&excludeId={ExcludeId}";
 
         var data = await httpClient.GetFromJsonAsync<PagedResult<PriceListDto>>(path);
 

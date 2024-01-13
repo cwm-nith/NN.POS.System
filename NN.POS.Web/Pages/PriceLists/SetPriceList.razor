@@ -1,0 +1,153 @@
+﻿@using NN.POS.Model.Dtos.PriceLists
+@using NN.POS.Model.Enums
+@using Newtonsoft.Json
+@using NN.POS.Web.Components.Dialogs
+@attribute [Route($"{RouteName.SetPriceList}/{{PriceListId:int}}")]
+
+
+<MudContainer Class="mt-2">
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<PriceListDetailDto>>>(ServerReload))"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              @ref="_table">
+
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Price Lists</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Price List</MudTh>
+            <MudTh>Item</MudTh>
+            <MudTh>Uom</MudTh>
+            <MudTh>Cost</MudTh>
+            <MudTh>Price</MudTh>
+            <MudTh>Currency</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Price List">@context.PriceListName</MudTd>
+                <MudTd DataLabel="Item">@context.ItemName</MudTd>
+                <MudTd DataLabel="Uom">@context.UomName</MudTd>
+                <MudTd DataLabel="Cost">
+                    @if (context.ItemProcess == ItemMasterDataProcess.Standard)
+                {
+                    <MudTextField @bind-Value="context.Cost"
+                                  For="@(() => context.Cost)"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                }
+                else
+                {
+                    @context.Cost
+                }
+            </MudTd>
+            <MudTd DataLabel="Price">
+                <MudTextField @bind-Value="context.Price"
+                              For="@(() => context.Price)"
+                              Immediate="true"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudTd>
+            <MudTd DataLabel="Currency">@context.CcyName</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Warning" OnClick="@(async () => await Save(context))"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+
+
+    @code {
+
+    [Parameter]
+    public int PriceListId { get; set; }
+
+    private MudTable<PriceListDetailDto>? _table;
+    private string _searchString = "";
+
+
+    protected override void OnInitialized()
+    {
+        NavbarStateService.SetExpend(RouteName.Products);
+        NavbarStateService.SetActive(RouteName.PriceList);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private async Task<TableData<PriceListDetailDto>> ServerReload(TableState state)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var path = $"{Setting.PrefixEndpoint}priceList/detail?PriceListId={PriceListId}&Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+
+        var data = await httpClient.GetFromJsonAsync<PagedResult<PriceListDetailDto>>(path);
+
+        return new TableData<PriceListDetailDto>
+            {
+                Items = data?.Items,
+                TotalItems = Convert.ToInt32(data?.TotalResults)
+            };
+    }
+
+    private async Task Save(PriceListDetailDto pld)
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+        var path = $"{Setting.PrefixEndpoint}priceList/detail/{pld.Id}";
+
+        var body = JsonConvert.SerializeObject(new UpdatePriceListDetailDto
+        {
+            Cost = pld.Cost,
+            Price = pld.Price
+        });
+
+        var requestContent = new StringContent(body, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+        var data = await httpClient.PutAsync(path, requestContent);
+        if (!data.IsSuccessStatusCode)
+        {
+            var errors = await data.Content.ReadFromJsonAsync<ErrorResponse>();
+            var parameters = new DialogParameters<ErrorDialog>
+            {
+                {
+                    x => x.Code, errors?.Code
+                },
+                {
+                    x => x.Code, errors?.Message
+                }
+            };
+
+            var options = new DialogOptions { CloseButton = true };
+
+            await Dialog.ShowAsync<ErrorDialog>("", parameters, options);
+        }
+        else
+        {
+            SnackBar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+            SnackBar.Add("Price Update Successfully", MudBlazor.Severity.Success);
+        }
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+}

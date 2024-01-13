@@ -9,6 +9,8 @@ public class PriceListDetailDto : IBaseDto
     public string? PriceListName { get; set; }
     public int ItemId { get; set; }
     public string? ItemName { get; set; }
+    public string? ItemBarcode { get; set; }
+    public ItemMasterDataProcess? ItemProcess { get; set; }
     public int? UomId { get; set; }
     public string? UomName { get; set; }
     public int CcyId { get; set; }
@@ -18,5 +20,10 @@ public class PriceListDetailDto : IBaseDto
     public int PromotionId { get; set; }
     public decimal Cost { get; set; } // purchase price
     public decimal Price { get; set; } // sale price
+
+    /// <summary>
+    /// This field is for copy from
+    /// </summary>
+    public bool Selected { get; set; }
     public DateTime CreatedAt { get; set; }
 }

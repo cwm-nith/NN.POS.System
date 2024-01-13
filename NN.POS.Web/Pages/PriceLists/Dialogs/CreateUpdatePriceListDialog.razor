@@ -7,8 +7,8 @@
 <MudDialog>
     <DialogContent>
         <MudForm Model="_priceListModel" Validation="_priceListValidator.ValidateValue" @ref="_form">
-            <MudGrid Spacing="5" Justify="Justify.Center">
-                <MudItem lg="5" sm="12" xs="12">
+            <MudGrid Justify="Justify.Center">
+                <MudItem lg="6" sm="12" xs="12">
                     <MudTextField @bind-Value="_priceListModel.Name"
                                   For="@(() => _priceListModel.Name)"
                                   Immediate="true"
@@ -16,7 +16,7 @@
                                   Variant="Variant.Outlined"
                                   Margin="Margin.Dense" />
                 </MudItem>
-                <MudItem lg="5" sm="12" xs="12">
+                <MudItem lg="6" sm="12" xs="12">
                     @if (Data.Id > 0)
                     {
                         <MudTextField @bind-Value="Data.CcyName"

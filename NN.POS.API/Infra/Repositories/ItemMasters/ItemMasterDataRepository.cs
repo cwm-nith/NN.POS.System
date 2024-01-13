@@ -15,9 +15,10 @@ public class ItemMasterDataRepository(
     IReadDbRepository<ItemMasterDataTable> readDbRepository,
     IWriteDbRepository<ItemMasterDataTable> writeDbRepository) : IItemMasterDataRepository
 {
-    public async Task CreateAsync(ItemMasterDataDto dto, CancellationToken cancellationToken = default)
+    public async Task<ItemMasterDataDto> CreateAsync(ItemMasterDataDto dto, CancellationToken cancellationToken = default)
     {
-        await writeDbRepository.AddAsync(dto.ToTable(), cancellationToken);
+        var item = await writeDbRepository.AddAsync(dto.ToTable(), cancellationToken);
+        return item.ToDto();
     }
 
     public async Task UpdateAsync(int id, UpdateItemMasterDataDto dto, CancellationToken cancellationToken = default)

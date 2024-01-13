@@ -5,4 +5,5 @@ namespace NN.POS.Model.Dtos.PriceLists;
 public class GetPagePriceListDto : PagedQuery
 {
     public string? Search { get; set; }
+    public int? ExcludeId { get; set; }
 }

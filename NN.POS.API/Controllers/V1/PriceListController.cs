@@ -43,7 +43,8 @@ public class PriceListController(IMediator mediator) : BaseApiController
         {
             Page = q.Page,
             Results = q.Results,
-            Search = q.Search
+            Search = q.Search,
+            ExcludeId = q.ExcludeId
         };
         var data = await mediator.Send(query);
         return Ok(data);
@@ -70,7 +71,7 @@ public class PriceListController(IMediator mediator) : BaseApiController
     }
 
     [HttpPut("detail/{id:int}")]
-    public async Task<ActionResult> CreateDetail(int id, [FromBody] UpdatePriceListDetailDto body)
+    public async Task<ActionResult> UpdateDetail(int id, [FromBody] UpdatePriceListDetailDto body)
     {
         var cmd = new UpdatePriceListDetailCommand(id, body);
         await mediator.Send(cmd);
@@ -95,6 +96,13 @@ public class PriceListController(IMediator mediator) : BaseApiController
             PriceListId = dto.PriceListId
         });
         return Ok(data);
+    }
+
+    [HttpGet("detail/copy/{priceListId:int}")]
+    public async Task<ActionResult<List<PriceListDetailDto>>> GetPriceListCopy(int priceListId,
+        [FromQuery] int priceListIdCopyFrom)
+    {
+        return Ok(await mediator.Send(new GetPriceListCopyQuery(priceListId, priceListIdCopyFrom)));
     }
 
     #endregion
