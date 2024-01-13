@@ -9,7 +9,7 @@ namespace NN.POS.API.Infra.Tables.ItemMasters;
 public class ItemMasterDataTable : BaseTable
 {
     [Column("group_id")] 
-    public int GroupId { get; set; }
+    public int? GroupId { get; set; }
 
     [Column("code"), StringLength(100)]
     public string Code { get; set; } = string.Empty;
