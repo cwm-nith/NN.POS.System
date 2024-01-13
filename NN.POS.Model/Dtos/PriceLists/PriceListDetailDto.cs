@@ -20,5 +20,10 @@ public class PriceListDetailDto : IBaseDto
     public int PromotionId { get; set; }
     public decimal Cost { get; set; } // purchase price
     public decimal Price { get; set; } // sale price
+
+    /// <summary>
+    /// This field is for copy from
+    /// </summary>
+    public bool Selected { get; set; }
     public DateTime CreatedAt { get; set; }
 }

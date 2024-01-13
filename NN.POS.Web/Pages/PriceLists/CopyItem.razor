@@ -1,72 +1,185 @@
 ﻿@using NN.POS.Model.Dtos.PriceLists
 @using NN.POS.Model.Enums
+@using NN.POS.Web.Components.Dialogs
 
 @attribute [Route($"{RouteName.CopyPriceList}/{{PriceListId:int}}")]
 
-<MudTable @ref="_table" T="PriceListDetailDto" Items="@_priceListDetails" MultiSelection="true" Hover="true"
-          OnRowClick="@OnRowClick" @bind-SelectOnRowClick="@_selectOnRowClick">
-    <HeaderContent>
-        <MudTh>Item</MudTh>
-        <MudTh>Uom</MudTh>
-        <MudTh>Cost</MudTh>
-        <MudTh>Price</MudTh>
-        <MudTh>Currency</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Item">@context.ItemName</MudTd>
-            <MudTd DataLabel="Uom">@context.UomName</MudTd>
-            <MudTd DataLabel="Cost">
-                @if (context.ItemProcess == ItemMasterDataProcess.Standard)
-            {
-                <MudTextField @bind-Value="context.Cost"
-                              For="@(() => context.Cost)"
+<MudContainer Class="p-4">
+
+    <MudGrid Justify="Justify.FlexStart">
+        <MudItem lg="4" sm="12" xs="12">
+            <MudTextField @bind-Value="_priceListIdCopyFromName"
+                          Immediate="true"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                          OnAdornmentClick="@ChoosePriceList"
+                          AdornmentAriaLabel="Choose Price List Copy From"
+                          ReadOnly="true"
+                          Label="Price List Copy From" />
+        </MudItem>
+        
+        <MudItem lg="2" sm="12" xs="12">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       OnClick="@Save">
+                Save
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+    
+    @if (!string.IsNullOrEmpty(_apiErrorMessages))
+    {
+        <MudChip Variant="Variant.Outlined" Color="Color.Error">
+            @_apiErrorMessages
+        </MudChip>
+    }
+
+    <MudTable T="PriceListDetailDto" Items="@_priceListDetails" Hover="true" @bind-SelectOnRowClick="@_selectOnRowClick">
+        <HeaderContent>
+            <MudTh>Item</MudTh>
+            <MudTh>Uom</MudTh>
+            <MudTh>Cost</MudTh>
+            <MudTh>Price</MudTh>
+            <MudTh>Currency</MudTh>
+            <MudTh>
+                Select <MudIconButton Icon="@(_selectedAll ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)"
+                                         Color="@(_selectedAll ? Color.Primary : Color.Error)"
+                                      OnClick="@AddOrRemoveAllItems" />
+            </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Item">@context.ItemName</MudTd>
+                <MudTd DataLabel="Uom">@context.UomName</MudTd>
+                <MudTd DataLabel="Cost">
+                    @if (context.ItemProcess == ItemMasterDataProcess.Standard)
+                {
+                    <MudTextField @bind-Value="context.Cost"
+                                  For="@(() => context.Cost)"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                }
+                else
+                {
+                    @context.Cost
+                }
+            </MudTd>
+            <MudTd DataLabel="Price">
+                <MudTextField @bind-Value="context.Price"
+                              For="@(() => context.Price)"
                               Immediate="true"
                               Variant="Variant.Outlined"
                               Margin="Margin.Dense" />
-            }
-            else
-            {
-                @context.Cost
-            }
-        </MudTd>
-        <MudTd DataLabel="Price">
-            <MudTextField @bind-Value="context.Price"
-                          For="@(() => context.Price)"
-                          Immediate="true"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense" />
-        </MudTd>
-        <MudTd DataLabel="Currency">@context.CcyName</MudTd>
-        </RowTemplate>
-        <PagerContent>
-            <MudTablePager PageSizeOptions="new[] { 10, 25, 50, 100 }" />
-        </PagerContent>
-        <FooterContent>
-            <MudTd colspan="5">Select All</MudTd>
-        </FooterContent>
-    </MudTable>
+            </MudTd>
+            <MudTd DataLabel="Currency">@context.CcyName</MudTd>
+                <MudTd DataLabel="Select">
+                    <MudIconButton Icon="@(context.Selected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)"
+                                   Color="@(context.Selected? Color.Primary : Color.Error)"
+                                   OnClick="@(() => AddOrRemoveItem(context))" />
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new[] { 10, 25, 50, 100 }" />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
 
     @code {
 
     [Parameter]
     public int PriceListId { get; set; }
-
-    private MudTable<PriceListDetailDto> _table;
     private bool _selectOnRowClick = true;
     private List<PriceListDetailDto> _priceListDetails = [];
     private int PriceListIdCopyFrom { get; set; }
+    private string _priceListIdCopyFromName = "";
 
-    protected override async Task OnInitializedAsync()
+    private bool _selectedAll;
+
+    string? _apiErrorMessages;
+
+    private async Task Save()
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var path = $"{Setting.PrefixEndpoint}priceList/detail/copy/{PriceListId}?priceListIdCopyFrom={PriceListIdCopyFrom}";
+        var path = $"{Setting.PrefixEndpoint}priceList/detail";
 
-        var data = await httpClient.GetFromJsonAsync<List<PriceListDetailDto>>(path);
-        if (data is not null) _priceListDetails = data;
+        var jsonPayload = JsonSerializer.Serialize(_priceListDetails.Where(i => i.Selected).Select(i => new CreatePriceListDetailDto
+        {
+            CcyId = i.CcyId,
+            Cost = i.Cost,
+            DiscountType = i.DiscountType,
+            DiscountValue = i.DiscountValue,
+            ItemId = i.ItemId,
+            Price = i.Price,
+            PriceListId = PriceListId,
+            PromotionId = i.PromotionId,
+            UomId = i.UomId
+        }));
+        var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+        var response = await httpClient.PostAsync(path, requestContent);
+
+        _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response, () => NavigationManager.NavigateTo(RouteName.Login), () =>
+        {
+            NavigationManager.NavigateTo(RouteName.PriceList);
+        });
     }
 
-    private void OnRowClick(TableRowClickEventArgs<PriceListDetailDto> args)
+    private void AddOrRemoveItem(PriceListDetailDto data)
     {
+        data.Selected = !data.Selected;
+        _selectedAll = _priceListDetails.All(i => i.Selected);
+    }
+
+    private void AddOrRemoveAllItems()
+    {
+        _selectedAll = !_selectedAll;
+        if (_selectedAll)
+        {
+            foreach (var pld in _priceListDetails.Where(pld => !pld.Selected))
+            {
+                pld.Selected = true;
+            }
+        }
+        else
+        {
+            foreach (var pld in _priceListDetails.Where(pld => pld.Selected))
+            {
+                pld.Selected = false;
+            }
+        }
+    }
+
+    private void ChoosePriceList()
+    {
+        var parameters = new DialogParameters<SelectPriceListDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<PriceListDto>(this, async pl =>
+                {
+                    _priceListIdCopyFromName = pl.Name;
+                    PriceListIdCopyFrom = pl.Id;
+
+                    var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+                    var path = $"{Setting.PrefixEndpoint}priceList/detail/copy/{PriceListId}?priceListIdCopyFrom={PriceListIdCopyFrom}";
+
+                    var data = await httpClient.GetFromJsonAsync<List<PriceListDetailDto>>(path);
+                    if (data is not null) _priceListDetails = data;
+                })
+            },
+            {
+                x => x.ExcludeId, PriceListId
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectPriceListDialog>("Price List Copy From", parameters, options);
+
     }
 }
