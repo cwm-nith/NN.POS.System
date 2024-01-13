@@ -321,11 +321,6 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private void OnTypeChange(ItemMasterDataType type)
-    {
-        Console.WriteLine(type.ToEnumString());
-    }
-
     private async Task OnInputFileChanged(InputFileChangeEventArgs e)
     {
         ClearDragClass();
@@ -425,7 +420,7 @@
 
     private void ChooseBaseUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -434,17 +429,20 @@
                     _baseUomName = uom.Name;
                     _itemModel.BaseUomId = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Base Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Base Uom", parameters, options);
     }
 
     private void ChooseSaleUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -453,17 +451,20 @@
                     _saleUomName = uom.Name;
                     _itemModel.SaleUomId= uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Sale Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Sale Uom", parameters, options);
     }
 
     private void ChoosePurchaseUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -472,17 +473,20 @@
                     _purchaseUomName = uom.Name;
                     _itemModel.PurchaseUomId = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Purchase Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Purchase Uom", parameters, options);
     }
 
     private void ChooseInventoryUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -491,12 +495,15 @@
                     _inventoryUomName = uom.Name;
                     _itemModel.InventoryUomId = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Inventory Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Inventory Uom", parameters, options);
     }
 
     private void ChooseItemGroup()

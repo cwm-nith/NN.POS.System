@@ -4,6 +4,7 @@ namespace NN.POS.Model.Dtos.ItemMasters;
 
 public class UpdateItemMasterDataDto
 {
+    public int? GroupId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? OtherName { get; set; }
     public decimal StockIn { get; set; }
