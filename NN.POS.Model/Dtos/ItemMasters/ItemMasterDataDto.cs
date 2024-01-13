@@ -6,6 +6,7 @@ public class ItemMasterDataDto : IBaseDto
 {
     public int Id { get; set; }
     public int? GroupId { get; set; }
+    public string? GroupName { get; set; }
     public string Code { get; set; } = string.Empty;
     public string Barcode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;

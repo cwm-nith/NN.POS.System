@@ -43,7 +43,7 @@ public class PriceListDetailRepository(
                           join ccy in context.Currencies! on pld.CcyId equals ccy.Id
                           join uom in context.UnitOfMeasures! on pld.UomId equals uom.Id
                           group new { pld, item, pl, ccy, uom } by item.Id into plds
-                          select plds.FirstOrDefault().pld.ToDto(plds.FirstOrDefault().pl.Name, plds.FirstOrDefault().ccy.Name, plds.FirstOrDefault().item, plds.FirstOrDefault().uom.Name)).PaginateAsync(q, cancellationToken);
+                          select plds.FirstOrDefault()!.pld.ToDto(plds.FirstOrDefault()!.pl.Name, plds.FirstOrDefault()!.ccy.Name, plds.FirstOrDefault()!.item, plds.FirstOrDefault()!.uom.Name)).PaginateAsync(q, cancellationToken);
         return data;
     }
 

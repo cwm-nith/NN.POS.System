@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Enums;
 
 namespace NN.POS.Model.Dtos.ItemMasters;
 
 public class CreateItemMasterDataDto : IBaseDto
 {
+    public int? GroupId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? OtherName { get; set; }
     public decimal StockIn { get; set; }
