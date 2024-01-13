@@ -5,6 +5,8 @@
 @using NN.POS.Model.Enums
 @using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Validations.ItemMasters
+@using JsonSerializer = System.Text.Json.JsonSerializer
+@using Newtonsoft.Json
 @attribute [Route($"{RouteName.ItemMasterDataUpdate}/{{Id:int}}")]
 @implements IDisposable
 
@@ -19,7 +21,7 @@
         </MudLink>
         <MudContainer Class="text-center">
             <MudChip Color="Color.Primary" Class="p-4">
-                <MudText Typo="Typo.body1">Create New Item</MudText>
+                <MudText Typo="Typo.body1">Update Item</MudText>
             </MudChip>
         </MudContainer>
     </MudPaper>
@@ -203,6 +205,19 @@
 
                 <MudGrid Justify="Justify.FlexStart">
                     <MudItem lg="4" sm="4" xs="12">
+                        <MudTextField @bind-Value="_groupName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseItemGroup"
+                                      AdornmentAriaLabel="Choose Group"
+                                      ReadOnly="true"
+                                      Disabled="@(_itemModel.Type is ItemMasterDataType.Group or ItemMasterDataType.None)"
+                                      Label="Item Group" />
+                    </MudItem>
+                    <MudItem lg="4" sm="4" xs="12">
                         <MudSelect @bind-Value="_itemModel.Process"
                                    For="@(() => _itemModel.Process)"
                                    Label="Process"
@@ -214,9 +229,9 @@
                             }
                         </MudSelect>
                     </MudItem>
-                 </MudGrid>
+                </MudGrid>
 
-                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
+                @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
                     <MudChip Variant="Variant.Outlined" Color="Color.Error">
                         @_apiErrorMessages
@@ -232,8 +247,8 @@
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.AddCircle"
-                                   OnClick="@(CreateItemAsync)">
-                            Save
+                                   OnClick="@(UpdateItemAsync)">
+                            Update
                         </MudButton>
                     </MudItem>
                 </MudGrid>
@@ -259,6 +274,7 @@
     private string? _inventoryUomName;
     private string? _baseUomName;
     private string? _saleUomName;
+    private string? _groupName;
 
     MudForm? _form;
 
@@ -269,6 +285,8 @@
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
         var data = await httpClient.GetFromJsonAsync<ItemMasterDataDto>($"{Setting.PrefixEndpoint}itemMasterData/{Id}");
 
+        Console.WriteLine(JsonConvert.SerializeObject(data));
+
         if (data is not null)
         {
             _warehouseName = data.WarehouseName;
@@ -278,30 +296,31 @@
             _inventoryUomName = data.InventoryUoMName;
             _baseUomName = data.BaseUomName;
             _saleUomName = data.SaleUomName;
+            _groupName = data.GroupName;
 
             _itemModel = new UpdateItemMasterDataDto
-            {
-                BaseUomId = data.BaseUomId,
-                Description = data.Description,
-                Image = data.Image,
-                InventoryUoMid = data.InventoryUoMid,
-                IsInventory = data.IsInventory,
-                IsPurchase = data.IsPurchase,
-                IsSale = data.IsSale,
-                Name = data.Name,
-                PriceListId = data.PriceListId,
-                UomGroupId = data.UomGroupId,
-                WarehouseId = data.WarehouseId,
-                StockIn = data.StockIn,
-                PurchaseUomId = data.PurchaseUomId,
-                SaleUomId = data.SaleUomId,
-                OtherName = data.OtherName,
-                Process = data.Process,
-                StockCommit = data.StockCommit,
-                StockOnHand = data.StockOnHand,
-                Type = data.Type,
-                GroupId = data.GroupId
-            };
+                {
+                    BaseUomId = data.BaseUomId,
+                    Description = data.Description,
+                    Image = data.Image,
+                    InventoryUoMid = data.InventoryUoMid,
+                    IsInventory = data.IsInventory,
+                    IsPurchase = data.IsPurchase,
+                    IsSale = data.IsSale,
+                    Name = data.Name,
+                    PriceListId = data.PriceListId,
+                    UomGroupId = data.UomGroupId,
+                    WarehouseId = data.WarehouseId,
+                    StockIn = data.StockIn,
+                    PurchaseUomId = data.PurchaseUomId,
+                    SaleUomId = data.SaleUomId,
+                    OtherName = data.OtherName,
+                    Process = data.Process,
+                    StockCommit = data.StockCommit,
+                    StockOnHand = data.StockOnHand,
+                    Type = data.Type,
+                    GroupId = data.GroupId
+                };
         }
     }
 
@@ -317,7 +336,7 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task CreateItemAsync()
+    private async Task UpdateItemAsync()
     {
         await _form?.Validate()!;
         if (_form.IsValid)
@@ -393,7 +412,7 @@
 
     private void ChooseBaseUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -402,17 +421,20 @@
                     _baseUomName = uom.Name;
                     _itemModel.BaseUomId = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Base Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Base Uom", parameters, options);
     }
 
     private void ChooseSaleUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -421,17 +443,20 @@
                     _saleUomName = uom.Name;
                     _itemModel.SaleUomId= uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Sale Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Sale Uom", parameters, options);
     }
 
     private void ChoosePurchaseUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -440,17 +465,20 @@
                     _purchaseUomName = uom.Name;
                     _itemModel.PurchaseUomId = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Purchase Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Purchase Uom", parameters, options);
     }
 
     private void ChooseInventoryUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -459,11 +487,36 @@
                     _inventoryUomName = uom.Name;
                     _itemModel.InventoryUoMid = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Inventory Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Inventory Uom", parameters, options);
+    }
+
+    private void ChooseItemGroup()
+    {
+        var parameters = new DialogParameters<SelectItemMasterDataDialog>
+        {
+            {
+                x => x.OnChoose,
+                new EventCallbackFactory().Create<ItemMasterDataDto>(this, g =>
+                {
+                    _groupName = g.Name;
+                    _itemModel.GroupId = g.Id;
+                })
+            },
+            {
+                x => x.Type, ItemMasterDataType.Group
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        Dialog.Show<SelectItemMasterDataDialog>("Item Group", parameters, options);
     }
 }

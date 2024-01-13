@@ -43,6 +43,7 @@ public class ItemMasterDataRepository(
         item.IsPurchase = dto.IsPurchase;
         item.Description = dto.Description;
         item.Process = dto.Process;
+        item.GroupId = dto.GroupId;
 
         await writeDbRepository.UpdateAsync(item.ToTable(), cancellationToken).ConfigureAwait(false);
     }
