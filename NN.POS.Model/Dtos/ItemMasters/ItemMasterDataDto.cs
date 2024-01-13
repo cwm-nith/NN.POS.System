@@ -5,6 +5,7 @@ namespace NN.POS.Model.Dtos.ItemMasters;
 public class ItemMasterDataDto : IBaseDto
 {
     public int Id { get; set; }
+    public int GroupId { get; set; }
     public string Code { get; set; } = string.Empty;
     public string Barcode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;

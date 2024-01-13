@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 using NN.POS.Model.Dtos.ItemMasters;
 
@@ -7,17 +8,19 @@ namespace NN.POS.API.Infra.Tables.ItemMasters;
 [Table("item_master_data")]
 public class ItemMasterDataTable : BaseTable
 {
+    [Column("group_id")] 
+    public int GroupId { get; set; }
 
-    [Column("code")]
+    [Column("code"), StringLength(100)]
     public string Code { get; set; } = string.Empty;
 
-    [Column("barcode")]
+    [Column("barcode"), StringLength(100)]
     public string Barcode { get; set; } = string.Empty;
 
-    [Column("name")]
+    [Column("name"), StringLength(250)]
     public string Name { get; set; } = string.Empty;
 
-    [Column("other_name")]
+    [Column("other_name"), StringLength(250)]
     public string? OtherName { get; set; }
 
     [Column("stock_in", TypeName = "decimal(18,2)")]
@@ -69,10 +72,10 @@ public class ItemMasterDataTable : BaseTable
     [Column("is_purchase")]
     public bool IsPurchase { get; set; }
     
-    [Column("image")]
+    [Column("image"), StringLength(250)]
     public string? Image { get; set; }
 
-    [Column("description")]
+    [Column("description"), StringLength(1000)]
     public string? Description { get; set; }
 
     /// <summary>
@@ -101,6 +104,7 @@ public static class ItemMasterDataTableExtensions
         CreatedAt = i.CreatedAt,
         Description = i.Description,
         Id = i.Id,
+        GroupId = i.GroupId,
         Image = $"{baseImageUrl}{i.Image}",
         InventoryUoMid = i.InventoryUoMid,
         IsDeleted = i.IsDeleted,
@@ -129,6 +133,7 @@ public static class ItemMasterDataTableExtensions
         CreatedAt = i.CreatedAt,
         Description = i.Description,
         Id = i.Id,
+        GroupId = i.GroupId,
         Image = i.Image?.Split('/')[^1],
         InventoryUoMid = i.InventoryUoMid,
         IsDeleted = i.IsDeleted,
