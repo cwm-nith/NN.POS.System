@@ -43,7 +43,8 @@ public class PriceListController(IMediator mediator) : BaseApiController
         {
             Page = q.Page,
             Results = q.Results,
-            Search = q.Search
+            Search = q.Search,
+            ExcludeId = q.ExcludeId
         };
         var data = await mediator.Send(query);
         return Ok(data);
