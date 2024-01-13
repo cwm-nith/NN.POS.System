@@ -10,6 +10,7 @@ GO
 
 CREATE TABLE [dbo].[item_master_data](
 	[id] [int] IDENTITY(1,1) NOT NULL,
+	[group_id] [int] NULL,
 	[code] [nvarchar](100) NOT NULL UNIQUE,
 	[barcode] [nvarchar](100) NOT NULL UNIQUE,
 	[name] [nvarchar](250) NOT NULL,

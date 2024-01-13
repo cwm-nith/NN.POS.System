@@ -22,7 +22,7 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<UnitOfMeasureDto>> GetById(int id)
     {
         var data = await mediator.Send(new GetUomByIdQuery(id));
@@ -41,7 +41,13 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok(data);
     }
 
-    [HttpPut("{id}")]
+    [HttpGet("by-group-id")]
+    public async Task<ActionResult<List<UnitOfMeasureDto>>> GetUomByGroupId([FromQuery] GetUomByGroupIdQuery q)
+    {
+        return Ok(await mediator.Send(q));
+    }
+
+    [HttpPut("{id:int}")]
     public async Task<ActionResult> Update(int id, [FromBody] UpdateUomDto body)
     {
         await mediator.Send(new UpdateUomCommand
@@ -52,7 +58,7 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {
         await mediator.Send(new DeleteUomCommand
@@ -81,21 +87,21 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok(await mediator.Send(q));
     }
 
-    [HttpGet("uom-group/{id}")]
+    [HttpGet("uom-group/{id:int}")]
     public async Task<ActionResult<UnitOfMeasureGroupDto>> GetUomGroupById(int id)
     {
         var data = await mediator.Send(new GetUomGroupByIdQuery(id));
         return Ok(data);
     }
 
-    [HttpPut("uom-group/{id}")]
+    [HttpPut("uom-group/{id:int}")]
     public async Task<ActionResult<UnitOfMeasureGroupDto>> UpdateUomGroup(int id, [FromBody] UpdateUomGroupDto body)
     {
         await mediator.Send(new UpdateUomGroupCommand(id, body.Name));
         return Ok();
     }
 
-    [HttpDelete("uom-group/{id}")]
+    [HttpDelete("uom-group/{id:int}")]
     public async Task<ActionResult<UnitOfMeasureGroupDto>> DeleteUomGroup(int id)
     {
         await mediator.Send(new DeleteUomGroupCommand(id));
@@ -120,28 +126,28 @@ public class UnitOfMeasureController(IMediator mediator) : BaseApiController
         return Ok();
     }
 
-    [HttpPut("uom-define/{id}")]
+    [HttpPut("uom-define/{id:int}")]
     public async Task<ActionResult> UpdateUomDefine(int id, [FromBody] CreateUomDefineDto body)
     {
         await mediator.Send(new UpdateUomDefineCommand(id, body));
         return Ok();
     }
 
-    [HttpDelete("uom-define/{id}")]
+    [HttpDelete("uom-define/{id:int}")]
     public async Task<ActionResult> DeleteUomDefine(int id)
     {
         await mediator.Send(new DeleteUomDefineCommand(id));
         return Ok();
     }
 
-    [HttpGet("uom-define/{id}")]
+    [HttpGet("uom-define/{id:int}")]
     public async Task<ActionResult> GetUomDefineById(int id)
     {
         var data = await mediator.Send(new GetUomDefineByIdQuery(id));
         return Ok(data);
     }
 
-    [HttpGet("uom-define-uom-group-id/{id}")]
+    [HttpGet("uom-define-uom-group-id/{id:int}")]
     public async Task<ActionResult<IEnumerable<UnitOfMeasureDefineDto>>> GetUomDefineByUomGroupId(int id)
     {
         var data = await mediator.Send(new GetUomDefineByUomGroupIdQuery(id));

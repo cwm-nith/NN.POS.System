@@ -58,6 +58,7 @@ public class CreateItemMasterDataCommandHandler(
                 Process = r.Process,
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow,
+                GroupId = r.GroupId
             };
             itemMasterData = await repository.CreateAsync(dto, cancellationToken);
 
@@ -77,7 +78,7 @@ public class CreateItemMasterDataCommandHandler(
         }
         finally
         {
-            if (isSuccess)
+            if (isSuccess && itemMasterData.Type != ItemMasterDataType.Group)
             {
                 var sysCcy = await ccyRepository.GetBaseCurrencyAsync(cancellationToken);
                 var priceList = await priceListRepository.GetByIdAsync(r.PriceListId, cancellationToken);

@@ -203,6 +203,19 @@
 
                 <MudGrid Justify="Justify.FlexStart">
                     <MudItem lg="4" sm="4" xs="12">
+                        <MudTextField @bind-Value="_groupName"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                      OnAdornmentClick="@ChooseItemGroup"
+                                      AdornmentAriaLabel="Choose Group"
+                                      ReadOnly="true"
+                                      Disabled="@(_itemModel.Type is ItemMasterDataType.Group or ItemMasterDataType.None)"
+                                      Label="Item Group" />
+                    </MudItem>
+                    <MudItem lg="4" sm="4" xs="12">
                         <MudSelect @bind-Value="_itemModel.Process"
                                    For="@(() => _itemModel.Process)"
                                    Label="Process"
@@ -288,7 +301,8 @@
     private string _inventoryUomName = "";
     private string _baseUomName = "";
     private string _saleUomName = "";
-
+    private string _groupName = "";
+    
     MudForm? _form;
 
     string? _apiErrorMessages;
@@ -313,12 +327,12 @@
         _fileImage = $"data:{e.File.ContentType};base64,{Convert.ToBase64String(buffer)}";
 
         _itemModel.File = new FileData
-        {
-            FileName = e.File.Name,
-            FileSize = e.File.Size,
-            FileType = e.File.ContentType,
-            ImageBytes = buffer
-        };
+            {
+                FileName = e.File.Name,
+                FileSize = e.File.Size,
+                FileType = e.File.ContentType,
+                ImageBytes = buffer
+            };
 
     }
 
@@ -359,7 +373,7 @@
             }
         };
 
-        var options = new DialogOptions { CloseButton = true };
+        var options = new DialogOptions { CloseButton = true};
 
         Dialog.Show<SelectWarehouseDialog>("Warehouse", parameters, options);
     }
@@ -404,7 +418,7 @@
 
     private void ChooseBaseUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -413,17 +427,20 @@
                     _baseUomName = uom.Name;
                     _itemModel.BaseUomId = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Base Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Base Uom", parameters, options);
     }
 
     private void ChooseSaleUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -432,17 +449,20 @@
                     _saleUomName = uom.Name;
                     _itemModel.SaleUomId= uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Sale Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Sale Uom", parameters, options);
     }
 
     private void ChoosePurchaseUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -451,17 +471,20 @@
                     _purchaseUomName = uom.Name;
                     _itemModel.PurchaseUomId = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Purchase Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Purchase Uom", parameters, options);
     }
 
     private void ChooseInventoryUom()
     {
-        var parameters = new DialogParameters<SelectUomDialog>
+        var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
             {
                 x => x.OnChooseUom,
@@ -470,11 +493,36 @@
                     _inventoryUomName = uom.Name;
                     _itemModel.InventoryUomId = uom.Id;
                 })
+            },
+            {
+                x => x.GroupId, _itemModel.UomGroupId
             }
         };
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomDialog>("Inventory Uom", parameters, options);
+        Dialog.Show<SelectUomByGroupIdDialog>("Inventory Uom", parameters, options);
+    }
+
+    private void ChooseItemGroup()
+    {
+        var parameters = new DialogParameters<SelectItemMasterDataDialog>
+        {
+            {
+                x => x.OnChoose,
+                new EventCallbackFactory().Create<ItemMasterDataDto>(this, g =>
+                {
+                    _groupName = g.Name;
+                    _itemModel.GroupId = g.Id;
+                })
+            },
+            {
+                x => x.Type, ItemMasterDataType.Group
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        Dialog.Show<SelectItemMasterDataDialog>("Item Group", parameters, options);
     }
 }
