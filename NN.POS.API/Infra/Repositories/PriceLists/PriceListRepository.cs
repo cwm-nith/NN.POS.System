@@ -43,7 +43,7 @@ public class PriceListRepository(
     {
         var context = readDbRepository.Context;
         var data = await (from pl in context.PriceLists!
-                .Where(i => !i.IsDeleted && EF.Functions.Like(i.Name, $"%{q.Search}%"))
+                .Where(i => !i.IsDeleted && (q.ExcludeId == null || i.Id != q.ExcludeId) && EF.Functions.Like(i.Name, $"%{q.Search}%"))
                        join ccy in context.Currencies! on pl.CcyId equals ccy.Id
                        select pl.ToDto(ccy.Name)).PaginateAsync(q, cancellationToken);
 
