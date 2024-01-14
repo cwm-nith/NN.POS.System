@@ -7,36 +7,37 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(_ => DrawerToggle())" />
         <MudDrawerHeader>
-            <MudButton Variant="Variant.Text" OnClick="ToDashboard">
+            <MudButton Variant="Variant.Text" OnClick="@ToDashboard">
                 <MudText Typo="Typo.h6" Class="mt-1 text-white">NN POS System</MudText>
             </MudButton>
         </MudDrawerHeader>
         <MudSpacer />
         <AuthorizeView>
             <Authorized>
-                <MudText>Welcome @UserDisplayName(context.User.Claims)</MudText>
-                <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" >
-                    <MudMenuItem>Profile</MudMenuItem>
-                    <MudMenuItem>My account</MudMenuItem>
-                    <MudMenuItem OnClick="LogOut">Logout</MudMenuItem>
-                </MudMenu>
-            </Authorized>
-        </AuthorizeView>
-    </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <AuthorizeView>
-            <NotAuthorized>
-                <LoginRedirect />
-            </NotAuthorized>
-            <Authorized>
-                <NavMenu />
-            </Authorized>
-        </AuthorizeView>
-    </MudDrawer>
-    <MudMainContent>
-        @Body
+                <MudText>Welcome, @UserDisplayName(context.User.Claims)</MudText>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End">
+                        <MudMenuItem>Profile</MudMenuItem>
+                        <MudMenuItem>My account</MudMenuItem>
+                        <MudMenuItem OnClick="@LogOut">Logout</MudMenuItem>
+                    </MudMenu>
+                </Authorized>
+            </AuthorizeView>
+        </MudAppBar>
+        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+            <AuthorizeView>
+                <NotAuthorized>
+                    <LoginRedirect />
+                </NotAuthorized>
+                <Authorized>
+                    <NavMenu />
+                </Authorized>
+            </AuthorizeView>
+        </MudDrawer>
+        <MudMainContent>
+            <MudBreadcrumbs Items="@NavbarStateService.BreadcrumbItems" Separator=">"></MudBreadcrumbs>
+            @Body
     </MudMainContent>
 </MudLayout>
 
