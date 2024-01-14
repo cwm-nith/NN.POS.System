@@ -106,7 +106,7 @@
 
         var path = $"{Setting.PrefixEndpoint}priceList/detail";
 
-        var jsonPayload = JsonSerializer.Serialize(_priceListDetails.Where(i => i.Selected).Select(i => new CreatePriceListDetailDto
+        var jsonPayload = JsonConvert.SerializeObject(_priceListDetails.Where(i => i.Selected).Select(i => new CreatePriceListDetailDto
         {
             CcyId = i.CcyId,
             Cost = i.Cost,

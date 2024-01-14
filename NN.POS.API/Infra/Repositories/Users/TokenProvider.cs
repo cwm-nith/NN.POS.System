@@ -18,12 +18,12 @@ public class TokenProvider(IUserRoleRepository userRoleRepository, AppSettings a
 
         var expiryInMinutes = appSettings.Jwt.ExpiryInMinutes;
 
-        List<Claim> claims = new()
-        {
+        List<Claim> claims =
+        [
             new Claim("userId", user.Id.ToString()),
             new Claim("email", user.Email),
-            new Claim(ClaimTypes.NameIdentifier, user.Name),
-        };
+            new Claim(ClaimTypes.NameIdentifier, user.Name)
+        ];
 
         var roles = await userRoleRepository.GetUserRolesAsync(user.Id, cancellationToken);
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));

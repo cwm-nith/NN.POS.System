@@ -88,7 +88,7 @@
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(_uomGroupModel);
+            var jsonPayload = JsonConvert.SerializeObject(_uomGroupModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}unitOfMeasure/uom-group", requestContent);

@@ -81,29 +81,16 @@
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(_customerGroupModel);
+            var jsonPayload = JsonConvert.SerializeObject(_customerGroupModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PutAsync($"{Setting.PrefixEndpoint}BusinessPartner/customer-group/{Id}", requestContent);
 
-            switch (response.StatusCode)
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response, () => NavigationManager.NavigateTo(RouteName.Login), async () =>
             {
-                case HttpStatusCode.BadRequest:
-                    var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                    _apiErrorMessages = $"{errors?.Message} [{errors?.Code}]";
-                    break;
-                case HttpStatusCode.Unauthorized:
-                    NavigationManager.NavigateTo(RouteName.Login);
-                    break;
-                case HttpStatusCode.OK:
-                    MudDialog?.Close();
-                    await Table?.ReloadServerData()!;
-                    break;
-                default:
-                    _apiErrorMessages = "Login Failed Please try after some time";
-                    break;
-            }
-
+                MudDialog?.Close();
+                await Table?.ReloadServerData()!;
+            });
         }
     }
     void Cancel() => MudDialog?.Cancel();
