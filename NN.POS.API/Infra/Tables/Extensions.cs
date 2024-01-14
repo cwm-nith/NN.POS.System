@@ -41,6 +41,7 @@ public static class Extensions
         services.AddPostgresRepository<PaymentTypeTable>();
         services.AddPostgresRepository<PurchaseOrderTable>();
         services.AddPostgresRepository<PurchaseOrderDetailTable>();
+        services.AddPostgresRepository<DocumentInvoicingTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>

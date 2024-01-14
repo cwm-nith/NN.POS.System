@@ -40,6 +40,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<PaymentTypeTable>? PaymentTypes { get; set; }
     public DbSet<PurchaseOrderTable>? PurchaseOrders { get; set; }
     public DbSet<PurchaseOrderDetailTable>? PurchaseOrderDetails { get; set; }
+    public DbSet<DocumentInvoicingTable>? DocumentInvoicing { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,6 +50,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
             .ItemMasterDataTableDbConfig()
             .BusinessPartnerConfig()
             .TaxTableDbConfig()
-            .PurchaseOrderTableConfig();
+            .PurchaseOrderTableConfig()
+            .DocumentInvoicingTableConfig();
     }
 }
