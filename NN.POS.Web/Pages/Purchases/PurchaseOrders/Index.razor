@@ -1,0 +1,194 @@
+﻿@using NN.POS.Model.Dtos.Purchases.PurchaseOrders
+@using NN.POS.Web.Components.Dialogs
+@using NN.POS.Web.Validations.Purchases.PurchaseOrders
+@using NN.POS.Model.Dtos.BusinessPartners
+@using NN.POS.Model.Dtos.Currencies
+@using NN.POS.Model.Dtos.Warehouses
+@using NN.POS.Web.Models
+
+@attribute [Route(RouteName.PurchasesOrder)]
+
+@implements IDisposable
+
+<MudContainer>
+    <MudContainer>
+        <MudText Typo="Typo.h6" Class="pb-4">Purchase Order</MudText>
+        <MudForm Model="_purModel" Validation="_purValidator.ValidateValue" @ref="_form">
+            <MudGrid Justify="Justify.SpaceBetween">
+                <MudItem lg="4" sm="4" xs="12">
+                    <MudGrid>
+                        <MudItem lg="12" sm="12" xs="12">
+                            <MudTextField @bind-Value="_supplierName"
+                                          Immediate="true"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                          OnAdornmentClick="@ChooseSupplier"
+                                          AdornmentAriaLabel="Choose Suppliers"
+                                          ReadOnly="true"
+                                          Label="Suppliers" />
+
+                            <MudTextField @bind-Value="_purModel.SupplyId"
+                                          For="@(() => _purModel.SupplyId)"
+                                          Style="display: none" />
+                        </MudItem>
+                        <MudItem lg="12" sm="12" xs="12">
+                            <MudTextField @bind-Value="_warehouseName"
+                                          Immediate="true"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                          OnAdornmentClick="@ChooseWarehouse"
+                                          AdornmentAriaLabel="Choose Warehouse"
+                                          ReadOnly="true"
+                                          Label="Warehouse" />
+
+                            <MudTextField @bind-Value="_purModel.WarehouseId"
+                                          For="@(() => _purModel.WarehouseId)"
+                                          Style="display: none" />
+                        </MudItem>
+                        
+                        <MudItem lg="12" sm="12" xs="12">
+                            <MudTextField @bind-Value="_ccyName"
+                                          Immediate="true"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                          OnAdornmentClick="@ChooseCcy"
+                                          AdornmentAriaLabel="Choose Purchase Currency"
+                                          ReadOnly="true"
+                                          Disabled="_purModel.WarehouseId == 0"
+                                          Label="Purchase Currency" />
+
+                            <MudTextField @bind-Value="_purModel.WarehouseId"
+                                          For="@(() => _purModel.WarehouseId)"
+                                          Style="display: none" />
+                        </MudItem>
+                        <MudItem lg="12" sm="12" xs="12">
+                            <MudTextField @bind-Value="@_user.UserName"
+                                          Immediate="true"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          ReadOnly="true"
+                                          Label="User" />
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem lg="4" sm="4" xs="12">
+                    <MudGrid>
+                        <MudItem lg="12" sm="12" xs="12">
+                            <MudTextField @bind-Value="_warehouseName"
+                                          Immediate="true"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                          OnAdornmentClick="@ChooseWarehouse"
+                                          AdornmentAriaLabel="Choose Warehouse"
+                                          ReadOnly="true"
+                                          Label="Warehouse" />
+
+                            <MudTextField @bind-Value="_purModel.WarehouseId"
+                                          For="@(() => _purModel.WarehouseId)"
+                                          Style="display: none" />
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </MudContainer>
+</MudContainer>
+
+@code {
+
+    private readonly CreatePurchaseOrderDto _purModel = new();
+
+    private readonly CreatePurchaseOrderValidation _purValidator = new();
+
+    MudForm? _form;
+
+    private AuthenticateUser _user = new();
+
+    private string? _supplierName;
+    private string? _warehouseName;
+    private string? _ccyName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var claims = (await AuthStateProvider.GetAuthenticationStateAsync()).User.Claims;
+        _user = UserService.GetUser(claims.ToList());
+        
+        NavbarStateService.SetExpend(RouteName.Purchases);
+        NavbarStateService.SetActive(RouteName.PurchasesOrder);
+        NavbarStateService.SetBreadcrumbItems([
+            new BreadcrumbItem("Purchases", null, true),
+            new BreadcrumbItem("Purchase Order", null, true)
+        ]);
+        NavbarStateService.OnStateChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private void ChooseSupplier()
+    {
+        var parameters = new DialogParameters<SelectSupplierDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<BusinessPartnerDto>(this, bp =>
+                {
+                    _supplierName = $"{bp.FirstName} {bp.LastName}";
+                    _purModel.SupplyId = bp.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectSupplierDialog>("Suppliers", parameters, options);
+    }
+
+    private void ChooseWarehouse()
+    {
+        var parameters = new DialogParameters<SelectWarehouseDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<WarehouseDto>(this, ws =>
+                {
+                    _warehouseName = ws.Name;
+                    _purModel.WarehouseId = ws.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectWarehouseDialog>("Warehouses", parameters, options);
+    }
+
+    private void ChooseCcy()
+    {
+        var parameters = new DialogParameters<SelectCurrencyDialog>
+        {
+            {
+                x => x.OnRefresh,
+                new EventCallbackFactory().Create<CurrencyDto>(this, ccy =>
+                {
+                    _ccyName = $"{ccy.Name} {ccy.Symbol}";
+                    _purModel.PurCcyId = ccy.Id;
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true };
+
+        Dialog.Show<SelectCurrencyDialog>("Purchase Currency", parameters, options);
+    }
+}
