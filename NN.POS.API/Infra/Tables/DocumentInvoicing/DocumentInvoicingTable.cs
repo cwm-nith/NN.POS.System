@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using NN.POS.Model.Dtos.DocumentInvoicings;
 using NN.POS.Model.Enums;
 
-namespace NN.POS.API.Infra.Tables;
+namespace NN.POS.API.Infra.Tables.DocumentInvoicing;
 
 [Table("document_invoicing")]
 public class DocumentInvoicingTable : BaseTable
@@ -11,7 +11,7 @@ public class DocumentInvoicingTable : BaseTable
     [Column("doc_id")]
     public int DocId { get; set; }
 
-    [Column("doc_invoicing"), StringLength(50)]
+    [Column("doc_invoicing"), StringLength(150)]
     public string DocInvoicing { get; set; } = string.Empty;
 
     [Column("invoice_count")]
