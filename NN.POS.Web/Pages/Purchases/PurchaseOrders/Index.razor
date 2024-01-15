@@ -3,7 +3,10 @@
 @using NN.POS.Web.Validations.Purchases.PurchaseOrders
 @using NN.POS.Model.Dtos.BusinessPartners
 @using NN.POS.Model.Dtos.Currencies
+@using NN.POS.Model.Dtos.DocumentInvoicings
+@using NN.POS.Model.Dtos.ItemMasters
 @using NN.POS.Model.Dtos.Warehouses
+@using NN.POS.Model.Enums
 @using NN.POS.Web.Models
 
 @attribute [Route(RouteName.PurchasesOrder)]
@@ -17,7 +20,7 @@
             <MudGrid Justify="Justify.SpaceBetween">
                 <MudItem lg="4" sm="4" xs="12">
                     <MudGrid>
-                        <MudItem lg="12" sm="12" xs="12">
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_supplierName"
                                           Immediate="true"
                                           Variant="Variant.Outlined"
@@ -33,7 +36,7 @@
                                           For="@(() => _purModel.SupplyId)"
                                           Style="display: none" />
                         </MudItem>
-                        <MudItem lg="12" sm="12" xs="12">
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_warehouseName"
                                           Immediate="true"
                                           Variant="Variant.Outlined"
@@ -49,8 +52,8 @@
                                           For="@(() => _purModel.WarehouseId)"
                                           Style="display: none" />
                         </MudItem>
-                        
-                        <MudItem lg="12" sm="12" xs="12">
+
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_ccyName"
                                           Immediate="true"
                                           Variant="Variant.Outlined"
@@ -67,7 +70,7 @@
                                           For="@(() => _purModel.WarehouseId)"
                                           Style="display: none" />
                         </MudItem>
-                        <MudItem lg="12" sm="12" xs="12">
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="@_user.UserName"
                                           Immediate="true"
                                           Variant="Variant.Outlined"
@@ -79,48 +82,167 @@
                 </MudItem>
                 <MudItem lg="4" sm="4" xs="12">
                     <MudGrid>
-                        <MudItem lg="12" sm="12" xs="12">
-                            <MudTextField @bind-Value="_warehouseName"
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
+                            <MudTextField @bind-Value="@_invoicePo"
                                           Immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
-                                          Adornment="Adornment.End"
-                                          AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
-                                          OnAdornmentClick="@ChooseWarehouse"
-                                          AdornmentAriaLabel="Choose Warehouse"
                                           ReadOnly="true"
-                                          Label="Warehouse" />
-
-                            <MudTextField @bind-Value="_purModel.WarehouseId"
-                                          For="@(() => _purModel.WarehouseId)"
-                                          Style="display: none" />
+                                          Label="Invoice Number" />
+                        </MudItem>
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
+                            <MudTextField @bind-Value="@_purModel.Status"
+                                          Immediate="true"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          ReadOnly="true"
+                                          Label="Status" />
+                        </MudItem>
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
+                            <MudDatePicker @bind-Date="_purModel.PostingDate"
+                                           For="@(() => _purModel.PostingDate)"
+                                           Immediate="true"
+                                           Label="Posting Date"
+                                           Variant="Variant.Outlined"
+                                           Margin="Margin.Dense" />
+                        </MudItem>
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
+                            <MudDatePicker @bind-Date="_purModel.DeliveryDate"
+                                           For="@(() => _purModel.DeliveryDate)"
+                                           Immediate="true"
+                                           Label="Delivery Date"
+                                           Variant="Variant.Outlined"
+                                           Margin="Margin.Dense" />
+                        </MudItem>
+                        <MudItem lg="12" sm="12" xs="12" Class="py-0">
+                            <MudDatePicker @bind-Date="_purModel.DocumentDate"
+                                           For="@(() => _purModel.DocumentDate)"
+                                           Immediate="true"
+                                           Label="Document Date"
+                                           Variant="Variant.Outlined"
+                                           Margin="Margin.Dense" />
                         </MudItem>
                     </MudGrid>
                 </MudItem>
             </MudGrid>
         </MudForm>
     </MudContainer>
+
+    <MudContainer>
+        <MudGrid>
+            <MudItem lg="12" sm="12" xs="12">
+                <MudFocusTrap Disabled="@_disableAutoFocusBarcodeSearch" DefaultFocus="DefaultFocus.FirstChild">
+                    <MudTextField @bind-Value="_barcodeSearch"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
+                                  OnAdornmentClick="@ChooseSupplier"
+                                  AdornmentAriaLabel="Choose Item"
+                                  Label="Bearcode Search" 
+                                  OnKeyDown="@BarcodeSearchByPressEnter"/>
+                </MudFocusTrap>
+            </MudItem>
+        </MudGrid>
+        <br />
+        <MudTable Items="@_items"
+                  Dense="true"
+                  Hover="true"
+                  Striped="true">
+
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Purchase Order Detail</MudText>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Code</MudTh>
+                <MudTh>Barcode</MudTh>
+                <MudTh>Item Name</MudTh>
+                <MudTh>Item Other Name</MudTh>
+                <MudTh>Qty</MudTh>
+                <MudTh>Cost</MudTh>
+                <MudTh>Discount Type</MudTh>
+                <MudTh>Discount Value</MudTh>
+                <MudTh>Total</MudTh>
+                <MudTh>UoMs</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                @* <MudTd DataLabel="Price List">@context.PriceListName</MudTd>
+                    <MudTd DataLabel="Item">@context.ItemName</MudTd>
+                    <MudTd DataLabel="Uom">@context.UomName</MudTd>
+                    <MudTd DataLabel="Cost">
+                        @if (context.ItemProcess == ItemMasterDataProcess.Standard)
+                    {
+                        <MudTextField @bind-Value="context.Cost"
+                                      For="@(() => context.Cost)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense" />
+                    }
+                    else
+                    {
+                        @context.Cost
+                    }
+                </MudTd>
+                <MudTd DataLabel="Price">
+                    <MudTextField @bind-Value="context.Price"
+                                  For="@(() => context.Price)"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudTd>
+                <MudTd DataLabel="Currency">@context.CcyName</MudTd>
+                    <MudTd DataLabel="Actions">
+                        <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Warning" OnClick="@(async () => await Save(context))"></MudIconButton>
+                    </MudTd> *@
+                </RowTemplate>
+
+                <NoRecordsContent>
+                    <MudText>No matching records found</MudText>
+                </NoRecordsContent>
+                <LoadingContent>
+                    <MudText>Loading...</MudText>
+                </LoadingContent>
+            </MudTable>
+    </MudContainer>
 </MudContainer>
 
 @code {
 
-    private readonly CreatePurchaseOrderDto _purModel = new();
+    private readonly CreatePurchaseOrderDto _purModel = new()
+        {
+            Status = PurchaseStatus.Open,
+            DeliveryDate = DateTime.UtcNow,
+            DocumentDate = DateTime.UtcNow,
+            PostingDate = DateTime.UtcNow
+        };
 
     private readonly CreatePurchaseOrderValidation _purValidator = new();
+
+    private List<ItemMasterDataDto> _items = [];
 
     MudForm? _form;
 
     private AuthenticateUser _user = new();
+    private bool _disableAutoFocusBarcodeSearch;
 
     private string? _supplierName;
     private string? _warehouseName;
     private string? _ccyName;
+    private string? _apiErrorMessages;
+
+    private string _invoicePo = "";
+
+    private string _barcodeSearch = "";
 
     protected override async Task OnInitializedAsync()
     {
+        await GetNextInvoice();
+
         var claims = (await AuthStateProvider.GetAuthenticationStateAsync()).User.Claims;
         _user = UserService.GetUser(claims.ToList());
-        
+
         NavbarStateService.SetExpend(RouteName.Purchases);
         NavbarStateService.SetActive(RouteName.PurchasesOrder);
         NavbarStateService.SetBreadcrumbItems([
@@ -133,6 +255,73 @@
     public void Dispose()
     {
         NavbarStateService.OnStateChange -= StateHasChanged;
+    }
+
+    private async Task BarcodeSearchByPressEnter(KeyboardEventArgs e)
+    {
+        Console.WriteLine(e.Code);
+
+        if (e.Code is "Enter" or "NumpadEnter")
+        {
+            Console.WriteLine(_barcodeSearch);
+
+            _barcodeSearch = "";
+            _disableAutoFocusBarcodeSearch = true;
+        }
+    }
+
+    private async Task GetNextInvoice()
+    {
+        var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+        var response = await httpClient.GetAsync($"{Setting.PrefixEndpoint}DocumentInvoicing/get_next_invoice?type={(int)DocumentInvoicingType.PurchaseOrder}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var invoicePo = JsonConvert.DeserializeObject<DocumentInvoicingDto>(await response.Content.ReadAsStringAsync());
+
+            _invoicePo = invoicePo?.DocInvoicing ?? "";
+        }
+        else
+        {
+            var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            var parameters = new DialogParameters<ErrorDialog>
+            {
+                {
+                    x => x.Code, errors?.Code
+                },
+                {
+                    x => x.Content, "Prefix not found, please setup prefix"
+                }
+            };
+
+            var options = new DialogOptions { CloseButton = true };
+
+            await Dialog.ShowAsync<ErrorDialog>("", parameters, options);
+        }
+    }
+
+    private async Task CreatePurchaseOrder()
+    {
+        await _form?.Validate()!;
+        if (_form.IsValid)
+        {
+            var jsonPayload = JsonConvert.SerializeObject(_purModel);
+            var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchaseOrder", requestContent);
+
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
+                () =>
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                },
+                () =>
+                {
+                    NavigationManager.Refresh();
+                });
+        }
     }
 
     private void ChooseSupplier()

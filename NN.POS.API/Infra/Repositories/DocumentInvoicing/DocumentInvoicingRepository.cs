@@ -16,7 +16,7 @@ public class DocumentInvoicingRepository(
         var docCount = await readDbRepository.CountAsync(i => i.Type == q.Type, cancellationToken);
         var prefix = await documentInvoicePrefixingRepository.GetAsync(q.Type, cancellationToken);
         var docCountStr = docCount > 0 ? docCount.ToString() : "1";
-        var padding = 7 - docCountStr.Length;
+        var padding = 8 - docCountStr.Length;
 
         return new DocumentInvoicingDto
         {
