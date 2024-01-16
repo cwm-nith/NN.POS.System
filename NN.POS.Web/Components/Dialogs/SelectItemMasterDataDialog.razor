@@ -69,7 +69,16 @@
     public ItemMasterDataType Type { get; set; }
 
     [Parameter]
+    public bool? IsPurchase { get; set; }
+    
+    [Parameter]
+    public bool? IsSale { get; set; }
+
+    [Parameter]
     public EventCallback<ItemMasterDataDto>? OnChoose { get; set; }
+    
+    [Parameter]
+    public bool AutoClose { get; set; } = true;
 
 
     private MudTable<ItemMasterDataDto>? _table;
@@ -79,7 +88,7 @@
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var path = $"{Setting.PrefixEndpoint}itemMasterData?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}&type={(int)Type}";
+        var path = $"{Setting.PrefixEndpoint}itemMasterData?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}&type={(int)Type}&isPurchase={IsPurchase}&isSale={IsSale}";
 
         var data = await httpClient.GetFromJsonAsync<PagedResult<ItemMasterDataDto>>(path);
 
@@ -99,7 +108,10 @@
 
     private async Task Submit(ItemMasterDataDto context)
     {
-        MudDialog?.Close(DialogResult.Ok(true));
+        if (AutoClose)
+        {
+            MudDialog?.Close(DialogResult.Ok(true));
+        }
         if (OnChoose is not null)
         {
             await OnChoose?.InvokeAsync(context)!;
