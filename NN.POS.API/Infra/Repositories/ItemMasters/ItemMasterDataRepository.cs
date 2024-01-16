@@ -83,57 +83,63 @@ public class ItemMasterDataRepository(
 
     public async Task<PagedResult<ItemMasterDataDto>> GetPageAsync(GetPageItemMasterDataQuery q, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(q.Search) && q is { Process: ItemMasterDataProcess.None, Type: ItemMasterDataType.None })
-        {
-            var item = await readDbRepository.BrowseAsync(i => !i.IsDeleted, i => i.Name, q, cancellationToken);
-            return item.Map(i => i.ToDto());
-        }
+        //if (string.IsNullOrWhiteSpace(q.Search) && q is { Process: ItemMasterDataProcess.None, Type: ItemMasterDataType.None })
+        //{
+        //    var item = await readDbRepository.BrowseAsync(i => !i.IsDeleted, i => i.Name, q, cancellationToken);
+        //    return item.Map(i => i.ToDto());
+        //}
 
-        if (!string.IsNullOrWhiteSpace(q.Search) && q is { Process: ItemMasterDataProcess.None, Type: ItemMasterDataType.None })
-        {
-            var item = await readDbRepository.BrowseAsync(i => !i.IsDeleted && EF.Functions.Like(i.Name, $"%{q.Search}%"), i => i.Name, q, cancellationToken);
-            return item.Map(i => i.ToDto());
-        }
+        //if (!string.IsNullOrWhiteSpace(q.Search) && q is { Process: ItemMasterDataProcess.None, Type: ItemMasterDataType.None })
+        //{
+        //    var item = await readDbRepository.BrowseAsync(i => !i.IsDeleted && EF.Functions.Like(i.Name, $"%{q.Search}%"), i => i.Name, q, cancellationToken);
+        //    return item.Map(i => i.ToDto());
+        //}
 
-        if (string.IsNullOrWhiteSpace(q.Search) && q.Process != ItemMasterDataProcess.None &&
-            q.Type == ItemMasterDataType.None)
-        {
-            var item = await readDbRepository.BrowseAsync(i => !i.IsDeleted && i.Process == q.Process, i => i.Name, q,
-                cancellationToken);
-            return item.Map(i => i.ToDto());
-        }
+        //if (string.IsNullOrWhiteSpace(q.Search) && q.Process != ItemMasterDataProcess.None &&
+        //    q.Type == ItemMasterDataType.None)
+        //{
+        //    var item = await readDbRepository.BrowseAsync(i => !i.IsDeleted && i.Process == q.Process, i => i.Name, q,
+        //        cancellationToken);
+        //    return item.Map(i => i.ToDto());
+        //}
 
-        if (!string.IsNullOrWhiteSpace(q.Search) && q.Process != ItemMasterDataProcess.None && q.Type == ItemMasterDataType.None)
-        {
-            var item = await readDbRepository.BrowseAsync(
-                i =>
-                    !i.IsDeleted
-                    && i.Process == q.Process
-                    && EF.Functions.Like(i.Name, $"%{q.Search}%"),
-                i => i.Name, q, cancellationToken);
-            return item.Map(i => i.ToDto());
-        }
+        //if (!string.IsNullOrWhiteSpace(q.Search) && q.Process != ItemMasterDataProcess.None && q.Type == ItemMasterDataType.None)
+        //{
+        //    var item = await readDbRepository.BrowseAsync(
+        //        i =>
+        //            !i.IsDeleted
+        //            && i.Process == q.Process
+        //            && EF.Functions.Like(i.Name, $"%{q.Search}%"),
+        //        i => i.Name, q, cancellationToken);
+        //    return item.Map(i => i.ToDto());
+        //}
 
-        if (!string.IsNullOrWhiteSpace(q.Search) && q.Process == ItemMasterDataProcess.None && q.Type != ItemMasterDataType.None)
-        {
-            var item = await readDbRepository.BrowseAsync(
-                i =>
-                    !i.IsDeleted
-                    && i.Type == q.Type
-                    && EF.Functions.Like(i.Name, $"%{q.Search}%"), i => i.Name, q, cancellationToken);
-            return item.Map(i => i.ToDto());
-        }
+        //if (!string.IsNullOrWhiteSpace(q.Search) && q.Process == ItemMasterDataProcess.None && q.Type != ItemMasterDataType.None)
+        //{
+        //    var item = await readDbRepository.BrowseAsync(
+        //        i =>
+        //            !i.IsDeleted
+        //            && i.Type == q.Type
+        //            && EF.Functions.Like(i.Name, $"%{q.Search}%"), i => i.Name, q, cancellationToken);
+        //    return item.Map(i => i.ToDto());
+        //}
 
-        if (string.IsNullOrWhiteSpace(q.Search) && q.Process == ItemMasterDataProcess.None && q.Type != ItemMasterDataType.None)
-        {
-            var item = await readDbRepository.BrowseAsync(
-                i =>
-                    !i.IsDeleted
-                    && i.Type == q.Type,
-                i => i.Name, q, cancellationToken);
-            return item.Map(i => i.ToDto());
-        }
-        var itemMaster = await readDbRepository.BrowseAsync(i => !i.IsDeleted, i => i.Name, q, cancellationToken);
+        //if (string.IsNullOrWhiteSpace(q.Search) && q.Process == ItemMasterDataProcess.None && q.Type != ItemMasterDataType.None)
+        //{
+        //    var item = await readDbRepository.BrowseAsync(
+        //        i =>
+        //            !i.IsDeleted
+        //            && i.Type == q.Type,
+        //        i => i.Name, q, cancellationToken);
+        //    return item.Map(i => i.ToDto());
+        //}
+        var itemMaster = await readDbRepository.BrowseAsync(i => 
+            !i.IsDeleted &&
+            (string.IsNullOrWhiteSpace(q.Search) || EF.Functions.Like(i.Name, $"%{q.Search}%")) &&
+            (q.Process == ItemMasterDataProcess.None || i.Process == q.Process) &&
+            (q.Type == ItemMasterDataType.None || i.Type == q.Type) &&
+            (q.IsPurchase == null || i.IsPurchase == q.IsPurchase) &&
+            (q.IsSale == null || i.IsSale == q.IsSale), i => i.Name, q, cancellationToken);
         return itemMaster.Map(i => i.ToDto());
     }
 }

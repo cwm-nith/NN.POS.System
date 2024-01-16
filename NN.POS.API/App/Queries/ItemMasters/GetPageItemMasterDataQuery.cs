@@ -10,4 +10,6 @@ public class GetPageItemMasterDataQuery : PagedQuery, IRequest<PagedResult<ItemM
     public string? Search { get; set; }
     public ItemMasterDataProcess Process { get; set; }
     public ItemMasterDataType Type { get; set; }
+    public bool? IsPurchase { get; set; }
+    public bool? IsSale { get; set; }
 }
