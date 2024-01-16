@@ -175,18 +175,18 @@
                     <MudTd DataLabel="Other">@context.OtherName</MudTd>
                     <MudTd DataLabel="Qty">
                         <MudTextField @bind-Value="context.Qty"
-                                      Immediate="true"
-                                      Class="h-50"
-                                      Variant="Variant.Outlined"
-                                      Margin="Margin.Dense" 
-                                      InputMode="@(InputMode.@decimal)"/>
-                    </MudTd>
-                    <MudTd DataLabel="Cost">
-                        <MudTextField @bind-Value="context.PurchasePrice"
+                                      For="@(() => context.Qty)"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      InputMode="@(InputMode.@decimal)" />
+                                       />
+                    </MudTd>
+                    <MudTd DataLabel="Cost">
+                        <MudTextField Value="context.PurchasePrice"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      ValueChanged="@((decimal e )=> CalculationItem(context, e))" />
                     </MudTd>
                     <MudTd DataLabel="Discount Type">
                         <MudSelect @bind-Value="context.DiscountType"
@@ -202,8 +202,7 @@
                     <MudTextField @bind-Value="context.DiscountValue"
                                   Immediate="true"
                                   Variant="Variant.Outlined"
-                                  Margin="Margin.Dense" 
-                                  InputMode="@(InputMode.@decimal)" />
+                                  Margin="Margin.Dense"/>
                 </MudTd>
                 <MudTd DataLabel="Total">@context.Total.ToString("N3")</MudTd>
                 <MudTd DataLabel="Uoms">
@@ -481,5 +480,16 @@
     private void DeleteItem(PurchaseItemDto item)
     {
         _items = _items.Where(i => i.Id != item.Id && i.UomId != item.UomId).ToList();
+    }
+
+    private void CalculationItem(PurchaseItemDto item, decimal value)
+    {
+        item.PurchasePrice = value;
+        item.Total = item.Qty * item.PurchasePrice;
+    }
+
+    private static void CalculateDiscount(PurchaseItemDto item)
+    {
+
     }
 }

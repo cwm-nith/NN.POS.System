@@ -18,5 +18,8 @@ public class CreatePurchaseOrderValidation : BaseValidator<CreatePurchaseOrderDt
         RuleFor(i => i.PurCcyId)
             .GreaterThan(0)
             .WithMessage("Please choose Purchase Currency");
+
+        RuleForEach(i => i.PurchaseOrderDetails)
+            .SetValidator(new CreatePurchaseOrderDetailValidation());
     }
 }
