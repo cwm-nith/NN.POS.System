@@ -25,11 +25,13 @@ public class NavbarStateService : INavbarStateService
         }
     }
 
-    public void SetBreadcrumbItems(List<BreadcrumbItem> breadcrumbItems)
+    public void SetBreadcrumbItems(List<BreadcrumbItem> breadcrumbItems, bool isNotify = false)
     {
         BreadcrumbItems = breadcrumbItems;
-
-        NotifyStateChanged();
+        if (isNotify)
+        {
+            NotifyStateChanged();
+        }
     }
 
     /// <summary>

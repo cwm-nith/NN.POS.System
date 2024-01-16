@@ -158,12 +158,12 @@
             <HeaderContent>
                 <MudTh>Code</MudTh>
                 <MudTh>Barcode</MudTh>
-                <MudTh>Item Name</MudTh>
-                <MudTh>Item Other Name</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Other</MudTh>
                 <MudTh>Qty</MudTh>
                 <MudTh>Cost</MudTh>
-                <MudTh>Discount Type</MudTh>
-                <MudTh>Discount Value</MudTh>
+                <MudTh>Dis Type</MudTh>
+                <MudTh>Dis Value</MudTh>
                 <MudTh>Total</MudTh>
                 <MudTh>UoMs</MudTh>
                 <MudTh>Actions</MudTh>
@@ -171,23 +171,25 @@
             <RowTemplate>
                 <MudTd DataLabel="Code">@context.Code</MudTd>
                     <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
-                    <MudTd DataLabel="Item Name">@context.Name</MudTd>
-                    <MudTd DataLabel="Item Other Name">@context.OtherName</MudTd>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Other">@context.OtherName</MudTd>
                     <MudTd DataLabel="Qty">
                         <MudTextField @bind-Value="context.Qty"
                                       Immediate="true"
+                                      Class="h-50"
                                       Variant="Variant.Outlined"
-                                      Margin="Margin.Dense" />
+                                      Margin="Margin.Dense" 
+                                      InputMode="@(InputMode.@decimal)"/>
                     </MudTd>
                     <MudTd DataLabel="Cost">
                         <MudTextField @bind-Value="context.PurchasePrice"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
-                                      Margin="Margin.Dense" />
+                                      Margin="Margin.Dense"
+                                      InputMode="@(InputMode.@decimal)" />
                     </MudTd>
                     <MudTd DataLabel="Discount Type">
                         <MudSelect @bind-Value="context.DiscountType"
-                                   Label="Type"
                                    Variant="Variant.Outlined"
                                    Margin="Margin.Dense">
                             @foreach (DiscountType option in Enum.GetValues(typeof(DiscountType)))
@@ -200,12 +202,12 @@
                     <MudTextField @bind-Value="context.DiscountValue"
                                   Immediate="true"
                                   Variant="Variant.Outlined"
-                                  Margin="Margin.Dense" />
+                                  Margin="Margin.Dense" 
+                                  InputMode="@(InputMode.@decimal)" />
                 </MudTd>
                 <MudTd DataLabel="Total">@context.Total.ToString("N3")</MudTd>
                 <MudTd DataLabel="Uoms">
                     <MudSelect @bind-Value="context.UomId"
-                               Label="Type"
                                Variant="Variant.Outlined"
                                Margin="Margin.Dense">
                         @foreach (var option in context.Uoms)
@@ -229,7 +231,7 @@
         </MudContainer>
     </MudContainer>
 
-    @code {
+@code {
 
     private readonly CreatePurchaseOrderDto _purModel = new()
         {
@@ -263,7 +265,10 @@
 
         var claims = (await AuthStateProvider.GetAuthenticationStateAsync()).User.Claims;
         _user = UserService.GetUser(claims.ToList());
+    }
 
+    protected override void OnInitialized()
+    {
         NavbarStateService.SetExpend(RouteName.Purchases);
         NavbarStateService.SetActive(RouteName.PurchasesOrder);
         NavbarStateService.SetBreadcrumbItems([
@@ -405,6 +410,15 @@
     {
         var parameters = new DialogParameters<SelectItemMasterDataDialog>
         {
+            {
+                x => x.AutoClose, false
+            },
+            {
+                x => x.IsPurchase, true
+            },
+            {
+                x => x.Type, ItemMasterDataType.Item
+            },
             {
                 x => x.OnChoose,
                 new EventCallbackFactory().Create<ItemMasterDataDto>(this, async item =>

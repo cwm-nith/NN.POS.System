@@ -9,5 +9,5 @@ public interface INavbarStateService : IStateBaseService
     List<BreadcrumbItem> BreadcrumbItems { get; }
     void SetExpend(string value);
     void SetActive(string value, bool isNotify = false);
-    void SetBreadcrumbItems(List<BreadcrumbItem> breadcrumbItems);
+    void SetBreadcrumbItems(List<BreadcrumbItem> breadcrumbItems, bool isNotify = false);
 };
