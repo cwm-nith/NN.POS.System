@@ -12,7 +12,6 @@ public class PurchaseOrderDetailDto : IBaseDto
     public string? UomName { get; set; }
     public int LocalCcyId { get; set; }
     public string? LocalCcyName { get; set; }
-    public decimal DiscountRate { get; set; }
     public decimal DiscountValue { get; set; }
     public DiscountType DiscountType { get; set; }
     public decimal Qty { get; set; }

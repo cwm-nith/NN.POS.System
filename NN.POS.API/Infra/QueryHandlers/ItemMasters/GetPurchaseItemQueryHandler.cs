@@ -18,6 +18,7 @@ public class GetPurchaseItemQueryHandler(IItemMasterDataRepository itemRepositor
         {
             Barcode = item.Barcode,
             Code = item.Code,
+            OtherName = item.OtherName ?? "",
             DiscountType = DiscountType.Percentage,
             DiscountValue = 0,
             Id = item.Id,

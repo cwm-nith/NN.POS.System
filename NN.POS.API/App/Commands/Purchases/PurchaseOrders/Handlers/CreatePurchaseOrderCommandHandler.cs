@@ -27,7 +27,6 @@ public class CreatePurchaseOrderCommandHandler(IPurchaseOrderRepository reposito
             PurchaseOrderDetails = r.PurchaseOrderDetails.Where(i => i.Qty > 0).Select(i => new PurchaseOrderDetailDto
             {
                 CreatedAt = DateTime.UtcNow,
-                DiscountRate = i.DiscountRate,
                 DiscountType = i.DiscountType,
                 DiscountValue = i.DiscountValue,
                 LocalCcyId = i.LocalCcyId,

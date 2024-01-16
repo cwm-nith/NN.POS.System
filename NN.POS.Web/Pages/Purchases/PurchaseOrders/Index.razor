@@ -5,6 +5,7 @@
 @using NN.POS.Model.Dtos.Currencies
 @using NN.POS.Model.Dtos.DocumentInvoicings
 @using NN.POS.Model.Dtos.ItemMasters
+@using NN.POS.Model.Dtos.Purchases
 @using NN.POS.Model.Dtos.Warehouses
 @using NN.POS.Model.Enums
 @using NN.POS.Web.Models
@@ -138,10 +139,10 @@
                                   Margin="Margin.Dense"
                                   Adornment="Adornment.End"
                                   AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
-                                  OnAdornmentClick="@ChooseSupplier"
+                                  OnAdornmentClick="@ChooseItem"
                                   AdornmentAriaLabel="Choose Item"
-                                  Label="Bearcode Search" 
-                                  OnKeyDown="@BarcodeSearchByPressEnter"/>
+                                  Label="Bearcode Search"
+                                  OnKeyDown="@BarcodeSearchByPressEnter" />
                 </MudFocusTrap>
             </MudItem>
         </MudGrid>
@@ -168,34 +169,54 @@
                 <MudTh>Actions</MudTh>
             </HeaderContent>
             <RowTemplate>
-                @* <MudTd DataLabel="Price List">@context.PriceListName</MudTd>
-                    <MudTd DataLabel="Item">@context.ItemName</MudTd>
-                    <MudTd DataLabel="Uom">@context.UomName</MudTd>
-                    <MudTd DataLabel="Cost">
-                        @if (context.ItemProcess == ItemMasterDataProcess.Standard)
-                    {
-                        <MudTextField @bind-Value="context.Cost"
-                                      For="@(() => context.Cost)"
+                <MudTd DataLabel="Code">@context.Code</MudTd>
+                    <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
+                    <MudTd DataLabel="Item Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Item Other Name">@context.OtherName</MudTd>
+                    <MudTd DataLabel="Qty">
+                        <MudTextField @bind-Value="context.Qty"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense" />
-                    }
-                    else
-                    {
-                        @context.Cost
-                    }
-                </MudTd>
-                <MudTd DataLabel="Price">
-                    <MudTextField @bind-Value="context.Price"
-                                  For="@(() => context.Price)"
+                    </MudTd>
+                    <MudTd DataLabel="Cost">
+                        <MudTextField @bind-Value="context.PurchasePrice"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense" />
+                    </MudTd>
+                    <MudTd DataLabel="Discount Type">
+                        <MudSelect @bind-Value="context.DiscountType"
+                                   Label="Type"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense">
+                            @foreach (DiscountType option in Enum.GetValues(typeof(DiscountType)))
+                        {
+                            <MudSelectItem Value="option" />
+                        }
+                    </MudSelect>
+                    </MudTd>
+                <MudTd DataLabel="Discount Value">
+                    <MudTextField @bind-Value="context.DiscountValue"
                                   Immediate="true"
                                   Variant="Variant.Outlined"
                                   Margin="Margin.Dense" />
                 </MudTd>
-                <MudTd DataLabel="Currency">@context.CcyName</MudTd>
+                <MudTd DataLabel="Total">@context.Total.ToString("N3")</MudTd>
+                <MudTd DataLabel="Uoms">
+                    <MudSelect @bind-Value="context.UomId"
+                               Label="Type"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense">
+                        @foreach (var option in context.Uoms)
+                        {
+                            <MudSelectItem Value="@option.AltUomId">@option.AltUomName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudTd>
                     <MudTd DataLabel="Actions">
-                        <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Warning" OnClick="@(async () => await Save(context))"></MudIconButton>
-                    </MudTd> *@
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Warning" OnClick="@(() => DeleteItem(context))"></MudIconButton>
+                    </MudTd>
                 </RowTemplate>
 
                 <NoRecordsContent>
@@ -205,10 +226,10 @@
                     <MudText>Loading...</MudText>
                 </LoadingContent>
             </MudTable>
+        </MudContainer>
     </MudContainer>
-</MudContainer>
 
-@code {
+    @code {
 
     private readonly CreatePurchaseOrderDto _purModel = new()
         {
@@ -220,7 +241,7 @@
 
     private readonly CreatePurchaseOrderValidation _purValidator = new();
 
-    private List<ItemMasterDataDto> _items = [];
+    private List<PurchaseItemDto> _items = [];
 
     MudForm? _form;
 
@@ -379,5 +400,72 @@
         var options = new DialogOptions { CloseButton = true };
 
         Dialog.Show<SelectCurrencyDialog>("Purchase Currency", parameters, options);
+    }
+    private void ChooseItem()
+    {
+        var parameters = new DialogParameters<SelectItemMasterDataDialog>
+        {
+            {
+                x => x.OnChoose,
+                new EventCallbackFactory().Create<ItemMasterDataDto>(this, async item =>
+                {
+                    var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
+
+                    var response = await httpClient.GetAsync($"{Setting.PrefixEndpoint}itemMasterData/get-purchase-item/{item.Id}?ccyId={_purModel.PurCcyId}&wsId={_purModel.WarehouseId}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var purchaseItem = await response.Content.ReadFromJsonAsync<PurchaseItemDto>();
+                        if (purchaseItem is not null)
+                        {
+                            var itemExisted = _items.FirstOrDefault(i => i.Id == purchaseItem.Id && i.UomId == purchaseItem.UomId);
+                            if (itemExisted is not null)
+                            {
+                                _items = _items.Select(i =>
+                                {
+                                    if (i.Id == purchaseItem?.Id && i.UomId == purchaseItem.UomId)
+                                    {
+                                        i.Qty++;
+                                    }
+
+                                    return i;
+                                }).ToList();
+                            }
+                            else
+                            {
+                                _items.Add(purchaseItem);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                        var parameters = new DialogParameters<ErrorDialog>
+                        {
+                            {
+                                x => x.Code, errors?.Code
+                            },
+                            {
+                                x => x.Content, errors?.Message
+                            }
+                        };
+
+                        var options = new DialogOptions { CloseButton = true};
+
+                        await Dialog.ShowAsync<ErrorDialog>("", parameters, options);
+                    }
+
+                })
+            }
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        Dialog.Show<SelectItemMasterDataDialog>("Purchase Items", parameters, options);
+    }
+
+    private void DeleteItem(PurchaseItemDto item)
+    {
+        _items = _items.Where(i => i.Id != item.Id && i.UomId != item.UomId).ToList();
     }
 }
