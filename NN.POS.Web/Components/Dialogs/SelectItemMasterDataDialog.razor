@@ -80,6 +80,8 @@
     [Parameter]
     public bool AutoClose { get; set; } = true;
 
+    [Parameter]
+    public int? WsId { get; set; }
 
     private MudTable<ItemMasterDataDto>? _table;
     private string _searchString = "";
@@ -88,7 +90,7 @@
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var path = $"{Setting.PrefixEndpoint}itemMasterData?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}&type={(int)Type}&isPurchase={IsPurchase}&isSale={IsSale}";
+        var path = $"{Setting.PrefixEndpoint}itemMasterData?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}&type={(int)Type}&isPurchase={IsPurchase}&isSale={IsSale}&wsId={WsId}";
 
         var data = await httpClient.GetFromJsonAsync<PagedResult<ItemMasterDataDto>>(path);
 
