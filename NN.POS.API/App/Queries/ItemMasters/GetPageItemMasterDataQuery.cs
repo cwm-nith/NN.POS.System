@@ -12,4 +12,5 @@ public class GetPageItemMasterDataQuery : PagedQuery, IRequest<PagedResult<ItemM
     public ItemMasterDataType Type { get; set; }
     public bool? IsPurchase { get; set; }
     public bool? IsSale { get; set; }
+    public int? WsId { get; set; }
 }
