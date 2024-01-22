@@ -17,7 +17,6 @@ public class CreatePurchaseOrderCommandHandler(IPurchaseOrderRepository reposito
             BalanceDueSys = r.BalanceDueSys,
             BranchId = r.BranchId,
             DeliveryDate = r.DeliveryDate ?? DateTime.UtcNow,
-            DiscountRate = r.DiscountRate,
             DiscountType = r.DiscountType,
             DiscountValue = r.DiscountValue,
             DocumentDate = r.DocumentDate ?? DateTime.UtcNow,

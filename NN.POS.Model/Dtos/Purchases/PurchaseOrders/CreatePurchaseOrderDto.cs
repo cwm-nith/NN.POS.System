@@ -15,7 +15,6 @@ public class CreatePurchaseOrderDto : IBaseDto
     public decimal SubTotal { get; set; }
     public decimal SubTotalSys { get; set; }
     public decimal DiscountValue { get; set; }
-    public decimal DiscountRate { get; set; }
     public DiscountType DiscountType { get; set; }
     public decimal TaxRate { get; set; }
     public decimal TaxValue { get; set; }
