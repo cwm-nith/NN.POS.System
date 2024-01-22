@@ -174,61 +174,73 @@
                     <MudTd DataLabel="Name">@context.Name</MudTd>
                     <MudTd DataLabel="Other">@context.OtherName</MudTd>
                     <MudTd DataLabel="Qty">
-                        <MudTextField @bind-Value="context.Qty"
+                        <MudTextField Value="context.Qty"
                                       For="@(() => context.Qty)"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                       />
+                                      ValueChanged="@((decimal e )=> CalculationQty(context, e))" />
                     </MudTd>
                     <MudTd DataLabel="Cost">
                         <MudTextField Value="context.PurchasePrice"
                                       Immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      ValueChanged="@((decimal e )=> CalculationItem(context, e))" />
+                                      ValueChanged="@((decimal e )=> CalculationCost(context, e))" />
                     </MudTd>
                     <MudTd DataLabel="Discount Type">
-                        <MudSelect @bind-Value="context.DiscountType"
+                        <MudSelect Value="context.DiscountType"
                                    Variant="Variant.Outlined"
-                                   Margin="Margin.Dense">
+                                   Margin="Margin.Dense"
+                                   ValueChanged="@((DiscountType v) => ChangeDiscountType(context, v))">
                             @foreach (DiscountType option in Enum.GetValues(typeof(DiscountType)))
                         {
                             <MudSelectItem Value="option" />
                         }
                     </MudSelect>
-                    </MudTd>
+                </MudTd>
                 <MudTd DataLabel="Discount Value">
-                    <MudTextField @bind-Value="context.DiscountValue"
+                    <MudTextField Value="context.DiscountValue"
                                   Immediate="true"
                                   Variant="Variant.Outlined"
-                                  Margin="Margin.Dense"/>
+                                  Margin="Margin.Dense"
+                                  ValueChanged="@((decimal v) => CalculateDiscount(context, v))" />
                 </MudTd>
                 <MudTd DataLabel="Total">@context.Total.ToString("N3")</MudTd>
-                <MudTd DataLabel="Uoms">
-                    <MudSelect @bind-Value="context.UomId"
-                               Variant="Variant.Outlined"
-                               Margin="Margin.Dense">
-                        @foreach (var option in context.Uoms)
+                    <MudTd DataLabel="Uoms">
+                        <MudSelect @bind-Value="context.UomId"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense">
+                            @foreach (var option in context.Uoms)
                         {
                             <MudSelectItem Value="@option.AltUomId">@option.AltUomName</MudSelectItem>
                         }
                     </MudSelect>
                 </MudTd>
-                    <MudTd DataLabel="Actions">
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Warning" OnClick="@(() => DeleteItem(context))"></MudIconButton>
-                    </MudTd>
-                </RowTemplate>
+                <MudTd DataLabel="Actions">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Warning" OnClick="@(() => DeleteItem(context))"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
 
-                <NoRecordsContent>
-                    <MudText>No matching records found</MudText>
-                </NoRecordsContent>
-                <LoadingContent>
-                    <MudText>Loading...</MudText>
-                </LoadingContent>
-            </MudTable>
-        </MudContainer>
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+        </MudTable>
+        <br />
+        <MudGrid>
+            <MudItem lg="4" sm="4" xs="12">
+                <MudTextField @bind-Value="_exchangeRate"
+                              Immediate="true"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              Label="Exchange Rate" />
+            </MudItem>
+        </MudGrid>
     </MudContainer>
+</MudContainer>
 
 @code {
 
@@ -253,6 +265,7 @@
     private string? _warehouseName;
     private string? _ccyName;
     private string? _apiErrorMessages;
+    private string? _exchangeRate;
 
     private string _invoicePo = "";
 
@@ -395,6 +408,8 @@
                 x => x.OnRefresh,
                 new EventCallbackFactory().Create<CurrencyDto>(this, ccy =>
                 {
+                    Console.WriteLine(JsonConvert.SerializeObject(ccy));
+
                     _ccyName = $"{ccy.Name} {ccy.Symbol}";
                     _purModel.PurCcyId = ccy.Id;
                 })
@@ -417,6 +432,9 @@
             },
             {
                 x => x.Type, ItemMasterDataType.Item
+            },
+            {
+                x => x.WsId, _purModel.WarehouseId
             },
             {
                 x => x.OnChoose,
@@ -482,14 +500,47 @@
         _items = _items.Where(i => i.Id != item.Id && i.UomId != item.UomId).ToList();
     }
 
-    private void CalculationItem(PurchaseItemDto item, decimal value)
+    private void CalculationCost(PurchaseItemDto item, decimal value)
     {
         item.PurchasePrice = value;
         item.Total = item.Qty * item.PurchasePrice;
     }
 
-    private static void CalculateDiscount(PurchaseItemDto item)
+    private void CalculationQty(PurchaseItemDto item, decimal value)
     {
+        item.Qty = value;
+        item.Total = item.Qty * item.PurchasePrice;
+    }
 
+    private void ChangeDiscountType(PurchaseItemDto item, DiscountType value)
+    {
+        item.DiscountType = value;
+        CalculateDiscount(item, item.DiscountValue);
+    }
+
+    private void CalculateDiscount(PurchaseItemDto item, decimal value)
+    {
+        decimal total = item.Qty * item.PurchasePrice;
+        item.DiscountValue = value;
+
+        if (item.DiscountType == DiscountType.Percentage)
+        {
+            if (value > 100)
+            {
+                value = 100;
+                item.DiscountValue = 100;
+            }
+
+            item.Total = total - (total * value) / 100;
+        }
+        else
+        {
+            if (value > total)
+            {
+                value = total;
+                item.DiscountValue = total;
+            }
+            item.Total = total - value;
+        }
     }
 }
