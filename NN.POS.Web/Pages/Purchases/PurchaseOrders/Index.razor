@@ -275,7 +275,7 @@
                                     <MudSelect Value="_purModel.DiscountType"
                                                Variant="Variant.Outlined"
                                                Margin="Margin.Dense"
-                                               ValueChanged="@((DiscountType e) => ChangeMasterDiscountType(_purModel, e))">
+                                               ValueChanged="@((DiscountType e) => ChangeMasterDiscountType(e))">
                                         @foreach (DiscountType option in Enum.GetValues(typeof(DiscountType)))
                                         {
                                             <MudSelectItem Value="option" />
@@ -283,11 +283,12 @@
                                     </MudSelect>
                                 </MudItem>
                                 <MudItem lg="8" sm="6" xs="6">
-                                    <MudTextField @bind-Value="_purModel.DiscountValue"
+                                    <MudTextField Value="_purModel.DiscountValue"
                                                   Immediate="true"
                                                   Variant="Variant.Outlined"
                                                   Margin="Margin.Dense"
-                                                  Label="Discount" />
+                                                  Label="Discount"
+                                                  ValueChanged="@((decimal e) => CalculateMasterDiscount(e))" />
                                 </MudItem>
                             </MudGrid>
                         </MudItem>
@@ -394,8 +395,6 @@
 
         if (e.Code is "Enter" or "NumpadEnter")
         {
-            Console.WriteLine(_barcodeSearch);
-
             _barcodeSearch = "";
             _disableAutoFocusBarcodeSearch = true;
         }
@@ -562,6 +561,8 @@
                             {
                                 _items.Add(purchaseItem);
                             }
+
+                            CalculationTotalMaster();
                         }
                     }
                     else
@@ -596,25 +597,28 @@
         _items = _items.Where(i => i.Id != item.Id && i.UomId != item.UomId).ToList();
     }
 
-    private static void CalculationCost(PurchaseItemDto item, decimal value)
+    private void CalculationCost(PurchaseItemDto item, decimal value)
     {
         item.PurchasePrice = value;
         item.Total = item.Qty * item.PurchasePrice;
+        CalculationTotalMaster();
     }
 
-    private static void CalculationQty(PurchaseItemDto item, decimal value)
+    private void CalculationQty(PurchaseItemDto item, decimal value)
     {
         item.Qty = value;
         item.Total = item.Qty * item.PurchasePrice;
+        CalculationTotalMaster();
     }
 
-    private static void ChangeDiscountType(PurchaseItemDto item, DiscountType value)
+    private void ChangeDiscountType(PurchaseItemDto item, DiscountType value)
     {
         item.DiscountType = value;
         CalculateDiscount(item, item.DiscountValue);
+        CalculationTotalMaster();
     }
 
-    private static void CalculateDiscount(PurchaseItemDto item, decimal value)
+    private void CalculateDiscount(PurchaseItemDto item, decimal value)
     {
         var total = item.Qty * item.PurchasePrice;
         item.DiscountValue = value;
@@ -638,11 +642,44 @@
             }
             item.Total = total - value;
         }
+        CalculationTotalMaster();
     }
 
-    private static void ChangeMasterDiscountType(CreatePurchaseOrderDto purchaseOrder, DiscountType value)
+    private void ChangeMasterDiscountType(DiscountType value)
     {
-        purchaseOrder.DiscountType = value;
-        //CalculateDiscount(item, item.DiscountValue);
+        _purModel.DiscountType = value;
+        CalculateMasterDiscount(_purModel.DiscountValue);
+    }
+
+    private void CalculationTotalMaster()
+    {
+        CalculateMasterDiscount(_purModel.DiscountValue);
+    }
+
+    private void CalculateMasterDiscount(decimal value)
+    {
+        var total = _items.Sum(i => i.Total);
+        _purModel.DiscountValue = value;
+        _purModel.SubTotal = total;
+
+        if (_purModel.DiscountType == DiscountType.Percentage)
+        {
+            if (value > 100)
+            {
+                value = 100;
+                _purModel.DiscountValue = 100;
+            }
+
+            _purModel.AppliedAmount = total - total * value / 100;
+        }
+        else
+        {
+            if (value > total)
+            {
+                value = total;
+                _purModel.DiscountValue = total;
+            }
+            _purModel.AppliedAmount = total - value;
+        }
     }
 }
