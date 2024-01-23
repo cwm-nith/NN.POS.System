@@ -17,5 +17,6 @@ public class PurchaseItemDto : IBaseDto
     public decimal Qty { get; set; }
     public decimal PurchasePrice { get; set; }
     public decimal Total { get; set; }
+    public decimal TotalSys { get; set; }
     public List<UnitOfMeasureDefineDto> Uoms { get; set; } = [];
 }

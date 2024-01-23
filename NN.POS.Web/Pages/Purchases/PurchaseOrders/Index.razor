@@ -85,7 +85,7 @@
                 <MudItem lg="4" sm="4" xs="12">
                     <MudGrid>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
-                            <MudTextField @bind-Value="@_invoicePo"
+                            <MudTextField @bind-Value="@_purModel.InvoiceNo"
                                           Immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
@@ -345,6 +345,7 @@
     private List<PurchaseItemDto> _items = [];
 
     private CurrencyDto? _baseCurrency;
+    private CurrencyDto? _localCurrency;
 
     MudForm? _form;
 
@@ -357,8 +358,6 @@
     private string? _apiErrorMessages;
     private string? _exchangeRate;
 
-    private string _invoicePo = "";
-
     private string _displayCcy = "";
 
     private string _barcodeSearch = "";
@@ -370,6 +369,7 @@
         var claims = (await AuthStateProvider.GetAuthenticationStateAsync()).User.Claims;
         _user = UserService.GetUser(claims.ToList());
         _baseCurrency = await CompanyStateService.GetBaseCurrencyExchangeRateAsync();
+        _localCurrency = await CompanyStateService.GetLocalCurrencyExchangeRateAsync();
         _displayCcy = $"{_baseCurrency?.Name}({_baseCurrency?.Symbol})";
     }
 
@@ -410,7 +410,7 @@
         {
             var invoicePo = JsonConvert.DeserializeObject<DocumentInvoicingDto>(await response.Content.ReadAsStringAsync());
 
-            _invoicePo = invoicePo?.DocInvoicing ?? "";
+            _purModel.InvoiceNo = invoicePo?.DocInvoicing ?? "";
         }
         else
         {
@@ -436,7 +436,23 @@
         await _form?.Validate()!;
         if (_form.IsValid)
         {
+            _purModel.PurchaseOrderDetails = _items.Select(i => new CreatePurchaseOrderDetailDto
+                {
+                    DiscountRate = i.DiscountValue,
+                    DiscountType = i.DiscountType,
+                    DiscountValue = i.DiscountValue,
+                    ItemId = i.Id,
+                    LocalCcyId = _localCurrency?.Id ?? 0,
+                    PurchasePrice = i.PurchasePrice,
+                    Qty = i.Qty,
+                    Total = i.Total,
+                    TotalSys = i.TotalSys,
+                    UomId = i.UomId
+                }).ToList();
             var jsonPayload = JsonConvert.SerializeObject(_purModel);
+
+            Console.WriteLine(jsonPayload);
+
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
@@ -601,6 +617,7 @@
     {
         item.PurchasePrice = value;
         item.Total = item.Qty * item.PurchasePrice;
+        item.TotalSys = item.Total * _baseCurrency?.ExchangeRate?.Rate ?? 0;
         CalculationTotalMaster();
     }
 
@@ -608,6 +625,7 @@
     {
         item.Qty = value;
         item.Total = item.Qty * item.PurchasePrice;
+        item.TotalSys = item.Total * _baseCurrency?.ExchangeRate?.Rate ?? 0;
         CalculationTotalMaster();
     }
 
@@ -642,6 +660,7 @@
             }
             item.Total = total - value;
         }
+        item.TotalSys = item.Total * _baseCurrency?.ExchangeRate?.Rate ?? 0;
         CalculationTotalMaster();
     }
 
@@ -661,6 +680,7 @@
         var total = _items.Sum(i => i.Total);
         _purModel.DiscountValue = value;
         _purModel.SubTotal = total;
+        _purModel.SubTotalSys = total * (_baseCurrency?.ExchangeRate?.Rate ?? 0);
 
         if (_purModel.DiscountType == DiscountType.Percentage)
         {
