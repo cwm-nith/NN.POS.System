@@ -39,21 +39,12 @@ public class CurrencyRepository(
 
     public async Task<PagedResult<CurrencyDto>> GetPageAsync(GetCurrenciesPageQuery query, CancellationToken cancellationToken = default)
     {
-        PagedResult<CurrencyTable> data;
-
-        if (string.IsNullOrWhiteSpace(query.Search))
-        {
-            data = await readDbRepository.BrowseAsync(i => !i.IsDeleted, query, cancellationToken);
-        }
-        else
-        {
-            data = await readDbRepository.BrowseAsync(i =>
-                !i.IsDeleted && EF.Functions.Like(i.Name, $"%{query.Search}%"),
-                query,
-                cancellationToken);
-        }
-
-        return data.Map(i => i.ToDto());
+        var context = readDbRepository.Context;
+        var curr = await (from ccy in context.Currencies!
+                .Where(i => !i.IsDeleted && (string.IsNullOrEmpty(query.Search) || EF.Functions.Like(i.Name, $"%{query.Search}%")))
+            join ex in context.ExchangeRates!.Where(i => !i.IsDeleted) on ccy.Id equals ex.CcyId
+            select ccy.ToDto(ex)).PaginateAsync(query, cancellationToken);
+        return curr;
     }
 
     public async Task<CurrencyDto> GetBaseCurrencyAsync(CancellationToken cancellationToken = default)

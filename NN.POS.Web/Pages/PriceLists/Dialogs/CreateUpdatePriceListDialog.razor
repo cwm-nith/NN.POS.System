@@ -121,7 +121,7 @@
 
         if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(_priceListModel);
+            var jsonPayload = JsonConvert.SerializeObject(_priceListModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 

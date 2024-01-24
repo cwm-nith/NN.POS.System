@@ -102,7 +102,7 @@
 
         if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(_taxModel);
+            var jsonPayload = JsonConvert.SerializeObject(_taxModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 

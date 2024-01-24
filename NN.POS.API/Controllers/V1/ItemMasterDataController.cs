@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NN.POS.API.App.Commands.ItemMasterData;
 using NN.POS.API.App.Queries.ItemMasters;
 using NN.POS.Model.Dtos.ItemMasters;
+using NN.POS.Model.Dtos.Purchases;
 
 namespace NN.POS.API.Controllers.V1;
 
@@ -50,17 +51,9 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetPage([FromQuery] GetPageItemMasterDataDto q)
+    public async Task<ActionResult> GetPage([FromQuery] GetPageItemMasterDataQuery q)
     {
-        var query = new GetPageItemMasterDataQuery
-        {
-            Page = q.Page,
-            Process = q.Process,
-            Results = q.Results,
-            Search = q.Search,
-            Type = q.Type
-        };
-        var data = await mediator.Send(query);
+        var data = await mediator.Send(q);
         return Ok(data);
     }
 
@@ -70,5 +63,12 @@ public class ItemMasterDataController(IMediator mediator) : BaseApiController
         var cmd = new UpdateItemMasterImageCommand(body);
         await mediator.Send(cmd);
         return Ok();
+    }
+
+    [HttpGet("get-purchase-item/{id:int}")]
+    public async Task<ActionResult<PurchaseItemDto>> GetPurchaseItem(int id, [FromQuery] GetPurchaseItemQuery q)
+    {
+        q.ItemId = id;
+        return Ok(await mediator.Send(q));
     }
 }

@@ -22,7 +22,6 @@ CREATE TABLE [dbo].[purchase_orders](
   [sub_total] [decimal](18,3) NOT NULL,
   [sub_total_sys] [decimal](18,3) NOT NULL,
 	[discount_value] [decimal](18, 3) NOT NULL,
-  [discount_rate] [decimal](18,3) NOT NULL,
 	[discount_type] [nvarchar](20) NOT NULL,
   [tax_rate] [decimal](18,3) NOT NULL,
   [tax_value] [decimal](18,3) NOT NULL,

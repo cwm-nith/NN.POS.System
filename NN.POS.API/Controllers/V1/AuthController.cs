@@ -8,8 +8,6 @@ namespace NN.POS.API.Controllers.V1;
 
 public class AuthController(IMediator mediator) : BaseApiController
 {
-    private readonly IMediator _mediator = mediator;
-
     [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -20,7 +18,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto r)
     {
         var cmd = new LoginCommand(r.Username, r.Password);
-        var user = await _mediator.Send(cmd);
+        var user = await mediator.Send(cmd);
         return Ok(user);
     }
 }

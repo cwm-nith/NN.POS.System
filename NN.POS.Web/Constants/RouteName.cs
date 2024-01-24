@@ -69,4 +69,9 @@ public static class RouteName
 
     public const string PaymentType = $"{Settings}/payment-type";
 
+    public const string Purchases = "/purchases";
+
+    public const string PurchasesOrder = $"{Purchases}/purchase-order";
+    public const string PurchasesOrderCreate = $"{Purchases}/purchase-order/create";
+
 }

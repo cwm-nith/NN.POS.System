@@ -2,5 +2,5 @@
 
 public interface IStateBaseService
 {
-    event Action OnStateChange;
+    event Action? OnStateChange;
 }

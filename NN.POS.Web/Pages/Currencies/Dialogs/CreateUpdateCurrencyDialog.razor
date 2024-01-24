@@ -74,7 +74,7 @@
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(_currencyModel);
+            var jsonPayload = JsonConvert.SerializeObject(_currencyModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 

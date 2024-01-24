@@ -9,13 +9,12 @@ public class CreatePurchaseOrderDto : IBaseDto
     public int PurCcyId { get; set; }
     public int WarehouseId { get; set; }
     public string InvoiceNo { get; set; } = string.Empty;
-    public DateTime PostingDate { get; set; }
-    public DateTime DocumentDate { get; set; }
-    public DateTime DeliveryDate { get; set; }
+    public DateTime? PostingDate { get; set; }
+    public DateTime? DocumentDate { get; set; }
+    public DateTime? DeliveryDate { get; set; }
     public decimal SubTotal { get; set; }
     public decimal SubTotalSys { get; set; }
     public decimal DiscountValue { get; set; }
-    public decimal DiscountRate { get; set; }
     public DiscountType DiscountType { get; set; }
     public decimal TaxRate { get; set; }
     public decimal TaxValue { get; set; }

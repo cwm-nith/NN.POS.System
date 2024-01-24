@@ -20,10 +20,7 @@ public class PurchaseOrderDetailTable : BaseTable
     public int LocalCcyId { get; set; }
 
     [Column("discount_value", TypeName = "decimal(18,3)")]
-    public decimal DiscountRate { get; set; }
-
-    [Column("discount_rate", TypeName = "decimal(18,3)")]
-    public decimal DiscountValue { get; set; }
+    public decimal DiscountValue{ get; set; }
 
     [Column("discount_type")]
     public DiscountType DiscountType { get; set; }
@@ -55,7 +52,6 @@ public static class PurchaseOrderDetailExtensions
         Id = p.Id,
         IsDeleted = p.IsDeleted,
         LocalCcyId = p.LocalCcyId,
-        DiscountRate = p.DiscountRate,
         DiscountType = p.DiscountType,
         DiscountValue = p.DiscountValue,
         ItemId = p.ItemId,
@@ -76,7 +72,6 @@ public static class PurchaseOrderDetailExtensions
             IsDeleted = p.IsDeleted,
             LocalCcyId = p.LocalCcyId,
             LocalCcyName = localCcyName,
-            DiscountRate = p.DiscountRate,
             DiscountType = p.DiscountType,
             DiscountValue = p.DiscountValue,
             ItemId = p.ItemId,

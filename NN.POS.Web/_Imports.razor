@@ -29,6 +29,9 @@
 @using NN.POS.Web.States.NavbarStates
 @using System.Globalization
 @using NN.POS.Web.Helpers
+@using NN.POS.Web.Services.Interfaces
+@using Newtonsoft.Json
+@using NN.POS.Web.States.CompanyStates
 
 @inject IHttpClientFactory HttpClientFactory
 @inject ILocalStorageService LocalStorageService
@@ -38,3 +41,5 @@
 @inject IDialogService Dialog
 @inject INavbarStateService NavbarStateService
 @inject ISnackbar SnackBar
+@inject IUserService UserService
+@inject ICompanyStateService CompanyStateService

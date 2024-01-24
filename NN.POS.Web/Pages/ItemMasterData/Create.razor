@@ -290,9 +290,9 @@
     private string _dragClass = DefaultDragClass;
     private string? _fileImage;
 
-    readonly CreateItemMasterDataDto _itemModel = new();
+    private readonly CreateItemMasterDataDto _itemModel = new();
 
-    readonly CreateItemMasterDataValidator _itemValidator = new();
+    private readonly CreateItemMasterDataValidator _itemValidator = new();
 
     private string _warehouseName = "";
     private string _priceListName = "";
@@ -347,7 +347,7 @@
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            var jsonPayload = JsonSerializer.Serialize(_itemModel);
+            var jsonPayload = JsonConvert.SerializeObject(_itemModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}itemMasterData", requestContent);

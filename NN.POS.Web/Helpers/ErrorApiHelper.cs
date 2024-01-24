@@ -8,8 +8,8 @@ public static class ErrorApiHelper
 {
     public static async Task<string> GetErrorMessageResponse(
         HttpResponseMessage response,
-        Action? unauthorized = null,
-        Action? ok = null)
+        Func<Task>? unauthorized = null,
+        Func<Task>? ok = null)
     {
         switch (response.StatusCode)
         {
@@ -31,6 +31,66 @@ public static class ErrorApiHelper
                     ok?.Invoke();
                     return "";
                 }
+            default:
+                return "Something went wrong, Please try after some time";
+        }
+    }
+
+    public static async Task<string> GetErrorMessageResponse(
+        HttpResponseMessage response,
+        Action? unauthorized = null,
+        Func<Task>? ok = null)
+    {
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.BadRequest:
+            {
+                var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+                var code = !string.IsNullOrEmpty(errors?.Code) ? $" [{errors.Code}]" : "";
+
+                return $"{errors?.Message}{code}";
+            }
+            case HttpStatusCode.Unauthorized:
+            {
+                unauthorized?.Invoke();
+                return "";
+            }
+            case HttpStatusCode.OK:
+            {
+                ok?.Invoke();
+                return "";
+            }
+            default:
+                return "Something went wrong, Please try after some time";
+        }
+    }
+
+    public static async Task<string> GetErrorMessageResponse(
+        HttpResponseMessage response,
+        Action? unauthorized = null,
+        Action? ok = null)
+    {
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.BadRequest:
+            {
+                var errors = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+                var code = !string.IsNullOrEmpty(errors?.Code) ? $" [{errors.Code}]" : "";
+
+                return $"{errors?.Message}{code}";
+            }
+            case HttpStatusCode.Unauthorized:
+            {
+                unauthorized?.Invoke();
+                return "";
+            }
+            case HttpStatusCode.OK:
+            {
+                ok?.Invoke();
+                return "";
+            }
             default:
                 return "Something went wrong, Please try after some time";
         }

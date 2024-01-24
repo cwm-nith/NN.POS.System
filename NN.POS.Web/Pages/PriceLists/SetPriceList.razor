@@ -1,6 +1,5 @@
 ﻿@using NN.POS.Model.Dtos.PriceLists
 @using NN.POS.Model.Enums
-@using Newtonsoft.Json
 @using NN.POS.Web.Components.Dialogs
 @attribute [Route($"{RouteName.SetPriceList}/{{PriceListId:int}}")]
 
@@ -130,7 +129,7 @@
                     x => x.Code, errors?.Code
                 },
                 {
-                    x => x.Code, errors?.Message
+                    x => x.Content, errors?.Message
                 }
             };
 

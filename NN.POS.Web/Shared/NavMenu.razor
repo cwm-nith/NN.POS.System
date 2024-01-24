@@ -58,6 +58,12 @@
                         Href="@RouteName.UomGroup">Uom Group</MudNavLink>
         </MudNavGroup>
     </MudNavGroup>
+    
+    <MudNavGroup Title="Purchases" Expanded="@(NavbarStateService.Value == RouteName.Purchases)">
+
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.PurchasesOrder))"
+                    Href="@RouteName.PurchasesOrder">Purchase Order</MudNavLink>
+    </MudNavGroup>
 </MudNavMenu>
 
 @code
