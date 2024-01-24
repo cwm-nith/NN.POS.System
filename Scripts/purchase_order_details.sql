@@ -15,7 +15,6 @@ CREATE TABLE [dbo].[purchase_order_details](
   [uom_id] [int] NULL,
   [local_ccy_id] [int] NOT NULL,
   [discount_value] [decimal](18, 3) NOT NULL,
-  [discount_rate] [decimal](18, 3) NOT NULL,
   [discount_type] [nvarchar](20) NOT NULL,
   [qty] [decimal](18, 3) NOT NULL,
   [purchase_price] [decimal](18, 3) NOT NULL,
