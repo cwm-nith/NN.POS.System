@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NN.POS.API.Core.Utils;
 
 namespace NN.POS.API.Controllers;
 
@@ -13,7 +14,13 @@ public class BaseApiController : ControllerBase
     private const string IdentityHeader = "X-Identity";
 
 
-    protected int UserId => int.Parse(User?.Identity?.Name ?? "0");
+    protected int UserId {
+        get
+        {
+            var id = User?.FindFirst("userId")?.Value;
+            return id.ToInt();
+        }
+    }
 
     protected string UserRole
     {
