@@ -6,8 +6,8 @@ namespace NN.POS.API.Infra.Tables.Purchases.PurchasePO;
 [Table("purchase_po_detail")]
 public class PurchasePODetailTable : BaseTable
 {
-    [Column("purchase_order_id")]
-    public int PurchaseOrderId { get; set; }
+    [Column("purchase_po_id")]
+    public int PurchasePOId { get; set; }
 
     [Column("item_id")]
     public int ItemId { get; set; }
@@ -39,5 +39,5 @@ public class PurchasePODetailTable : BaseTable
     [Column("is_deleted")]
     public bool IsDeleted { get; set; }
 
-    public PurchasePOTable? PurchaseOrder { get; set; }
+    public PurchasePOTable? PurchasePO { get; set; }
 }

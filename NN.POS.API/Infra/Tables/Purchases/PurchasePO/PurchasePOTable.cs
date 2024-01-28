@@ -85,5 +85,5 @@ public class PurchasePOTable : BaseTable
     [Column("local_ccy_id")]
     public int LocalCcyId { get; set; }
 
-    public List<PurchasePODetailTable> PurchaseOrderDetails { get; set; } = [];
+    public List<PurchasePODetailTable> PurchasePODetails { get; set; } = [];
 }
