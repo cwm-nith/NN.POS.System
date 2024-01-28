@@ -1,4 +1,7 @@
-﻿using NN.POS.Model.Enums;
+﻿using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
+using NN.POS.Model.Dtos.Purchases.PurchaseOrders;
+using NN.POS.Model.Dtos.Purchases.PurchasePO;
+using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NN.POS.API.Infra.Tables.Purchases.PurchasePO;
@@ -40,4 +43,45 @@ public class PurchasePODetailTable : BaseTable
     public bool IsDeleted { get; set; }
 
     public PurchasePOTable? PurchasePO { get; set; }
+}
+
+public static class PurchasePODetailExtensions
+{
+    public static PurchasePODetailDto ToDto(this PurchasePODetailTable p, 
+        string? localCcyName = null, string? itemName = null, string? uomName = null) => new()
+    {
+        CreatedAt = p.CreatedAt,
+        DiscountType = p.DiscountType,
+        DiscountValue = p.DiscountValue,
+        Id = p.Id,
+        IsDeleted = p.IsDeleted,
+        ItemId = p.ItemId,
+        ItemName = itemName,
+        LocalCcyId = p.LocalCcyId,
+        LocalCcyName = localCcyName,
+        PurchasePOId = p.PurchasePOId,
+        PurchasePrice = p.PurchasePrice,
+        Qty = p.Qty,
+        Total = p.Total,
+        TotalSys = p.TotalSys,
+        UomId = p.UomId,
+        UomName = uomName
+    };
+
+    public static PurchasePODetailTable ToTable(this PurchasePODetailDto p) => new()
+    {
+        CreatedAt = p.CreatedAt,
+        Id = p.Id,
+        IsDeleted = p.IsDeleted,
+        LocalCcyId = p.LocalCcyId,
+        DiscountType = p.DiscountType,
+        DiscountValue = p.DiscountValue,
+        ItemId = p.ItemId,
+        PurchasePOId = p.PurchasePOId,
+        PurchasePrice = p.PurchasePrice,
+        Qty = p.Qty,
+        Total = p.Total,
+        TotalSys = p.TotalSys,
+        UomId = p.UomId
+    };
 }
