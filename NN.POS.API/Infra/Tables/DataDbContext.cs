@@ -5,6 +5,7 @@ using NN.POS.API.Infra.Tables.BusinessPartners;
 using NN.POS.API.Infra.Tables.Company;
 using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.DocumentInvoicing;
+using NN.POS.API.Infra.Tables.Inventories;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
@@ -46,6 +47,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<DocumentInvoicePrefixingTable>? DocumentInvoicePrefixing { get; set; }
     public DbSet<PurchasePOTable>? PurchasePO { get; set; }
     public DbSet<PurchasePODetailTable>? PurchasePODetail { get; set; }
+    public DbSet<InventoryAuditTable>? InventoryAudits { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

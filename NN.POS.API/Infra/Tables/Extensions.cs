@@ -4,6 +4,7 @@ using NN.POS.API.Infra.Tables.BusinessPartners;
 using NN.POS.API.Infra.Tables.Company;
 using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.DocumentInvoicing;
+using NN.POS.API.Infra.Tables.Inventories;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
@@ -47,6 +48,7 @@ public static class Extensions
         services.AddPostgresRepository<DocumentInvoicePrefixingTable>();
         services.AddPostgresRepository<PurchasePOTable>();
         services.AddPostgresRepository<PurchasePODetailTable>();
+        services.AddPostgresRepository<InventoryAuditTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>
