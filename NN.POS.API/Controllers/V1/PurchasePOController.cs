@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using NN.POS.API.App.Commands.Purchases.PurchasePO;
 using NN.POS.API.App.Queries.Purchases;
 using NN.POS.Common.Pagination;
+using NN.POS.Model.Dtos.Purchases.PurchaseOrders;
 using NN.POS.Model.Dtos.Purchases.PurchasePO;
 
 namespace NN.POS.API.Controllers.V1;
@@ -24,5 +26,12 @@ public class PurchasePOController(IMediator mediator) : BaseApiController
     public async Task<ActionResult<PurchasePODto>> GetByInvoice(string invoice)
     {
         return Ok(await mediator.Send(new GetPurchasePOByIdOrInvoiceQuery(invoice, false)));
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreatePurchasePODto body)
+    {
+        await mediator.Send(new CreatePurchasePOCommand(UserId, body));
+        return Ok();
     }
 }
