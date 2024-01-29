@@ -59,6 +59,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
             .TaxTableDbConfig()
             .PurchaseOrderTableConfig()
             .DocumentInvoicingTableConfig()
-            .PurchasePOTableConfig();
+            .PurchasePOTableConfig()
+            .InventoryAuditTableConfig();
     }
 }
