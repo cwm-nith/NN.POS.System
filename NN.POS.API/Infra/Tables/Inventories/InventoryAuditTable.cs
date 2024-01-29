@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Dtos.Inventories;
+using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -60,4 +61,55 @@ public class InventoryAuditTable : BaseTable
 
     [Column("local_set_rate", TypeName = "decimal(18,4)")]
     public decimal LocalSetRate { get; set; }
+}
+
+public static class InventoryAuditExtensions
+{
+    public static InventoryAuditDto ToDto(this InventoryAuditTable i) => new()
+    {
+        BranchId = i.BranchId,
+        CcyId = i.CcyId,
+        Cost = i.Cost,
+        CreatedAt = i.CreatedAt,
+        CumulativeQty = i.CumulativeQty,
+        CumulativeValue = i.CumulativeValue,
+        ExpireDate = i.ExpireDate,
+        Id = i.Id,
+        InvoiceNo = i.InvoiceNo,
+        ItemId = i.ItemId,
+        LocalCcyId = i.LocalCcyId,
+        LocalSetRate = i.LocalSetRate,
+        Price = i.Price,
+        Process = i.Process,
+        Qty = i.Qty,
+        TransType = i.TransType,
+        TransValue = i.TransValue,
+        UomId = i.UomId,
+        UserId = i.UserId,
+        WarehouseId = i.WarehouseId
+    };
+
+    public static InventoryAuditTable ToTable(this InventoryAuditDto i) => new()
+    {
+        BranchId = i.BranchId,
+        CcyId = i.CcyId,
+        Cost = i.Cost,
+        CreatedAt = i.CreatedAt,
+        CumulativeQty = i.CumulativeQty,
+        CumulativeValue = i.CumulativeValue,
+        ExpireDate = i.ExpireDate,
+        Id = i.Id,
+        InvoiceNo = i.InvoiceNo,
+        ItemId = i.ItemId,
+        LocalCcyId = i.LocalCcyId,
+        LocalSetRate = i.LocalSetRate,
+        Price = i.Price,
+        Process = i.Process,
+        Qty = i.Qty,
+        TransType = i.TransType,
+        TransValue = i.TransValue,
+        UomId = i.UomId,
+        UserId = i.UserId,
+        WarehouseId = i.WarehouseId
+    };
 }
