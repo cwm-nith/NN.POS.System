@@ -6,12 +6,18 @@ using NN.POS.API.Infra.Tables;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.Purchases.PurchasePO;
 using NN.POS.API.Infra.Tables.Purchases.PurchasePO;
-using NN.POS.API.Core;
 using Microsoft.EntityFrameworkCore;
 using NN.POS.Model.Enums;
 using NN.POS.Model.Dtos.DocumentInvoicings;
 using NN.POS.Model.Dtos.Warehouses;
 using NN.POS.API.Core.IRepositories.Warehouses;
+using NN.POS.API.Core.IRepositories.Inventories;
+using NN.POS.API.App.Queries.Inventories;
+using NN.POS.Model.Dtos.Inventories;
+using NN.POS.API.Core.IRepositories.PriceLists;
+using NN.POS.API.Core.IRepositories.ItemMasters;
+using NN.POS.API.Core.Exceptions.Purchases;
+using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
 
 namespace NN.POS.API.Infra.Repositories.Purchases;
 
@@ -21,11 +27,13 @@ public class PurchasePORepository(
     ICurrencyRepository currencyRepository,
     ILogger<PurchasePORepository> logger,
     IWarehouseDetailRepository wsdRepo,
-    IConfiguration configuration,
+    IWarehouseSummaryRepository whsRepo,
+    IInventoryAuditRepository invAuditRepo,
+    IPriceListDetailRepository priceListRepo,
+    IItemMasterDataRepository itemRepo,
     IDocumentInvoicingRepository documentInvoicingRepository,
     IDocumentInvoicePrefixingRepository documentInvoicePrefixingRepository) : DapperRepository<PurchasePORepository>(logger), IPurchasePORepository
 {
-    private AppSettings AppSetting => configuration.GetSection("AppSetting").Get<AppSettings>() ?? new AppSettings();
     public async Task CreateAsync(PurchasePODto body, CancellationToken cancellationToken = default)
     {
         var context = writeDbRepository.Context;
@@ -44,30 +52,32 @@ public class PurchasePORepository(
 
             foreach (var pd in body.PurchasePODetails)
             {
-                var item = await context.ItemMasterData!.FirstOrDefaultAsync(i => i.Id == pd.ItemId, cancellationToken);
-                if(item != null)
+                var item = await itemRepo.GetByIdAsync(pd.ItemId, cancellationToken);
+                if (item != null)
                 {
-                    var gd = await context.UnitOfMeasureDefines!.FirstOrDefaultAsync(i => 
+                    var gd = await context.UnitOfMeasureDefines!.FirstOrDefaultAsync(i =>
                     i.GroupUomId == item.UomGroupId && i.AltUomId == pd.UomId, cancellationToken);
-                    var warehouse = await context.WarehouseSummaries!.FirstOrDefaultAsync(w => 
-                    w.ItemId == pd.ItemId && w.WarehouseId == body.WarehouseId, cancellationToken);
+                    var warehouse = await whsRepo.GetAsync(pd.ItemId, body.WarehouseId, cancellationToken);
 
-                    var qty = pd.Qty * gd.Factor;
-                    var cost = pd.PurchasePrice * gd.Factor * body.PurRate;
+                    var qty = pd.Qty * (gd?.Factor ?? 0);
+                    var cost = pd.PurchasePrice * (gd?.Factor ?? 0) * body.PurRate;
+
+                    var invAudit = new InventoryAuditDto();
+                    var wsd = new WarehouseDetailDto();
 
                     // TODO: check other type copy from
 
                     // update itmemasterdata
                     item.StockIn += qty;
                     //update warehouse
-                    if(warehouse != null)
+                    if (warehouse != null)
                     {
                         warehouse.InStock += qty;
-                        context.WarehouseSummaries!.Update(warehouse);
+                        await whsRepo.UpdateAsync(warehouse, cancellationToken);
                     }
-                    context.ItemMasterData!.Update(item);
+                    await itemRepo.UpdateAsync(item, cancellationToken);
 
-                    var wsd = new WarehouseDetailDto
+                    wsd = new WarehouseDetailDto
                     {
                         AvailableStock = 0,
                         CcyId = body.PurCcyId,
@@ -75,7 +85,7 @@ public class PurchasePORepository(
                         Cost = cost,
                         CreatedAt = DateTime.UtcNow,
                         ExpireDate = null,
-                        Factor = gd.Factor,
+                        Factor = gd?.Factor ?? 0,
                         Id = 0,
                         InStock = qty,
                         ItemId = item.Id,
@@ -84,6 +94,90 @@ public class PurchasePORepository(
                         UserId = body.UserId,
                         WarehouseId = body.WarehouseId
                     };
+
+                    var priDetails = await priceListRepo.GetAsync(pd.ItemId, pd.UomId, cancellationToken);
+                    var invAudits = await invAuditRepo.GetAsync(new GetInventoryAuditQuery
+                    {
+                        WarehouseId = body.WarehouseId,
+                        UomId = pd.UomId,
+                        ItemId = pd.ItemId
+                    }, cancellationToken);
+
+                    if (item.Process == ItemMasterDataProcess.Fifo)
+                    {
+                        invAudit = new InventoryAuditDto
+                        {
+                            ItemId = pd.ItemId,
+                            UomId = pd.UomId,
+                            WarehouseId = body.WarehouseId,
+                            BranchId = body.BranchId,
+                            CcyId = body.SysCcyId,
+                            Cost = cost,
+                            CreatedAt = DateTime.UtcNow,
+                            ExpireDate = null,
+                            CumulativeQty = invAudits.Sum(i => i.Qty) + qty,
+                            Qty = qty,
+                            CumulativeValue = invAudits.Sum(i => i.TransValue) + (qty * cost),
+                            TransValue = qty * cost,
+                            Price = 0,
+                            Id = 0,
+                            InvoiceNo = body.InvoiceNo,
+                            LocalCcyId = body.LocalCcyId,
+                            LocalSetRate = body.LocalSetRate,
+                            Process = item.Process,
+                            TransType = DocumentInvoicingType.PurchasePO,
+                            UserId = body.UserId
+                        };
+                        foreach (var pri in priDetails)
+                        {
+                            pri.Cost = cost * (pri.ExchangeRate?.SetRate ?? 0);
+                            await priceListRepo.UpdateAsync(pri, cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        var whs = await whsRepo.GetAsync(body.WarehouseId, pd.ItemId, cancellationToken);
+                        var avgCost = ((invAudits.Sum(s => s.TransValue)) + (qty * cost)) / (invAudits.Sum(q => q.Qty) + qty);
+                        invAudit = new InventoryAuditDto
+                        {
+                            ItemId = pd.ItemId,
+                            UomId = pd.UomId,
+                            WarehouseId = body.WarehouseId,
+                            BranchId = body.BranchId,
+                            CcyId = body.SysCcyId,
+                            Cost = avgCost,
+                            CreatedAt = DateTime.UtcNow,
+                            ExpireDate = null,
+                            CumulativeQty = invAudits.Sum(i => i.Qty) + qty,
+                            Qty = qty,
+                            CumulativeValue = invAudits.Sum(i => i.TransValue) + (qty * avgCost),
+                            TransValue = qty * avgCost,
+                            Price = 0,
+                            Id = 0,
+                            InvoiceNo = body.InvoiceNo,
+                            LocalCcyId = body.LocalCcyId,
+                            LocalSetRate = body.LocalSetRate,
+                            Process = item.Process,
+                            TransType = DocumentInvoicingType.PurchasePO,
+                            UserId = body.UserId
+                        };
+
+                        if(whs is not null)
+                        {
+                            // update_warehouse_summary
+                            whs.Cost = avgCost;
+                            await whsRepo.UpdateAsync(whs, cancellationToken);
+                        }
+
+                        foreach (var pri in priDetails)
+                        {
+                            pri.Cost = avgCost * (pri.ExchangeRate?.SetRate ?? 0);
+                            await priceListRepo.UpdateAsync(pri, cancellationToken);
+                        }
+                    }
+
+                    await wsdRepo.CreateAsync(wsd, cancellationToken);
+                    await invAuditRepo.CreateAsync(invAudit, cancellationToken);
                 }
             }
 
@@ -106,18 +200,75 @@ public class PurchasePORepository(
         });
     }
 
-    public Task<PurchasePODto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<PurchasePODto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var context = readDbRepository.Context;
+        var data = await (from po in context.PurchasePO!
+                .Include(i => i.PurchasePODetails)
+                .Where(i => i.Status == PurchaseStatus.Open && i.Id == id)
+                         join br in context.Branches! on po.BranchId equals br.Id
+                         join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
+                         join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
+                         join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
+                         join ws in context.Warehouses! on po.WarehouseId equals ws.Id
+                         join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
+                         join user in context.Users! on po.UserId equals user.Id
+                         select po.ToDto(
+                             br.Name,
+                             supplier.ToString(),
+                             sysCcy.Name,
+                             localCcy.Name,
+                             ws.Name,
+                             purCcy.Name,
+                             user.Name)).FirstOrDefaultAsync(cancellationToken);
+        return data ?? throw new PurchasePONotFoundException(id);
     }
 
-    public Task<PurchasePODto> GetByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default)
+    public async Task<PurchasePODto> GetByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var context = readDbRepository.Context;
+        var data = await (from po in context.PurchasePO!
+                .Include(i => i.PurchasePODetails)
+                .Where(i => i.Status == PurchaseStatus.Open && i.InvoiceNo == invoiceNo)
+                         join br in context.Branches! on po.BranchId equals br.Id
+                         join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
+                         join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
+                         join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
+                         join ws in context.Warehouses! on po.WarehouseId equals ws.Id
+                         join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
+                         join user in context.Users! on po.UserId equals user.Id
+                         select po.ToDto(
+                             br.Name, supplier.ToString(), sysCcy.Name, localCcy.Name,
+                             ws.Name, purCcy.Name, user.Name)).FirstOrDefaultAsync(cancellationToken);
+        return data ?? throw new PurchasePONotFoundException(invoiceNo);
     }
 
-    public Task<PagedResult<PurchasePODto>> GetPageAsync(GetPurchasePOPageQuery query, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<PurchasePODto>> GetPageAsync(GetPurchasePOPageQuery query, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var context = readDbRepository.Context;
+
+        var data = await (from po in context.PurchasePO!
+        .Include(i => i.PurchasePODetails)
+                .Where(i =>
+            (query.PurchaseStatus == null || i.Status == query.PurchaseStatus) &&
+            (query.FromDate == null || query.ToDate == null || i.PostingDate >= query.FromDate && i.PostingDate <= query.ToDate) &&
+            EF.Functions.Like(i.InvoiceNo, $"%{query.Search}%"))
+
+                          join br in context.Branches! on po.BranchId equals br.Id
+                          join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
+                          join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
+                          join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
+                          join ws in context.Warehouses! on po.WarehouseId equals ws.Id
+                          join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
+                          join user in context.Users! on po.UserId equals user.Id
+                          select po.ToDto(
+                              br.Name,
+                              supplier.ToString(),
+                              sysCcy.Name,
+                              localCcy.Name,
+                              ws.Name,
+                              purCcy.Name,
+                              user.Name)).PaginateAsync(query, cancellationToken);
+        return data;
     }
 }

@@ -7,6 +7,6 @@ public class UpdateItemMasterDataCommandHandler(IItemMasterDataRepository reposi
 {
     public async Task Handle(UpdateItemMasterDataCommand request, CancellationToken cancellationToken)
     {
-        await repository.UpdateAsync(request.Id, request.Dto, cancellationToken);
+        await repository.UpdateByIdAsync(request.Id, request.Dto, cancellationToken);
     }
 }

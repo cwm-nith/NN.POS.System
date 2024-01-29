@@ -1,10 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using NN.POS.API.App.Queries.PriceLists;
 using NN.POS.API.Core;
 using NN.POS.API.Core.Exceptions.PriceLists;
 using NN.POS.API.Core.IRepositories.PriceLists;
 using NN.POS.API.Core.Utils;
 using NN.POS.API.Infra.Tables;
+using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.PriceLists;
@@ -43,7 +45,17 @@ public class PriceListDetailRepository(
                           join ccy in context.Currencies! on pld.CcyId equals ccy.Id
                           join uom in context.UnitOfMeasures! on pld.UomId equals uom.Id
                           group new { pld, item, pl, ccy, uom } by item.Id into plds
-                          select plds.FirstOrDefault()!.pld.ToDto(plds.FirstOrDefault()!.pl.Name, plds.FirstOrDefault()!.ccy.Name, plds.FirstOrDefault()!.item, plds.FirstOrDefault()!.uom.Name)).PaginateAsync(q, cancellationToken);
+                          select plds.FirstOrDefault()!.pld.ToDto(plds.FirstOrDefault()!.pl.Name, plds.FirstOrDefault()!.ccy.Name, plds.FirstOrDefault()!.item, plds.FirstOrDefault()!.uom.Name, null)).PaginateAsync(q, cancellationToken);
+        return data;
+    }
+
+    public async Task<List<PriceListDetailDto>> GetAsync(int itemId, int uomId, CancellationToken cancellationToken = default)
+    {
+        var context = readDbRepository.Context;
+        var data = await (from pld in context.PriceListDetails!
+                .Where(i => i.ItemId == itemId && i.UomId == uomId)
+                          join exRate in context.ExchangeRates! on pld.CcyId equals exRate.CcyId
+                          select pld.ToDto(null, null, null, null, exRate.ToDto(null, null))).ToListAsync(cancellationToken);
         return data;
     }
 
