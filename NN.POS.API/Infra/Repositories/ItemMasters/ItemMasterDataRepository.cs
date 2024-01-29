@@ -21,7 +21,7 @@ public class ItemMasterDataRepository(
         return item.ToDto();
     }
 
-    public async Task UpdateAsync(int id, UpdateItemMasterDataDto dto, CancellationToken cancellationToken = default)
+    public async Task UpdateByIdAsync(int id, UpdateItemMasterDataDto dto, CancellationToken cancellationToken = default)
     {
         var item = await GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
@@ -92,5 +92,10 @@ public class ItemMasterDataRepository(
             (q.IsSale == null || i.IsSale == q.IsSale) &&
             (q.WsId == null || i.WarehouseId == q.WsId), i => i.Name, q, cancellationToken);
         return itemMaster.Map(i => i.ToDto());
+    }
+
+    public async Task UpdateAsync(ItemMasterDataDto dto, CancellationToken cancellationToken = default)
+    {
+        await writeDbRepository.UpdateAsync(dto.ToTable(), cancellationToken);
     }
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.Model.Dtos.PriceLists;
+using NN.POS.Model.Dtos.Currencies;
 
 namespace NN.POS.API.Infra.Tables.PriceLists;
 
@@ -59,7 +60,8 @@ public static class PriceListDetailTableExtensions
         string? plName = null, 
         string? ccy = null, 
         ItemMasterDataTable? item = null, 
-        string? uom = null) => new()
+        string? uom = null,
+        ExchangeRateDto? exchangeRate = null) => new()
     {
         Id = p.Id,
         PriceListId = p.PriceListId,
@@ -77,6 +79,7 @@ public static class PriceListDetailTableExtensions
         UomId = p.UomId,
         UomName = uom,
         ItemBarcode = item?.Barcode,
-        ItemProcess = item?.Process
+        ItemProcess = item?.Process,
+        ExchangeRate = exchangeRate
     };
 }

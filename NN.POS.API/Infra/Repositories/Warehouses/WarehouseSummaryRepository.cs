@@ -26,4 +26,9 @@ public class WarehouseSummaryRepository(
         var ws = await readDbRepository.WhereAsync(i => i.WarehouseId == whId, cancellationToken);
         return ws.Select(i => i.ToDto()).ToList();
     }
+
+    public async Task UpdateAsync(WarehouseSummaryDto ws, CancellationToken cancellationToken = default)
+    {
+        await writeDbRepository.UpdateAsync(ws.ToTable(), cancellationToken);
+    }
 }

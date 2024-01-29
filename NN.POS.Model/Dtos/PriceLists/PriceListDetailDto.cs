@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Dtos.Currencies;
+using NN.POS.Model.Enums;
 
 namespace NN.POS.Model.Dtos.PriceLists;
 
@@ -26,4 +27,6 @@ public class PriceListDetailDto : IBaseDto
     /// </summary>
     public bool Selected { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public ExchangeRateDto? ExchangeRate { get; set; }
 }
