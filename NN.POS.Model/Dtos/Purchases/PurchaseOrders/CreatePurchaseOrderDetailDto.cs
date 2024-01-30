@@ -7,7 +7,6 @@ public class CreatePurchaseOrderDetailDto : IBaseDto
     public int ItemId { get; set; }
     public int UomId { get; set; }
     public int LocalCcyId { get; set; }
-    public decimal DiscountRate { get; set; }
     public decimal DiscountValue { get; set; }
     public DiscountType DiscountType { get; set; }
     public decimal Qty { get; set; }
