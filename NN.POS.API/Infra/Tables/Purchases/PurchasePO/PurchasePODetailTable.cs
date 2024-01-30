@@ -1,12 +1,10 @@
-﻿using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
-using NN.POS.Model.Dtos.Purchases.PurchaseOrders;
-using NN.POS.Model.Dtos.Purchases.PurchasePO;
+﻿using NN.POS.Model.Dtos.Purchases.PurchasePO;
 using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NN.POS.API.Infra.Tables.Purchases.PurchasePO;
 
-[Table("purchase_po_detail")]
+[Table("purchase_po_details")]
 public class PurchasePODetailTable : BaseTable
 {
     [Column("purchase_po_id")]
