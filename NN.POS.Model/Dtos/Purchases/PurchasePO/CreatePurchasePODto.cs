@@ -30,5 +30,5 @@ public class CreatePurchasePODto : IBaseDto
     public decimal LocalSetRate { get; set; }
     public int LocalCcyId { get; set; }
 
-    public List<CreatePurchasePODetailDto> PurchasePODetail { get; set; } = [];
+    public List<CreatePurchasePODetailDto> PurchasePODetails { get; set; } = [];
 }
