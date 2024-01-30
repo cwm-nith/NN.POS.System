@@ -10,9 +10,9 @@ public class CreatePurchasePODto : IBaseDto
     public int WarehouseId { get; set; }
     public int UserId { get; set; }
     public string InvoiceNo { get; set; } = string.Empty;
-    public DateTime PostingDate { get; set; }
-    public DateTime DocumentDate { get; set; }
-    public DateTime DueDate { get; set; }
+    public DateTime? PostingDate { get; set; }
+    public DateTime? DocumentDate { get; set; }
+    public DateTime? DueDate { get; set; }
     public decimal SubTotal { get; set; }
     public decimal SubTotalSys { get; set; }
     public decimal DiscountValue { get; set; }
