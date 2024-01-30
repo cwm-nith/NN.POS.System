@@ -1,0 +1,23 @@
+﻿@namespace NN.POS.Web.Components.Dialogs
+
+<style>
+    .center {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
+<MudDialog Class="bg-transparent">
+    <DialogContent>
+        <div class="center">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Medium" Indeterminate="true" />
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+}

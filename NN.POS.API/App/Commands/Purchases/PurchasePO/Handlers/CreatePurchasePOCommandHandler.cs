@@ -19,16 +19,16 @@ public class CreatePurchasePOCommandHandler(IPurchasePORepository repository) : 
             CreatedAt = DateTime.UtcNow,
             DiscountType = r.DiscountType,
             DiscountValue = r.DiscountValue,
-            DocumentDate = r.DocumentDate,
+            DocumentDate = r.DocumentDate ?? DateTime.UtcNow,
             DownPayment = r.DownPayment,
-            DueDate = r.DueDate,
+            DueDate = r.DueDate ?? DateTime.UtcNow,
             Id = 0,
             InvoiceNo = r.InvoiceNo,
             LocalCcyId = r.LocalCcyId,
             LocalSetRate = r.LocalSetRate,
-            PostingDate = r.PostingDate,
+            PostingDate = r.PostingDate ?? DateTime.UtcNow,
             PurCcyId = r.PurCcyId,
-            PurchasePODetails = r.PurchasePODetail.Select(i => new PurchasePODetailDto
+            PurchasePODetails = r.PurchasePODetails.Select(i => new PurchasePODetailDto
             {
                 CreatedAt = DateTime.UtcNow,
                 DiscountType = i.DiscountType,

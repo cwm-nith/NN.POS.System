@@ -1,23 +1,22 @@
-﻿@using NN.POS.Model.Dtos.Purchases.PurchaseOrders
-@using NN.POS.Web.Components.Dialogs
-@using NN.POS.Web.Validations.Purchases.PurchaseOrders
-@using NN.POS.Model.Dtos.BusinessPartners
+﻿@using NN.POS.Model.Dtos.BusinessPartners
 @using NN.POS.Model.Dtos.Currencies
 @using NN.POS.Model.Dtos.DocumentInvoicings
 @using NN.POS.Model.Dtos.ItemMasters
 @using NN.POS.Model.Dtos.Purchases
+@using NN.POS.Model.Dtos.Purchases.PurchasePO
 @using NN.POS.Model.Dtos.Warehouses
 @using NN.POS.Model.Enums
+@using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Models
-
-@attribute [Route(RouteName.PurchasesOrder)]
+@using NN.POS.Web.Validations.Purchases.PurchasePO
+@attribute [Route(RouteName.PurchasesPO)]
 
 @implements IDisposable
 
 <MudContainer Class="mb-5">
     <MudForm Model="_purModel" Validation="_purValidator.ValidateValue" @ref="_form">
         <MudContainer>
-            <MudText Typo="Typo.h6" Class="pb-4">Purchase Order</MudText>
+            <MudText Typo="Typo.h6" Class="pb-4">Purchase PO</MudText>
 
             <MudGrid Justify="Justify.SpaceBetween">
                 <MudItem lg="4" sm="4" xs="12">
@@ -68,8 +67,8 @@
                                           Disabled="_purModel.WarehouseId == 0"
                                           Label="Purchase Currency" />
 
-                            <MudTextField @bind-Value="_purModel.WarehouseId"
-                                          For="@(() => _purModel.WarehouseId)"
+                            <MudTextField @bind-Value="_purModel.PurCcyId"
+                                          For="@(() => _purModel.PurCcyId)"
                                           Style="display: none" />
                         </MudItem>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
@@ -109,10 +108,10 @@
                                            Margin="Margin.Dense" />
                         </MudItem>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
-                            <MudDatePicker @bind-Date="_purModel.DeliveryDate"
-                                           For="@(() => _purModel.DeliveryDate)"
+                            <MudDatePicker @bind-Date="_purModel.DueDate"
+                                           For="@(() => _purModel.DueDate)"
                                            Immediate="true"
-                                           Label="Delivery Date"
+                                           Label="Due Date"
                                            Variant="Variant.Outlined"
                                            Margin="Margin.Dense" />
                         </MudItem>
@@ -155,7 +154,7 @@
                       HorizontalScrollbar="true">
 
                 <ToolBarContent>
-                    <MudText Typo="Typo.h6">Purchase Order Detail</MudText>
+                    <MudText Typo="Typo.h6">Purchase PO Detail</MudText>
                 </ToolBarContent>
                 <HeaderContent>
                     <MudTh>Code</MudTh>
@@ -305,6 +304,12 @@
                     </MudGrid>
                 </MudItem>
             </MudGrid>
+            @if (!string.IsNullOrEmpty(_apiErrorMessages))
+            {
+                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    @_apiErrorMessages
+                </MudChip>
+            }
         </MudContainer>
         <br />
         <MudGrid Justify="Justify.FlexEnd">
@@ -329,18 +334,18 @@
     </MudForm>
 </MudContainer>
 
-@code {
 
-    private readonly CreatePurchaseOrderDto _purModel = new()
+@code {
+    private readonly CreatePurchasePODto _purModel = new()
         {
             Status = PurchaseStatus.Open,
-            DeliveryDate = DateTime.UtcNow,
+            DueDate = DateTime.UtcNow,
             DocumentDate = DateTime.UtcNow,
             PostingDate = DateTime.UtcNow,
             DiscountType = DiscountType.Percentage
         };
 
-    private readonly CreatePurchaseOrderValidation _purValidator = new();
+    private readonly CreatePurchasePOValidation _purValidator = new();
 
     private List<PurchaseItemDto> _items = [];
 
@@ -376,10 +381,10 @@
     protected override void OnInitialized()
     {
         NavbarStateService.SetExpend(RouteName.Purchases);
-        NavbarStateService.SetActive(RouteName.PurchasesOrder);
+        NavbarStateService.SetActive(RouteName.PurchasesPO);
         NavbarStateService.SetBreadcrumbItems([
             new BreadcrumbItem("Purchases", null, true),
-            new BreadcrumbItem("Purchase Order", null, true)
+            new BreadcrumbItem("Purchase PO", null, true)
         ]);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
@@ -404,7 +409,7 @@
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var response = await httpClient.GetAsync($"{Setting.PrefixEndpoint}DocumentInvoicing/get_next_invoice?type={(int)DocumentInvoicingType.PurchaseOrder}");
+        var response = await httpClient.GetAsync($"{Setting.PrefixEndpoint}DocumentInvoicing/get_next_invoice?type={(int)DocumentInvoicingType.PurchasePO}");
 
         if (response.IsSuccessStatusCode)
         {
@@ -433,10 +438,22 @@
 
     private async Task CreatePurchaseOrder()
     {
+        if(_items.Count == 0)
+        {
+            _apiErrorMessages = "Please select some items";
+            return;
+        }
+
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            _purModel.PurchaseOrderDetails = _items.Select(i => new CreatePurchaseOrderDetailDto
+            var parameters = new DialogParameters<LoadingDialog>();
+
+            var options = new DialogOptions { FullScreen = true, ClassBackground = "dialog-bg-blur" };
+
+            var loadingDialog = await Dialog.ShowAsync<LoadingDialog>("", parameters, options);
+
+            _purModel.PurchasePODetails = _items.Select(i => new CreatePurchasePODetailDto
                 {
                     DiscountType = i.DiscountType,
                     DiscountValue = i.DiscountValue,
@@ -455,7 +472,12 @@
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchaseOrder", requestContent);
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchasePO", requestContent);
+
+            if (!response.IsSuccessStatusCode && loadingDialog is not null)
+            {
+                Dialog.Close((DialogReference)loadingDialog);
+            }
 
             _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
                 () =>

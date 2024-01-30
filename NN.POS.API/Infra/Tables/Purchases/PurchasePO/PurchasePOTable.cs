@@ -2,8 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using NN.POS.Model.Dtos.Purchases.PurchasePO;
-using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
-using NN.POS.Model.Dtos.Purchases.PurchaseOrders;
 
 namespace NN.POS.API.Infra.Tables.Purchases.PurchasePO;
 
