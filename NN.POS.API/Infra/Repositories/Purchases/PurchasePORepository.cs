@@ -183,7 +183,7 @@ public class PurchasePORepository(
 
             var purOrderTb = await writeDbRepository.AddAsync(body.ToTable(), cancellationToken);
 
-            var prefix = await documentInvoicePrefixingRepository.GetAsync(DocumentInvoicingType.PurchaseOrder, cancellationToken);
+            var prefix = await documentInvoicePrefixingRepository.GetAsync(DocumentInvoicingType.PurchasePO, cancellationToken);
 
             await documentInvoicingRepository.CreateAsync(new DocumentInvoicingDto
             {
@@ -193,7 +193,7 @@ public class PurchasePORepository(
                 DocInvoicing = purOrderTb.InvoiceNo,
                 InvoiceCount = 0,
                 PreFix = prefix.Prefix,
-                Type = DocumentInvoicingType.PurchaseOrder
+                Type = DocumentInvoicingType.PurchasePO
             }, cancellationToken);
 
             await t.CommitAsync(cancellationToken);
