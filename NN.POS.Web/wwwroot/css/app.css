@@ -103,3 +103,8 @@ a, .btn-link {
 .loading-progress-text:after {
     content: var(--blazor-load-percentage-text, "Loading");
 }
+
+.dialog-bg-blur {
+    backdrop-filter: blur(1px);
+    background-color: transparent;
+}
