@@ -74,4 +74,6 @@ public static class RouteName
     public const string PurchasesOrder = $"{Purchases}/purchase-order";
     public const string PurchasesOrderCreate = $"{Purchases}/purchase-order/create";
 
+    public const string PurchasesPO = $"{Purchases}/purchase-po";
+
 }
