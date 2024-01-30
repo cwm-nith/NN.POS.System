@@ -28,7 +28,7 @@ public class CreatePurchasePOCommandHandler(IPurchasePORepository repository) : 
             LocalSetRate = r.LocalSetRate,
             PostingDate = r.PostingDate,
             PurCcyId = r.PurCcyId,
-            PurchasePODetails = r.PurchasePODetail.Select(i => new PurchasePODetailDto
+            PurchasePODetails = r.PurchasePODetails.Select(i => new PurchasePODetailDto
             {
                 CreatedAt = DateTime.UtcNow,
                 DiscountType = i.DiscountType,
