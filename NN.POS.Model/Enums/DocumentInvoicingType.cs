@@ -8,5 +8,8 @@ public enum DocumentInvoicingType
     PurchaseOrder = 1,
 
     [EnumMember(Value = "PURCHASE_PO")]
-    PurchasePO = 2
+    PurchasePO = 2,
+
+    [EnumMember(Value = "PURCHASE_AP")]
+    PurchaseAP = 3
 }
