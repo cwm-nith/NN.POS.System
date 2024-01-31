@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Dtos.Purchases.PurchaseAP;
+using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -86,4 +87,87 @@ public class PurchaseAPTable : BaseTable
     public int LocalCcyId { get; set; }
 
     public List<PurchaseAPDetailTable> PurchaseAPDetails { get; set; } = [];
+}
+
+
+public static class PurchaseAPExtensions
+{
+    public static PurchaseAPDto ToDto(this PurchaseAPTable p, string? branchName = null,
+        string? sysCcyName = null,
+        string? localCcyName = null,
+        string? wsName = null,
+        string? purCcyName = null,
+        string? supplyName = null,
+        string? userName = null) => new()
+        {
+            AppliedAmount = p.AppliedAmount,
+            BalanceDue = p.BalanceDue,
+            BalanceDueSys = p.BalanceDueSys,
+            BranchId = p.BranchId,
+            BranchName = branchName,
+            CreatedAt = p.CreatedAt,
+            DiscountType = p.DiscountType,
+            DiscountValue = p.DiscountValue,
+            DocumentDate = p.DocumentDate,
+            DownPayment = p.DownPayment,
+            DueDate = p.DueDate,
+            Id = p.Id,
+            InvoiceNo = p.InvoiceNo,
+            LocalCcyId = p.LocalCcyId,
+            LocalCcyName = localCcyName,
+            LocalSetRate = p.LocalSetRate,
+            PostingDate = p.PostingDate,
+            PurCcyId = p.PurCcyId,
+            PurCcyName = purCcyName,
+            PurchaseAPDetails = p.PurchaseAPDetails.Select(i => i.ToDto()).ToList(),
+            PurRate = p.PurRate,
+            Remark = p.Remark,
+            ReturnAmount = p.ReturnAmount,
+            Status = p.Status,
+            SubTotal = p.SubTotal,
+            SubTotalSys = p.SubTotalSys,
+            SupplyId = p.SupplyId,
+            SupplyName = supplyName,
+            SysCcyId = p.SysCcyId,
+            SysCcyName = sysCcyName,
+            TaxRate = p.TaxRate,
+            TaxValue = p.TaxValue,
+            UserId = p.UserId,
+            UserName = userName,
+            WarehouseId = p.WarehouseId,
+            WarehouseName = wsName
+        };
+
+    public static PurchaseAPTable ToTable(this PurchaseAPDto p) => new()
+    {
+        CreatedAt = p.CreatedAt,
+        AppliedAmount = p.AppliedAmount,
+        BalanceDue = p.BalanceDue,
+        BalanceDueSys = p.BalanceDueSys,
+        BranchId = p.BranchId,
+        DiscountType = p.DiscountType,
+        DiscountValue = p.DiscountValue,
+        DocumentDate = p.DocumentDate,
+        DownPayment = p.DownPayment,
+        Id = p.Id,
+        SysCcyId = p.SysCcyId,
+        LocalCcyId = p.LocalCcyId,
+        WarehouseId = p.WarehouseId,
+        Status = p.Status,
+        InvoiceNo = p.InvoiceNo,
+        LocalSetRate = p.LocalSetRate,
+        PostingDate = p.PostingDate,
+        PurCcyId = p.PurCcyId,
+        PurRate = p.PurRate,
+        Remark = p.Remark,
+        ReturnAmount = p.ReturnAmount,
+        SubTotal = p.SubTotal,
+        SubTotalSys = p.SubTotalSys,
+        SupplyId = p.SupplyId,
+        TaxRate = p.TaxRate,
+        TaxValue = p.TaxValue,
+        UserId = p.UserId,
+        DueDate = p.DueDate,
+        PurchaseAPDetails = p.PurchaseAPDetails.Select(i => i.ToTable()).ToList()
+    };
 }

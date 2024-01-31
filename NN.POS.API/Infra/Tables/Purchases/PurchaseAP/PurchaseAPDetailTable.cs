@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Dtos.Purchases.PurchaseAP;
+using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NN.POS.API.Infra.Tables.Purchases.PurchaseAP;
@@ -40,4 +41,45 @@ public class PurchaseAPDetailTable : BaseTable
     public bool IsDeleted { get; set; }
 
     public PurchaseAPTable? PurchaseAP { get; set; }
+}
+
+public static class PurchaseAPDetailExtensions
+{
+    public static PurchaseAPDetailDto ToDto(this PurchaseAPDetailTable p,
+        string? localCcyName = null, string? itemName = null, string? uomName = null) => new()
+        {
+            CreatedAt = p.CreatedAt,
+            DiscountType = p.DiscountType,
+            DiscountValue = p.DiscountValue,
+            Id = p.Id,
+            IsDeleted = p.IsDeleted,
+            ItemId = p.ItemId,
+            ItemName = itemName,
+            LocalCcyId = p.LocalCcyId,
+            LocalCcyName = localCcyName,
+            PurchaseAPId = p.PurchaseAPId,
+            PurchasePrice = p.PurchasePrice,
+            Qty = p.Qty,
+            Total = p.Total,
+            TotalSys = p.TotalSys,
+            UomId = p.UomId,
+            UomName = uomName
+        };
+
+    public static PurchaseAPDetailTable ToTable(this PurchaseAPDetailDto p) => new()
+    {
+        CreatedAt = p.CreatedAt,
+        Id = p.Id,
+        IsDeleted = p.IsDeleted,
+        LocalCcyId = p.LocalCcyId,
+        DiscountType = p.DiscountType,
+        DiscountValue = p.DiscountValue,
+        ItemId = p.ItemId,
+        PurchaseAPId = p.PurchaseAPId,
+        PurchasePrice = p.PurchasePrice,
+        Qty = p.Qty,
+        Total = p.Total,
+        TotalSys = p.TotalSys,
+        UomId = p.UomId
+    };
 }
