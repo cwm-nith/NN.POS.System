@@ -8,6 +8,7 @@ using NN.POS.API.Infra.Tables.Inventories;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
+using NN.POS.API.Infra.Tables.Purchases.PurchaseAP;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
 using NN.POS.API.Infra.Tables.Purchases.PurchasePO;
 using NN.POS.API.Infra.Tables.Roles;
@@ -49,6 +50,8 @@ public static class Extensions
         services.AddPostgresRepository<PurchasePOTable>();
         services.AddPostgresRepository<PurchasePODetailTable>();
         services.AddPostgresRepository<InventoryAuditTable>();
+        services.AddPostgresRepository<PurchaseAPTable>();
+        services.AddPostgresRepository<PurchaseAPDetailTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>

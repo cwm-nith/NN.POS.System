@@ -9,6 +9,7 @@ using NN.POS.API.Infra.Tables.Inventories;
 using NN.POS.API.Infra.Tables.ItemMasters;
 using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
+using NN.POS.API.Infra.Tables.Purchases.PurchaseAP;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
 using NN.POS.API.Infra.Tables.Purchases.PurchasePO;
 using NN.POS.API.Infra.Tables.Roles;
@@ -48,6 +49,8 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<PurchasePOTable>? PurchasePO { get; set; }
     public DbSet<PurchasePODetailTable>? PurchasePODetail { get; set; }
     public DbSet<InventoryAuditTable>? InventoryAudits { get; set; }
+    public DbSet<PurchaseAPDetailTable>? PurchaseAPDetail { get; set; }
+    public DbSet<PurchaseAPTable>? PurchaseAP { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
