@@ -7,6 +7,7 @@ using NN.POS.API.Infra.Tables.Currencies;
 using NN.POS.API.Infra.Tables.DocumentInvoicing;
 using NN.POS.API.Infra.Tables.Inventories;
 using NN.POS.API.Infra.Tables.ItemMasters;
+using NN.POS.API.Infra.Tables.OutGoingPayments;
 using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseAP;
@@ -51,6 +52,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<InventoryAuditTable>? InventoryAudits { get; set; }
     public DbSet<PurchaseAPDetailTable>? PurchaseAPDetail { get; set; }
     public DbSet<PurchaseAPTable>? PurchaseAP { get; set; }
+    public DbSet<OutGoingPaymentSupplierTable>? OutGoingPaymentSuppliers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
