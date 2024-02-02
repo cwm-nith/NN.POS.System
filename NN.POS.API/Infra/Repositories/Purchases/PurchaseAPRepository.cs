@@ -18,6 +18,9 @@ using NN.POS.API.App.Queries.Inventories;
 using NN.POS.Model.Dtos.DocumentInvoicings;
 using NN.POS.Model.Dtos.Inventories;
 using NN.POS.Model.Dtos.Warehouses;
+using NN.POS.API.Core.IRepositories.OutGoingVendors;
+using NN.POS.Model.Dtos.OutGoingPayments;
+using NN.POS.API.Core.Utils;
 
 namespace NN.POS.API.Infra.Repositories.Purchases;
 
@@ -31,7 +34,8 @@ public class PurchaseAPRepository(
     IPriceListDetailRepository priceListRepo,
     IItemMasterDataRepository itemRepo,
     IDocumentInvoicingRepository documentInvoicingRepository,
-    IDocumentInvoicePrefixingRepository documentInvoicePrefixingRepository) : IPurchaseAPRepository
+    IDocumentInvoicePrefixingRepository documentInvoicePrefixingRepository,
+    IOutGoingPaymentSupplierRepository outGoingPaymentSupplierRepo) : IPurchaseAPRepository
 {
     public async Task CreateAsync(PurchaseAPDto body, PurchaseType purchaseType, CancellationToken cancellationToken = default)
     {
@@ -207,8 +211,35 @@ public class PurchaseAPRepository(
         {
             purOrderTb = await writeDbRepository.AddAsync(body.ToTable(), cancellationToken);
         }
-        
-        // TODO: create OutGoingPaymentVendor
+
+        var outgoingPayment = new OutGoingPaymentSupplierDto
+        {
+            AppliedAmount = body.AppliedAmount,
+            BalanceDue = body.BalanceDue,
+            BranchId = body.BranchId,
+            Cash = body.BalanceDue,
+            CcyId = body.PurCcyId,
+            CreatedAt = DateTime.UtcNow,
+            Date = body.DueDate,
+            DiscountType = body.DiscountType,
+            DiscountValue = 0,
+            DocumentType = DocumentInvoicingType.PurchaseAP,
+            ExchangeRate = body.PurRate,
+            Id = 0,
+            InvoiceNo = body.InvoiceNo,
+            LocalCcyId = body.LocalCcyId,
+            LocalSetRate = body.LocalSetRate,
+            OverdueDays = (DateTime.UtcNow - body.DueDate).TotalDays.ToDecimal(),
+            PostingDate = body.PostingDate,
+            Status = body.Status,
+            SupplierId = body.SupplyId,
+            SysCcyId = body.SysCcyId,
+            Total = body.SubTotal,
+            TotalPayment = body.SubTotal - (body.DiscountType == DiscountType.Flat ? body.DiscountValue : body.SubTotal * body.DiscountValue / 100),
+            WarehouseId = body.WarehouseId
+        };
+
+        await outGoingPaymentSupplierRepo.CreateAsync(outgoingPayment, cancellationToken);
 
         if(purOrderTb is not null)
         {
