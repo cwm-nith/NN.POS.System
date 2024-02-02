@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Dtos.OutGoingPayments;
+using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -65,8 +66,65 @@ public class OutGoingPaymentSupplierTable : BaseTable
     public int SysCcyId { get; set; }
 
     [Column("local_ccy_id")]
-    public int LocalCcyID { get; set; }
+    public int LocalCcyId { get; set; }
 
     [Column("local_set_rate", TypeName = "demical(18,4)")]
     public decimal LocalSetRate { get; set; }
+}
+
+public static class OutGoingPaymentSupplierExtensions
+{
+    public static OutGoingPaymentSupplierDto ToDto(this OutGoingPaymentSupplierTable o) => new()
+    {
+        AppliedAmount = o.AppliedAmount,
+        BalanceDue = o.BalanceDue,
+        BranchId = o.BranchId,
+        Cash = o.Cash,
+        CcyId = o.CcyId,
+        CreatedAt = o.CreatedAt,
+        Date = o.Date,
+        DiscountType = o.DiscountType,
+        DiscountValue = o.DiscountValue,
+        DocumentType = o.DocumentType,
+        ExchangeRate = o.ExchangeRate,
+        Id = o.Id,
+        InvoiceNo = o.InvoiceNo,
+        LocalCcyId = o.LocalCcyId,
+        LocalSetRate = o.LocalSetRate,
+        OverdueDays = o.OverdueDays,
+        PostingDate = o.PostingDate,
+        Status = o.Status,
+        SupplierId = o.SupplierId,
+        SysCcyId = o.SysCcyId,
+        Total = o.Total,
+        TotalPayment = o.TotalPayment,
+        WarehouseId = o.WarehouseId
+    };
+
+    public static OutGoingPaymentSupplierTable ToTable(this OutGoingPaymentSupplierDto o) => new()
+    {
+        AppliedAmount = o.AppliedAmount,
+        BalanceDue = o.BalanceDue,
+        BranchId = o.BranchId,
+        Cash = o.Cash,
+        CcyId = o.CcyId,
+        CreatedAt = o.CreatedAt,
+        Date = o.Date,
+        DiscountType = o.DiscountType,
+        DiscountValue = o.DiscountValue,
+        DocumentType = o.DocumentType,
+        ExchangeRate = o.ExchangeRate,
+        Id = o.Id,
+        InvoiceNo = o.InvoiceNo,
+        LocalCcyId = o.LocalCcyId,
+        LocalSetRate = o.LocalSetRate,
+        OverdueDays = o.OverdueDays,
+        PostingDate = o.PostingDate,
+        Status = o.Status,
+        SupplierId = o.SupplierId,
+        SysCcyId = o.SysCcyId,
+        Total = o.Total,
+        TotalPayment = o.TotalPayment,
+        WarehouseId = o.WarehouseId
+    };
 }
