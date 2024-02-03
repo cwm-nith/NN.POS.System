@@ -27,4 +27,10 @@ public class PurchaseAPController(IMediator mediator) : BaseApiController
     {
         return Ok(await mediator.Send(new GetPurchaseAPByIdOrInvoiceQuery(id, true)));
     }
+
+    [HttpGet("invoice/{invoice}")]
+    public async Task<ActionResult<PurchaseAPDto>> GetById(string invoice)
+    {
+        return Ok(await mediator.Send(new GetPurchaseAPByIdOrInvoiceQuery(invoice, false)));
+    }
 }
