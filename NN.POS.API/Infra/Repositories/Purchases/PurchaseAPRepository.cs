@@ -40,9 +40,6 @@ public class PurchaseAPRepository(
     public async Task CreateAsync(PurchaseAPDto body, PurchaseType purchaseType, CancellationToken cancellationToken = default)
     {
         var context = writeDbRepository.Context;
-        var localCcy = await currencyRepository.GetLocalCurrencyAsync(cancellationToken);
-        var sysCcy = await currencyRepository.GetBaseCurrencyAsync(cancellationToken);
-
         PurchaseAPTable? purOrderTb = new();
 
         await using var t = await context.Database.BeginTransactionAsync(cancellationToken);
@@ -52,10 +49,16 @@ public class PurchaseAPRepository(
             var strategy = context.Database.CreateExecutionStrategy();
             await strategy.Execute(async () =>
             {
-                body.LocalCcyId = localCcy.Id;
-                body.LocalSetRate = localCcy.ExchangeRate?.SetRate ?? 0;
+                if(purchaseType == PurchaseType.PurchaseAP)
+                {
+                    var localCcy = await currencyRepository.GetLocalCurrencyAsync(cancellationToken);
+                    var sysCcy = await currencyRepository.GetBaseCurrencyAsync(cancellationToken);
 
-                body.SysCcyId = sysCcy.Id;
+                    body.LocalCcyId = localCcy.Id;
+                    body.LocalSetRate = localCcy.ExchangeRate?.SetRate ?? 0;
+
+                    body.SysCcyId = sysCcy.Id;
+                }                
 
                 foreach (var pd in body.PurchaseAPDetails)
                 {

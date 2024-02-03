@@ -11,6 +11,9 @@ public class PurchaseAPTable : BaseTable
     [Column("supply_id")]
     public int SupplyId { get; set; }
 
+    [Column("copy_from_id")]
+    public int CopyFromId { get; set; }
+
     [Column("branch_id")]
     public int BranchId { get; set; }
 
@@ -112,6 +115,7 @@ public static class PurchaseAPExtensions
             DownPayment = p.DownPayment,
             DueDate = p.DueDate,
             Id = p.Id,
+            CopyFromId = p.CopyFromId,
             InvoiceNo = p.InvoiceNo,
             LocalCcyId = p.LocalCcyId,
             LocalCcyName = localCcyName,
@@ -150,6 +154,7 @@ public static class PurchaseAPExtensions
         DocumentDate = p.DocumentDate,
         DownPayment = p.DownPayment,
         Id = p.Id,
+        CopyFromId = p.CopyFromId,
         SysCcyId = p.SysCcyId,
         LocalCcyId = p.LocalCcyId,
         WarehouseId = p.WarehouseId,

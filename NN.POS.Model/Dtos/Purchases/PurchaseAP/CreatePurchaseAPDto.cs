@@ -1,26 +1,19 @@
 ﻿using NN.POS.Model.Enums;
 
 namespace NN.POS.Model.Dtos.Purchases.PurchaseAP;
-public class PurchaseAPDto : IBaseDto
+public class CreatePurchaseAPDto : IBaseDto
 {
-    public int Id { get; set; }
-    public int CopyFromId { get; set; }
     public int SupplyId { get; set; }
-    public string? SupplyName { get; set; }
+    public int CopyFromId { get; set; }
     public int BranchId { get; set; }
-    public string? BranchName { get; set; }
     public int PurCcyId { get; set; }
-    public string? PurCcyName { get; set; }
     public int SysCcyId { get; set; }
-    public string? SysCcyName { get; set; }
     public int WarehouseId { get; set; }
-    public string? WarehouseName { get; set; }
     public int UserId { get; set; }
-    public string? UserName { get; set; }
     public string InvoiceNo { get; set; } = string.Empty;
-    public DateTime PostingDate { get; set; }
-    public DateTime DocumentDate { get; set; }
-    public DateTime DueDate { get; set; }
+    public DateTime? PostingDate { get; set; }
+    public DateTime? DocumentDate { get; set; }
+    public DateTime? DueDate { get; set; }
     public decimal SubTotal { get; set; }
     public decimal SubTotalSys { get; set; }
     public decimal DiscountValue { get; set; }
@@ -37,8 +30,7 @@ public class PurchaseAPDto : IBaseDto
     public PurchaseStatus Status { get; set; }
     public decimal LocalSetRate { get; set; }
     public int LocalCcyId { get; set; }
-    public string? LocalCcyName { get; set; }
+    public PurchaseType Type { get; set; }
 
-    public List<PurchaseAPDetailDto> PurchaseAPDetails { get; set; } = [];
-    public DateTime CreatedAt { get; set; }
+    public List<CreatePurchaseAPDetailDto> PurchaseAPDetails { get; set; } = [];
 }
