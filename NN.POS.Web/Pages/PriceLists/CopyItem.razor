@@ -19,7 +19,7 @@
                           ReadOnly="true"
                           Label="Price List Copy From" />
         </MudItem>
-        
+
         <MudItem lg="2" sm="12" xs="12">
             <MudButton Variant="Variant.Filled"
                        Color="Color.Primary"
@@ -29,7 +29,7 @@
             </MudButton>
         </MudItem>
     </MudGrid>
-    
+
     @if (!string.IsNullOrEmpty(_apiErrorMessages))
     {
         <MudChip Variant="Variant.Outlined" Color="Color.Error">
@@ -46,7 +46,7 @@
             <MudTh>Currency</MudTh>
             <MudTh>
                 Select <MudIconButton Icon="@(_selectedAll ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)"
-                                         Color="@(_selectedAll ? Color.Primary : Color.Error)"
+                                      Color="@(_selectedAll ? Color.Primary : Color.Error)"
                                       OnClick="@AddOrRemoveAllItems" />
             </MudTh>
         </HeaderContent>
@@ -107,17 +107,17 @@
         var path = $"{Setting.PrefixEndpoint}priceList/detail";
 
         var jsonPayload = JsonConvert.SerializeObject(_priceListDetails.Where(i => i.Selected).Select(i => new CreatePriceListDetailDto
-        {
-            CcyId = i.CcyId,
-            Cost = i.Cost,
-            DiscountType = i.DiscountType,
-            DiscountValue = i.DiscountValue,
-            ItemId = i.ItemId,
-            Price = i.Price,
-            PriceListId = PriceListId,
-            PromotionId = i.PromotionId,
-            UomId = i.UomId
-        }));
+            {
+                CcyId = i.CcyId,
+                Cost = i.Cost,
+                DiscountType = i.DiscountType,
+                DiscountValue = i.DiscountValue,
+                ItemId = i.ItemId,
+                Price = i.Price,
+                PriceListId = PriceListId,
+                PromotionId = i.PromotionId,
+                UomId = i.UomId
+            }));
         var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
 
         var response = await httpClient.PostAsync(path, requestContent);
