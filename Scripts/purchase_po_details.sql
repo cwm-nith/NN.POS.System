@@ -1,4 +1,4 @@
-USE [NN.POS.System]GO
+USE [NN.POS.System]
 GO
 
 /****** Object:  Table [dbo].[purchase_po_details]    Script Date: 12/12/2023 22:22:59 ******/
