@@ -453,7 +453,7 @@
 
             var loadingDialog = await Dialog.ShowAsync<LoadingDialog>("", parameters, options);
 
-            _purModel.PurchasePODetails = _items.Select(i => new CreatePurchaseAPDetailDto
+            _purModel.PurchasePODetails = _items.Select(i => new CreatePurchasePODetailDto
                 {
                     DiscountType = i.DiscountType,
                     DiscountValue = i.DiscountValue,
