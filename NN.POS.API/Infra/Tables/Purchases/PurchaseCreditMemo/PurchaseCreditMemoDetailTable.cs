@@ -7,7 +7,7 @@ namespace NN.POS.API.Infra.Tables.Purchases.PurchaseCreditMemo;
 public class PurchaseCreditMemoDetailTable : BaseTable
 {
     [Column("purchase_credit_memo_id")]
-    public int PurchaseAPId { get; set; }
+    public int PurchaseCreditMemoId { get; set; }
 
     [Column("item_id")]
     public int ItemId { get; set; }

@@ -94,5 +94,5 @@ public class PurchaseCreditMemoTable : BaseTable
     [Column("local_ccy_id")]
     public int LocalCcyId { get; set; }
 
-    public List<PurchaseCreditMemoDetailTable> PurchaseAPDetails { get; set; } = [];
+    public List<PurchaseCreditMemoDetailTable> PurchaseCreditMemoDetails { get; set; } = [];
 }

@@ -70,6 +70,7 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
             .PurchasePOTableConfig()
             .InventoryAuditTableConfig()
             .PurchaseAPTableConfig()
-            .OutGoingPaymentTableConfig();
+            .OutGoingPaymentTableConfig()
+            .PurchaseCreditMemoTableConfig();
     }
 }
