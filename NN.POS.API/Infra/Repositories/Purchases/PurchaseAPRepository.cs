@@ -41,15 +41,16 @@ public class PurchaseAPRepository(
     {
         var context = writeDbRepository.Context;
         PurchaseAPTable? purOrderTb = new();
-
-        await using var t = await context.Database.BeginTransactionAsync(cancellationToken);
-
-        if (purchaseType != PurchaseType.PurchasePO)
+        var strategy = context.Database.CreateExecutionStrategy();
+        await strategy.Execute(async () =>
         {
-            var strategy = context.Database.CreateExecutionStrategy();
-            await strategy.Execute(async () =>
+            await using var t = await context.Database.BeginTransactionAsync(cancellationToken);
+
+            if (purchaseType != PurchaseType.PurchasePO)
             {
-                if(purchaseType == PurchaseType.PurchaseAP)
+
+
+                if (purchaseType == PurchaseType.PurchaseAP)
                 {
                     var localCcy = await currencyRepository.GetLocalCurrencyAsync(cancellationToken);
                     var sysCcy = await currencyRepository.GetBaseCurrencyAsync(cancellationToken);
@@ -58,7 +59,7 @@ public class PurchaseAPRepository(
                     body.LocalSetRate = localCcy.ExchangeRate?.SetRate ?? 0;
 
                     body.SysCcyId = sysCcy.Id;
-                }                
+                }
 
                 foreach (var pd in body.PurchaseAPDetails)
                 {
@@ -100,7 +101,7 @@ public class PurchaseAPRepository(
                         }
 
                         await itemRepo.UpdateAsync(item, cancellationToken);
-                        if(warehouse is not null) await whsRepo.UpdateAsync(warehouse, cancellationToken);
+                        if (warehouse is not null) await whsRepo.UpdateAsync(warehouse, cancellationToken);
 
                         wsd = new WarehouseDetailDto
                         {
@@ -207,60 +208,61 @@ public class PurchaseAPRepository(
                 }
 
                 purOrderTb = await writeDbRepository.AddAsync(body.ToTable(), cancellationToken);
-                
-            });
-        }
-        else
-        {
-            purOrderTb = await writeDbRepository.AddAsync(body.ToTable(), cancellationToken);
-        }
 
-        var outgoingPayment = new OutGoingPaymentSupplierDto
-        {
-            AppliedAmount = body.AppliedAmount,
-            BalanceDue = body.BalanceDue,
-            BranchId = body.BranchId,
-            Cash = body.BalanceDue,
-            CcyId = body.PurCcyId,
-            CreatedAt = DateTime.UtcNow,
-            Date = body.DueDate,
-            DiscountType = body.DiscountType,
-            DiscountValue = 0,
-            DocumentType = DocumentInvoicingType.PurchaseAP,
-            ExchangeRate = body.PurRate,
-            Id = 0,
-            InvoiceNo = body.InvoiceNo,
-            LocalCcyId = body.LocalCcyId,
-            LocalSetRate = body.LocalSetRate,
-            OverdueDays = (DateTime.UtcNow - body.DueDate).TotalDays.ToDecimal(),
-            PostingDate = body.PostingDate,
-            Status = body.Status,
-            SupplierId = body.SupplyId,
-            SysCcyId = body.SysCcyId,
-            Total = body.SubTotal,
-            TotalPayment = body.SubTotal - (body.DiscountType == DiscountType.Flat ? body.DiscountValue : body.SubTotal * body.DiscountValue / 100),
-            WarehouseId = body.WarehouseId
-        };
 
-        await outGoingPaymentSupplierRepo.CreateAsync(outgoingPayment, cancellationToken);
-
-        if(purOrderTb is not null)
-        {
-            var prefix = await documentInvoicePrefixingRepository.GetAsync(DocumentInvoicingType.PurchaseAP, cancellationToken);
-
-            await documentInvoicingRepository.CreateAsync(new DocumentInvoicingDto
+            }
+            else
             {
-                CreatedAt = DateTime.UtcNow,
-                DocId = purOrderTb.Id,
-                Id = 0,
-                DocInvoicing = purOrderTb.InvoiceNo,
-                InvoiceCount = 0,
-                PreFix = prefix.Prefix,
-                Type = DocumentInvoicingType.PurchaseAP
-            }, cancellationToken);
-        }
+                purOrderTb = await writeDbRepository.AddAsync(body.ToTable(), cancellationToken);
+            }
 
-        await t.CommitAsync(cancellationToken);
+            var outgoingPayment = new OutGoingPaymentSupplierDto
+            {
+                AppliedAmount = body.AppliedAmount,
+                BalanceDue = body.BalanceDue,
+                BranchId = body.BranchId,
+                Cash = body.BalanceDue,
+                CcyId = body.PurCcyId,
+                CreatedAt = DateTime.UtcNow,
+                Date = body.DueDate,
+                DiscountType = body.DiscountType,
+                DiscountValue = 0,
+                DocumentType = DocumentInvoicingType.PurchaseAP,
+                ExchangeRate = body.PurRate,
+                Id = 0,
+                InvoiceNo = body.InvoiceNo,
+                LocalCcyId = body.LocalCcyId,
+                LocalSetRate = body.LocalSetRate,
+                OverdueDays = (DateTime.UtcNow - body.DueDate).TotalDays.ToDecimal(),
+                PostingDate = body.PostingDate,
+                Status = body.Status,
+                SupplierId = body.SupplyId,
+                SysCcyId = body.SysCcyId,
+                Total = body.SubTotal,
+                TotalPayment = body.SubTotal - (body.DiscountType == DiscountType.Flat ? body.DiscountValue : body.SubTotal * body.DiscountValue / 100),
+                WarehouseId = body.WarehouseId
+            };
+
+            await outGoingPaymentSupplierRepo.CreateAsync(outgoingPayment, cancellationToken);
+
+            if (purOrderTb is not null)
+            {
+                var prefix = await documentInvoicePrefixingRepository.GetAsync(DocumentInvoicingType.PurchaseAP, cancellationToken);
+
+                await documentInvoicingRepository.CreateAsync(new DocumentInvoicingDto
+                {
+                    CreatedAt = DateTime.UtcNow,
+                    DocId = purOrderTb.Id,
+                    Id = 0,
+                    DocInvoicing = purOrderTb.InvoiceNo,
+                    InvoiceCount = 0,
+                    PreFix = prefix.Prefix,
+                    Type = DocumentInvoicingType.PurchaseAP
+                }, cancellationToken);
+            }
+
+            await t.CommitAsync(cancellationToken);
+        });
     }
 
     public async Task<PurchaseAPDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
