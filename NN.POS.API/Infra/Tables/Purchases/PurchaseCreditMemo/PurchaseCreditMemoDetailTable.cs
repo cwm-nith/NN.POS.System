@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Dtos.Purchases.PurchaseCreditMemo;
+using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NN.POS.API.Infra.Tables.Purchases.PurchaseCreditMemo;
@@ -40,4 +41,41 @@ public class PurchaseCreditMemoDetailTable : BaseTable
     public bool IsDeleted { get; set; }
 
     public PurchaseCreditMemoTable? PurchaseCreditMemo { get; set; }
+}
+
+public static class PurchaseCreditMemoDetailExtensions
+{
+    public static PurchaseCreditMemoDetailTable ToTable(this PurchaseCreditMemoDetailDto p) => new()
+    {
+        PurchaseCreditMemoId = p.PurchaseCreditMemoId,
+         CreatedAt = p.CreatedAt,
+         DiscountType = p.DiscountType,
+         DiscountValue = p.DiscountValue,
+         Id = p.Id,
+         IsDeleted = p.IsDeleted,
+         ItemId = p.ItemId,
+         LocalCcyId = p.LocalCcyId,
+         PurchasePrice = p.PurchasePrice,
+         Qty = p.Qty,
+         Total = p.Total,
+         TotalSys = p.TotalSys,
+         UomId = p.UomId
+    };
+
+    public static PurchaseCreditMemoDetailDto ToDto(this PurchaseCreditMemoDetailTable p) => new()
+    {
+        PurchaseCreditMemoId = p.PurchaseCreditMemoId,
+        CreatedAt = p.CreatedAt,
+        DiscountType = p.DiscountType,
+        DiscountValue = p.DiscountValue,
+        Id = p.Id,
+        IsDeleted = p.IsDeleted,
+        ItemId = p.ItemId,
+        LocalCcyId = p.LocalCcyId,
+        PurchasePrice = p.PurchasePrice,
+        Qty = p.Qty,
+        Total = p.Total,
+        TotalSys = p.TotalSys,
+        UomId = p.UomId
+    };
 }

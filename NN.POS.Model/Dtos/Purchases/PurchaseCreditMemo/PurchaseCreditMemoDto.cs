@@ -1,5 +1,4 @@
-﻿using NN.POS.Model.Dtos.Purchases.PurchaseAP;
-using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Enums;
 
 namespace NN.POS.Model.Dtos.Purchases.PurchaseCreditMemo;
 public class PurchaseCreditMemoDto : IBaseDto

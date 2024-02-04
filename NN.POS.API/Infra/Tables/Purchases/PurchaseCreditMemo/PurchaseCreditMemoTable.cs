@@ -1,4 +1,5 @@
-﻿using NN.POS.Model.Enums;
+﻿using NN.POS.Model.Dtos.Purchases.PurchaseCreditMemo;
+using NN.POS.Model.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -95,4 +96,92 @@ public class PurchaseCreditMemoTable : BaseTable
     public int LocalCcyId { get; set; }
 
     public List<PurchaseCreditMemoDetailTable> PurchaseCreditMemoDetails { get; set; } = [];
+}
+
+public static class PurchaseCreditMemoExtensions
+{
+    public static PurchaseCreditMemoTable ToTable(this PurchaseCreditMemoDto p) => new()
+    {
+        AppliedAmount = p.AppliedAmount,
+        BalanceDueSys = p.BalanceDueSys,
+        BalanceDue = p.BalanceDue,
+        BaseOn = p.BaseOn,
+        BaseOnId = p.BaseOnId,
+        BranchId = p.BranchId,
+        CopyFromId = p.CopyFromId,
+        CreatedAt = p.CreatedAt,
+        DiscountType = p.DiscountType,
+        DiscountValue = p.DiscountValue,
+        DocumentDate = p.DocumentDate,
+        DownPayment = p.DownPayment,
+        DueDate = p.DueDate,
+        Id = p.Id,
+        InvoiceNo = p.InvoiceNo,
+        LocalCcyId = p.LocalCcyId,
+        LocalSetRate = p.LocalSetRate,
+        PostingDate = p.PostingDate,
+        PurCcyId = p.PurCcyId,
+        PurchaseCreditMemoDetails = p.PurchaseCreditMemoDetails.Select(i => i.ToTable()).ToList(),
+        PurRate = p.PurRate,
+        Remark = p.Remark,
+        ReturnAmount = p.ReturnAmount,
+        Status = p.Status,
+        SubTotal = p.SubTotal,
+        SubTotalSys = p.SubTotalSys,
+        SupplyId = p.SupplyId,
+        SysCcyId = p.SysCcyId,
+        TaxRate = p.TaxRate,
+        TaxValue = p.TaxValue,
+        UserId = p.UserId,
+        WarehouseId = p.WarehouseId,
+    };
+
+    public static PurchaseCreditMemoDto ToDto(this PurchaseCreditMemoTable p, string? branchName = null,
+        string? sysCcyName = null,
+        string? localCcyName = null,
+        string? wsName = null,
+        string? purCcyName = null,
+        string? supplyName = null,
+        string? userName = null) => new()
+        {
+            AppliedAmount = p.AppliedAmount,
+            BalanceDue = p.BalanceDue,
+            BalanceDueSys = p.BalanceDueSys,
+            BranchId = p.BranchId,
+            BranchName = branchName,
+            CreatedAt = p.CreatedAt,
+            DiscountType = p.DiscountType,
+            DiscountValue = p.DiscountValue,
+            DocumentDate = p.DocumentDate,
+            DownPayment = p.DownPayment,
+            DueDate = p.DueDate,
+            Id = p.Id,
+            CopyFromId = p.CopyFromId,
+            InvoiceNo = p.InvoiceNo,
+            LocalCcyId = p.LocalCcyId,
+            LocalCcyName = localCcyName,
+            LocalSetRate = p.LocalSetRate,
+            PostingDate = p.PostingDate,
+            PurCcyId = p.PurCcyId,
+            PurCcyName = purCcyName,
+            PurchaseCreditMemoDetails = p.PurchaseCreditMemoDetails.Select(i => i.ToDto()).ToList(),
+            PurRate = p.PurRate,
+            Remark = p.Remark,
+            ReturnAmount = p.ReturnAmount,
+            Status = p.Status,
+            SubTotal = p.SubTotal,
+            SubTotalSys = p.SubTotalSys,
+            SupplyId = p.SupplyId,
+            SupplyName = supplyName,
+            SysCcyId = p.SysCcyId,
+            SysCcyName = sysCcyName,
+            TaxRate = p.TaxRate,
+            TaxValue = p.TaxValue,
+            UserId = p.UserId,
+            UserName = userName,
+            WarehouseId = p.WarehouseId,
+            WarehouseName = wsName,
+            BaseOn = p.BaseOn,
+            BaseOnId = p.BaseOnId
+        };
 }
