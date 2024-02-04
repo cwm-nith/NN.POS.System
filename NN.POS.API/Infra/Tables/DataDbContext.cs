@@ -11,6 +11,7 @@ using NN.POS.API.Infra.Tables.OutGoingPayments;
 using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseAP;
+using NN.POS.API.Infra.Tables.Purchases.PurchaseCreditMemo;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
 using NN.POS.API.Infra.Tables.Purchases.PurchasePO;
 using NN.POS.API.Infra.Tables.Roles;
@@ -53,6 +54,8 @@ public class DataDbContext(DbContextOptions<DataDbContext> options) : DbContext(
     public DbSet<PurchaseAPDetailTable>? PurchaseAPDetail { get; set; }
     public DbSet<PurchaseAPTable>? PurchaseAP { get; set; }
     public DbSet<OutGoingPaymentSupplierTable>? OutGoingPaymentSuppliers { get; set; }
+    public DbSet<PurchaseCreditMemoDetailTable>? PurchaseCreditMemoDetails { get; set; }
+    public DbSet<PurchaseCreditMemoTable>? PurchaseCreditMemos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
