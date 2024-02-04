@@ -1,13 +1,13 @@
 ﻿@using NN.POS.Web.Extensions
 @using NN.POS.Web.Constants
 <MudNavMenu>
-    
+
     <MudNavGroup Title="Settings" Expanded="@(NavbarStateService.Value is RouteName.Settings)">
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Company))"
                     Href="@RouteName.Company">Company</MudNavLink>
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Branch))"
                     Href="@RouteName.Branch">Branch</MudNavLink>
-        
+
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Warehouse))"
                     Href="@RouteName.Warehouse">Warehouse</MudNavLink>
 
@@ -15,10 +15,10 @@
                     Href="@RouteName.Currency">Currency</MudNavLink>
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.ExchangeRate))"
                     Href="@RouteName.ExchangeRate">Exchange Rate</MudNavLink>
-        
+
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.PaymentType))"
                     Href="@RouteName.PaymentType">Payment Type</MudNavLink>
-        
+
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.Tax))"
                     Href="@RouteName.Tax">Tax</MudNavLink>
     </MudNavGroup>
@@ -58,7 +58,7 @@
                         Href="@RouteName.UomGroup">Uom Group</MudNavLink>
         </MudNavGroup>
     </MudNavGroup>
-    
+
     <MudNavGroup Title="Purchases" Expanded="@(NavbarStateService.Value == RouteName.Purchases)">
 
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.PurchasesOrder))"
@@ -66,6 +66,9 @@
 
         <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.PurchasesPO))"
                     Href="@RouteName.PurchasesPO">Purchase PO</MudNavLink>
+
+        <MudNavLink ActiveClass="@(GetActiveClass(NavbarStateService.ActiveValue == RouteName.PurchasesAP))"
+                    Href="@RouteName.PurchasesAP">Purchase A/P</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 
@@ -74,7 +77,7 @@
 
     protected override void OnInitialized()
     {
-        
+
         NavigationManager.LocationChanged += (_, _) => StateHasChanged();
         base.OnInitialized();
     }

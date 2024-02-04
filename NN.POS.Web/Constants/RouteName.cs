@@ -76,4 +76,6 @@ public static class RouteName
 
     public const string PurchasesPO = $"{Purchases}/purchase-po";
 
+    public const string PurchasesAP = $"{Purchases}/purchase-ap";
+
 }

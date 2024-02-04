@@ -3,20 +3,21 @@
 @using NN.POS.Model.Dtos.DocumentInvoicings
 @using NN.POS.Model.Dtos.ItemMasters
 @using NN.POS.Model.Dtos.Purchases
-@using NN.POS.Model.Dtos.Purchases.PurchasePO
+@using NN.POS.Model.Dtos.Purchases.PurchaseAP
 @using NN.POS.Model.Dtos.Warehouses
 @using NN.POS.Model.Enums
 @using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Models
-@using NN.POS.Web.Validations.Purchases.PurchasePO
-@attribute [Route(RouteName.PurchasesPO)]
+@using NN.POS.Web.Validations.Purchases.PurchaseAP
+@attribute [Route(RouteName.PurchasesAP)]
 
 @implements IDisposable
+
 
 <MudContainer Class="mb-5">
     <MudForm Model="_purModel" Validation="_purValidator.ValidateValue" @ref="_form">
         <MudContainer>
-            <MudText Typo="Typo.h6" Class="pb-4">Purchase PO</MudText>
+            <MudText Typo="Typo.h6" Class="pb-4">Purchase A/P</MudText>
 
             <MudGrid Justify="Justify.SpaceBetween">
                 <MudItem lg="4" sm="4" xs="12">
@@ -154,7 +155,7 @@
                       HorizontalScrollbar="true">
 
                 <ToolBarContent>
-                    <MudText Typo="Typo.h6">Purchase PO Detail</MudText>
+                    <MudText Typo="Typo.h6">Purchase A/P Detail</MudText>
                 </ToolBarContent>
                 <HeaderContent>
                     <MudTh>Code</MudTh>
@@ -336,16 +337,17 @@
 
 
 @code {
-    private readonly CreatePurchasePODto _purModel = new()
+    private readonly CreatePurchaseAPDto _purModel = new()
         {
             Status = PurchaseStatus.Open,
             DueDate = DateTime.UtcNow,
             DocumentDate = DateTime.UtcNow,
             PostingDate = DateTime.UtcNow,
-            DiscountType = DiscountType.Percentage
+            DiscountType = DiscountType.Percentage,
+            Type = PurchaseType.PurchaseAP
         };
 
-    private readonly CreatePurchasePOValidation _purValidator = new();
+    private readonly CreatePurchaseAPValidation _purValidator = new();
 
     private List<PurchaseItemDto> _items = [];
 
@@ -381,10 +383,10 @@
     protected override void OnInitialized()
     {
         NavbarStateService.SetExpend(RouteName.Purchases);
-        NavbarStateService.SetActive(RouteName.PurchasesPO);
+        NavbarStateService.SetActive(RouteName.PurchasesAP);
         NavbarStateService.SetBreadcrumbItems([
             new BreadcrumbItem("Purchases", null, true),
-            new BreadcrumbItem("Purchase PO", null, true)
+            new BreadcrumbItem("Purchase A/P", null, true)
         ]);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
@@ -409,7 +411,7 @@
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var response = await httpClient.GetAsync($"{Setting.PrefixEndpoint}DocumentInvoicing/get_next_invoice?type={(int)DocumentInvoicingType.PurchasePO}");
+        var response = await httpClient.GetAsync($"{Setting.PrefixEndpoint}DocumentInvoicing/get_next_invoice?type={(int)DocumentInvoicingType.PurchaseAP}");
 
         if (response.IsSuccessStatusCode)
         {
@@ -438,7 +440,7 @@
 
     private async Task CreatePurchaseOrder()
     {
-        if(_items.Count == 0)
+        if (_items.Count == 0)
         {
             _apiErrorMessages = "Please select some items";
             return;
@@ -450,10 +452,9 @@
             var parameters = new DialogParameters<LoadingDialog>();
 
             var options = new DialogOptions { FullScreen = true, ClassBackground = "dialog-bg-blur" };
+            var loading = await Dialog.ShowAsync<LoadingDialog>("", parameters, options);
 
-            var loadingDialog = await Dialog.ShowAsync<LoadingDialog>("", parameters, options);
-
-            _purModel.PurchasePODetails = _items.Select(i => new CreatePurchasePODetailDto
+            _purModel.PurchaseAPDetails = _items.Select(i => new CreatePurchaseAPDetailDto
                 {
                     DiscountType = i.DiscountType,
                     DiscountValue = i.DiscountValue,
@@ -472,11 +473,11 @@
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchasePO", requestContent);
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchaseAP", requestContent);
 
-            if (!response.IsSuccessStatusCode && loadingDialog is not null)
+            if (!response.IsSuccessStatusCode && loading is not null)
             {
-                Dialog.Close((DialogReference)loadingDialog);
+                Dialog.Close((DialogReference)loading);
             }
 
             _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,

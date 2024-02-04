@@ -13,7 +13,7 @@ public class CreatePurchaseAPCommandHandler(IPurchaseAPRepository repository) : 
         if (r.Type == PurchaseType.PurchaseAP)
         {
             var status = r.Status;
-            if (r.SubTotal > (r.AppliedAmount + (r.DiscountType == DiscountType.Flat ? r.DiscountValue : r.SubTotal * r.DiscountValue / 100)))
+            if (r.SubTotal <= (r.AppliedAmount + (r.DiscountType == DiscountType.Flat ? r.DiscountValue : r.SubTotal * r.DiscountValue / 100)))
             {
                 status = PurchaseStatus.Close;
             }

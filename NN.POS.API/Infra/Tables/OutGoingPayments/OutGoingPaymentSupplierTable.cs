@@ -8,8 +8,8 @@ namespace NN.POS.API.Infra.Tables.OutGoingPayments;
 [Table("out_going_payment_suppliers")]
 public class OutGoingPaymentSupplierTable : BaseTable
 {
-    [Column("supplier_id")]
-    public int SupplierId { get; set; }
+    [Column("supply_id")]
+    public int SupplyId { get; set; }
 
     [Column("branch_id")]
     public int BranchId { get; set; }
@@ -94,7 +94,7 @@ public static class OutGoingPaymentSupplierExtensions
         OverdueDays = o.OverdueDays,
         PostingDate = o.PostingDate,
         Status = o.Status,
-        SupplierId = o.SupplierId,
+        SupplierId = o.SupplyId,
         SysCcyId = o.SysCcyId,
         Total = o.Total,
         TotalPayment = o.TotalPayment,
@@ -121,7 +121,7 @@ public static class OutGoingPaymentSupplierExtensions
         OverdueDays = o.OverdueDays,
         PostingDate = o.PostingDate,
         Status = o.Status,
-        SupplierId = o.SupplierId,
+        SupplyId = o.SupplierId,
         SysCcyId = o.SysCcyId,
         Total = o.Total,
         TotalPayment = o.TotalPayment,
