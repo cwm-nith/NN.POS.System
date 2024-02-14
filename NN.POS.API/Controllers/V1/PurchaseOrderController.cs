@@ -28,7 +28,7 @@ public class PurchaseOrderController(IMediator mediator) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] CreatePurchaseOrderDto body)
+    public async Task<ActionResult> Create([FromBody] CreatePurchaseCreditMemoDto body)
     {
         await mediator.Send(new CreatePurchaseOrderCommand(UserId, body));
         return Ok();

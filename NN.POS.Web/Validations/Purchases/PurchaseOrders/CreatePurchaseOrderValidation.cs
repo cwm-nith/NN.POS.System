@@ -3,7 +3,7 @@ using NN.POS.Model.Dtos.Purchases.PurchaseOrders;
 
 namespace NN.POS.Web.Validations.Purchases.PurchaseOrders;
 
-public class CreatePurchaseOrderValidation : BaseValidator<CreatePurchaseOrderDto>
+public class CreatePurchaseOrderValidation : BaseValidator<CreatePurchaseCreditMemoDto>
 {
     public CreatePurchaseOrderValidation()
     {

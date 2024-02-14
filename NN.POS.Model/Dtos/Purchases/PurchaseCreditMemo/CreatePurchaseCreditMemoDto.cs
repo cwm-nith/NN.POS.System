@@ -1,17 +1,22 @@
 ﻿using NN.POS.Model.Enums;
 
-namespace NN.POS.Model.Dtos.Purchases.PurchaseOrders;
+namespace NN.POS.Model.Dtos.Purchases.PurchaseCreditMemo;
 
 public class CreatePurchaseCreditMemoDto : IBaseDto
 {
     public int SupplyId { get; set; }
+    public int CopyFromId { get; set; }
     public int BranchId { get; set; }
     public int PurCcyId { get; set; }
+    public int SysCcyId { get; set; }
     public int WarehouseId { get; set; }
+    public int UserId { get; set; }
+    public int BaseOnId { get; set; }
+    public string BaseOn { get; set; } = string.Empty;
     public string InvoiceNo { get; set; } = string.Empty;
     public DateTime? PostingDate { get; set; }
     public DateTime? DocumentDate { get; set; }
-    public DateTime? DeliveryDate { get; set; }
+    public DateTime? DueDate { get; set; }
     public decimal SubTotal { get; set; }
     public decimal SubTotalSys { get; set; }
     public decimal DiscountValue { get; set; }
@@ -26,5 +31,9 @@ public class CreatePurchaseCreditMemoDto : IBaseDto
     public decimal AppliedAmount { get; set; }
     public decimal ReturnAmount { get; set; }
     public PurchaseStatus Status { get; set; }
-    public List<CreatePurchaseCreditMemoDetailDto> PurchaseOrderDetails { get; set; } = [];
+    public decimal LocalSetRate { get; set; }
+    public int LocalCcyId { get; set; }
+    public PurchaseType Type { get; set; }
+
+    public List<CreatePurchaseCreditMemoDetailDto> PurchaseCreditMemoDetails { get; set; } = [];
 }

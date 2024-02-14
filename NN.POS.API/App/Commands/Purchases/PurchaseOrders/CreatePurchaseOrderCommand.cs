@@ -3,8 +3,8 @@ using NN.POS.Model.Dtos.Purchases.PurchaseOrders;
 
 namespace NN.POS.API.App.Commands.Purchases.PurchaseOrders;
 
-public class CreatePurchaseOrderCommand(int userId, CreatePurchaseOrderDto dto) : IRequest
+public class CreatePurchaseOrderCommand(int userId, CreatePurchaseCreditMemoDto dto) : IRequest
 {
     public int UserId => userId;
-    public CreatePurchaseOrderDto Dto => dto;
+    public CreatePurchaseCreditMemoDto Dto => dto;
 }

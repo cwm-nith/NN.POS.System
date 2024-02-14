@@ -265,7 +265,7 @@ public class PurchaseAPRepository(
         });
     }
 
-    public async Task<PurchaseAPDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<PurchaseAPDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var context = readDbRepository.Context;
         var data = await (from po in context.PurchaseAP!
@@ -286,7 +286,7 @@ public class PurchaseAPRepository(
                               ws.Name,
                               purCcy.Name,
                               user.Name)).FirstOrDefaultAsync(cancellationToken);
-        return data ?? throw new PurchaseAPNotFoundException(id);
+        return data;
     }
 
     public async Task<PurchaseAPDto> GetByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default)

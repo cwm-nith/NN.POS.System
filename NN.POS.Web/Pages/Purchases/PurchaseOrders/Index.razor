@@ -331,7 +331,7 @@
 
 @code {
 
-    private readonly CreatePurchaseOrderDto _purModel = new()
+    private readonly CreatePurchaseCreditMemoDto _purModel = new()
         {
             Status = PurchaseStatus.Open,
             DeliveryDate = DateTime.UtcNow,
@@ -436,7 +436,7 @@
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            _purModel.PurchaseOrderDetails = _items.Select(i => new CreatePurchaseOrderDetailDto
+            _purModel.PurchaseOrderDetails = _items.Select(i => new CreatePurchaseCreditMemoDetailDto
                 {
                     DiscountType = i.DiscountType,
                     DiscountValue = i.DiscountValue,

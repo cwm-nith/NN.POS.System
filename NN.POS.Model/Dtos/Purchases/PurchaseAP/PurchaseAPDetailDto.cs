@@ -13,6 +13,7 @@ public class PurchaseAPDetailDto : IBaseDto
     public string? LocalCcyName { get; set; }
     public decimal DiscountValue { get; set; }
     public DiscountType DiscountType { get; set; }
+    public decimal OpenQty { get; set; }
     public decimal Qty { get; set; }
     public decimal PurchasePrice { get; set; }
     public decimal Total { get; set; }

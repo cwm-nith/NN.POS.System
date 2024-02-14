@@ -28,6 +28,9 @@ public class PurchaseAPDetailTable : BaseTable
     [Column("qty", TypeName = "decimal(18,3)")]
     public decimal Qty { get; set; }
 
+    [Column("open_qty", TypeName = "decimal(18,3)")]
+    public decimal OpenQty { get; set; }
+
     [Column("purchase_price", TypeName = "decimal(18,3)")]
     public decimal PurchasePrice { get; set; }
 
@@ -60,6 +63,7 @@ public static class PurchaseAPDetailExtensions
             PurchaseAPId = p.PurchaseAPId,
             PurchasePrice = p.PurchasePrice,
             Qty = p.Qty,
+            OpenQty = p.OpenQty,
             Total = p.Total,
             TotalSys = p.TotalSys,
             UomId = p.UomId,
@@ -78,6 +82,7 @@ public static class PurchaseAPDetailExtensions
         PurchaseAPId = p.PurchaseAPId,
         PurchasePrice = p.PurchasePrice,
         Qty = p.Qty,
+        OpenQty = p.OpenQty,
         Total = p.Total,
         TotalSys = p.TotalSys,
         UomId = p.UomId

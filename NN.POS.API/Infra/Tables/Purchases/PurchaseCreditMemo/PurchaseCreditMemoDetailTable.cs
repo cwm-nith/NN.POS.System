@@ -10,6 +10,9 @@ public class PurchaseCreditMemoDetailTable : BaseTable
     [Column("purchase_credit_memo_id")]
     public int PurchaseCreditMemoId { get; set; }
 
+    [Column("copy_from_id")]
+    public int CopyFromId { get; set; }
+
     [Column("item_id")]
     public int ItemId { get; set; }
 
@@ -59,7 +62,8 @@ public static class PurchaseCreditMemoDetailExtensions
          Qty = p.Qty,
          Total = p.Total,
          TotalSys = p.TotalSys,
-         UomId = p.UomId
+         UomId = p.UomId,
+         CopyFromId = p.CopyFromId
     };
 
     public static PurchaseCreditMemoDetailDto ToDto(this PurchaseCreditMemoDetailTable p) => new()
@@ -76,6 +80,7 @@ public static class PurchaseCreditMemoDetailExtensions
         Qty = p.Qty,
         Total = p.Total,
         TotalSys = p.TotalSys,
-        UomId = p.UomId
+        UomId = p.UomId,
+        CopyFromId = p.CopyFromId
     };
 }

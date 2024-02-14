@@ -5,6 +5,7 @@ public class PurchaseCreditMemoDetailDto : IBaseDto
 {
     public int Id { get; set; }
     public int PurchaseCreditMemoId { get; set; }
+    public int CopyFromId { get; set; }
     public int ItemId { get; set; }
     public string? ItemName { get; set; }
     public int UomId { get; set; }
