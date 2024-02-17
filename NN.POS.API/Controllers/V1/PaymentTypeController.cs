@@ -5,7 +5,7 @@ using NN.POS.API.App.Queries.PaymentTypes;
 using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.PaymentTypes;
 
-namespace NN.POS.API.Controllers;
+namespace NN.POS.API.Controllers.V1;
 
 public class PaymentTypeController(IMediator mediator) : BaseApiController
 {
