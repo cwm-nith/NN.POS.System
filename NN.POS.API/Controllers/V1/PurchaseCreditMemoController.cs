@@ -25,4 +25,10 @@ public class PurchaseCreditMemoController(IMediator mediator) : BaseApiControlle
     {
         return Ok(await mediator.Send(q));
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<PurchaseCreditMemoDto>> GetById(int id)
+    {
+        return Ok(await mediator.Send(new GetPurchaseCreditMemoByIdOrInvoiceQuery(id, true)));
+    }
 }
