@@ -2,7 +2,7 @@
 
 namespace NN.POS.Model.Dtos.Purchases.PurchaseOrders;
 
-public class CreatePurchaseCreditMemoDto : IBaseDto
+public class CreatePurchaseOrderDto : IBaseDto
 {
     public int SupplyId { get; set; }
     public int BranchId { get; set; }
