@@ -1,4 +1,6 @@
-﻿using NN.POS.Model.Dtos.UnitOfMeasures;
+﻿using NN.POS.API.Infra.Tables.UnitOfMeasures;
+using NN.POS.Model.Dtos.UnitOfMeasures;
+using System.Linq.Expressions;
 
 namespace NN.POS.API.Core.IRepositories.UnitOfMeasures;
 
@@ -9,5 +11,7 @@ public interface IUnitOfMeasureDefineRepository : IRepository
     Task UpdateAsync(CreateUomDefineDto dto, int id, CancellationToken cancellationToken = default);
     Task DeleteAsync(int id, CancellationToken cancellationToken = default);
     Task<UnitOfMeasureDefineDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<UnitOfMeasureDefineDto?> GetAsync(
+        Expression<Func<UnitOfMeasureDefineTable, bool>> expression, CancellationToken cancellationToken = default);
     Task<IEnumerable<UnitOfMeasureDefineDto>> GetUomDefineByGroupIdAsync(int groupId);
 }

@@ -2,6 +2,7 @@
 using NN.POS.API.Infra.Tables;
 using NN.POS.API.Infra.Tables.Warehouses;
 using NN.POS.Model.Dtos.Warehouses;
+using System.Linq.Expressions;
 
 namespace NN.POS.API.Infra.Repositories.Warehouses;
 
@@ -25,5 +26,12 @@ public class WarehouseDetailRepository(
     {
         var wd = await readDbRepository.WhereAsync(i => i.WarehouseId == whId, cancellationToken);
         return wd.Select(i => i.ToDto()).ToList();
+    }
+
+    public async Task<WarehouseDetailDto?> GetAsync(
+        Expression<Func<WarehouseDetailTable, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        var wd = await readDbRepository.FirstOrDefaultAsync(expression, cancellationToken);
+        return wd?.ToDto();
     }
 }
