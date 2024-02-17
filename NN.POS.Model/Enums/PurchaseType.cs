@@ -3,5 +3,6 @@ public enum PurchaseType
 {
     PurchaseOrder = 1,
     PurchasePO = 2,
-    PurchaseAP = 3
+    PurchaseAP = 3,
+    PurchaseCreditMemo = 4
 }

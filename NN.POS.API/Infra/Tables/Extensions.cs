@@ -10,6 +10,7 @@ using NN.POS.API.Infra.Tables.OutGoingPayments;
 using NN.POS.API.Infra.Tables.PaymentTypes;
 using NN.POS.API.Infra.Tables.PriceLists;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseAP;
+using NN.POS.API.Infra.Tables.Purchases.PurchaseCreditMemo;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseOrders;
 using NN.POS.API.Infra.Tables.Purchases.PurchasePO;
 using NN.POS.API.Infra.Tables.Roles;
@@ -54,6 +55,8 @@ public static class Extensions
         services.AddPostgresRepository<PurchaseAPTable>();
         services.AddPostgresRepository<PurchaseAPDetailTable>();
         services.AddPostgresRepository<OutGoingPaymentSupplierTable>();
+        services.AddPostgresRepository<PurchaseCreditMemoDetailTable>();
+        services.AddPostgresRepository<PurchaseCreditMemoTable>();
 
         services.AddScoped(typeof(DataDbContext),
           sp =>

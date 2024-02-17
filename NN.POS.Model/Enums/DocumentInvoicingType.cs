@@ -11,5 +11,8 @@ public enum DocumentInvoicingType
     PurchasePO = 2,
 
     [EnumMember(Value = "PURCHASE_AP")]
-    PurchaseAP = 3
+    PurchaseAP = 3,
+
+    [EnumMember(Value = "PURCHASE_CREDIT_MEMO")]
+    PurchaseCreditMemo = 4
 }

@@ -3,6 +3,7 @@ using NN.POS.API.Core.IRepositories.UnitOfMeasures;
 using NN.POS.API.Infra.Tables;
 using NN.POS.API.Infra.Tables.UnitOfMeasures;
 using NN.POS.Model.Dtos.UnitOfMeasures;
+using System.Linq.Expressions;
 
 namespace NN.POS.API.Infra.Repositories.UnitOfMeasures;
 
@@ -53,28 +54,42 @@ public class UnitOfMeasureDefineRepository(
         return dto;
     }
 
+    public async Task<UnitOfMeasureDefineDto?> GetAsync(
+        Expression<Func<UnitOfMeasureDefineTable, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        var context = readDbRepository.Context;
+        var uom = await readDbRepository.FirstOrDefaultAsync(expression, cancellationToken);
+        if (uom == null) return default!;
+        var baseUom = context.UnitOfMeasures!.FirstOrDefault(i => !i.IsDeleted && i.Id == uom.BaseUomId);
+        var altUom = context.UnitOfMeasures!.FirstOrDefault(i => !i.IsDeleted && i.Id == uom.AltUomId);
+        var dto = uom.ToDto();
+        dto.BaseUomName = baseUom?.Name;
+        dto.AltUomName = altUom?.Name;
+        return dto;
+    }
+
     public async Task<IEnumerable<UnitOfMeasureDefineDto>> GetUomDefineByGroupIdAsync(int groupId)
     {
         var context = readDbRepository.Context;
 
         var list = (from du in context.UnitOfMeasureDefines!.Where(i => !i.IsDeleted)
-                join uomGroup in context.UnitOfMeasureGroups!.Where(i => !i.IsDeleted && i.Id == groupId) on du.GroupUomId equals uomGroup.Id
-                join buo in context.UnitOfMeasures!.Where(i => !i.IsDeleted) on du.BaseUomId equals buo.Id
-                join auo in context.UnitOfMeasures!.Where(i => !i.IsDeleted) on du.AltUomId equals auo.Id
-                select new UnitOfMeasureDefineDto
-                {
-                    AltQty = du.AltQty,
-                    BaseQty = du.BaseQty,
-                    Factor = du.Factor,
-                    AltUomId = du.AltUomId,
-                    AltUomName = auo.Name,
-                    BaseUomId = buo.Id,
-                    BaseUomName = buo.Name,
-                    CreatedAt = du.CreatedAt,
-                    GroupUomId = uomGroup.Id,
-                    Id = du.Id,
-                    IsDeleted = du.IsDeleted
-                }
+                    join uomGroup in context.UnitOfMeasureGroups!.Where(i => !i.IsDeleted && i.Id == groupId) on du.GroupUomId equals uomGroup.Id
+                    join buo in context.UnitOfMeasures!.Where(i => !i.IsDeleted) on du.BaseUomId equals buo.Id
+                    join auo in context.UnitOfMeasures!.Where(i => !i.IsDeleted) on du.AltUomId equals auo.Id
+                    select new UnitOfMeasureDefineDto
+                    {
+                        AltQty = du.AltQty,
+                        BaseQty = du.BaseQty,
+                        Factor = du.Factor,
+                        AltUomId = du.AltUomId,
+                        AltUomName = auo.Name,
+                        BaseUomId = buo.Id,
+                        BaseUomName = buo.Name,
+                        CreatedAt = du.CreatedAt,
+                        GroupUomId = uomGroup.Id,
+                        Id = du.Id,
+                        IsDeleted = du.IsDeleted
+                    }
             );
         return await Task.FromResult(list);
     }

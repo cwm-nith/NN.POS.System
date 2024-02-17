@@ -9,6 +9,6 @@ public interface IPurchaseAPRepository : IRepository
 {
     Task CreateAsync(PurchaseAPDto body, PurchaseType purchaseType, CancellationToken cancellationToken = default);
     Task<PurchaseAPDto> GetByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default);
-    Task<PurchaseAPDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<PurchaseAPDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<PagedResult<PurchaseAPDto>> GetPageAsync(GetPurchaseAPPageQuery query, CancellationToken cancellationToken = default);
 }

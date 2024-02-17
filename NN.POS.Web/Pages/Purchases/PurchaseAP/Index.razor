@@ -542,9 +542,10 @@
 
                     _ccyName = $"{ccy.Name} {ccy.Symbol}";
                     _purModel.PurCcyId = ccy.Id;
+                    _purModel.PurRate = ccy.ExchangeRate?.SetRate ?? 0;
 
-                    _exchangeRate = $"{ccy.ExchangeRate?.SetRate:N1} {ccy?.Name}({ccy?.Symbol}) = {_baseCurrency?.ExchangeRate?.Rate:N2} {_baseCurrency?.Name}({_baseCurrency?.Symbol})";
-                    _displayCcy = $"{ccy?.Name}({ccy?.Symbol})";
+                    _exchangeRate = $"{ccy.ExchangeRate?.SetRate:N1} {ccy.Name}({ccy.Symbol}) = {_baseCurrency?.ExchangeRate?.Rate:N2} {_baseCurrency?.Name}({_baseCurrency?.Symbol})";
+                    _displayCcy = $"{ccy.Name}({ccy.Symbol})";
                 })
             }
         };

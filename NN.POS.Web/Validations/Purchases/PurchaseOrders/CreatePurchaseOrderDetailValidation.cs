@@ -4,7 +4,7 @@ using NN.POS.Web.RegexExpression;
 
 namespace NN.POS.Web.Validations.Purchases.PurchaseOrders;
 
-public partial class CreatePurchaseOrderDetailValidation : BaseValidator<CreatePurchaseOrderDetailDto>
+public partial class CreatePurchaseOrderDetailValidation : BaseValidator<CreatePurchaseCreditMemoDetailDto>
 {
     public CreatePurchaseOrderDetailValidation()
     {
