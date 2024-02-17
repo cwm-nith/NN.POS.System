@@ -130,7 +130,7 @@ public class CreatePurchaseCreditMemoCommandHandler(
             };
         }
 
-        await repository.CreateAsync(dto, request.PurchaseType, cancellationToken);
+        await repository.CreateAsync(dto, r.Type, cancellationToken);
         return null!;
     }
 }
