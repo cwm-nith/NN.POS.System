@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NN.POS.API.App.Commands.Purchases.PurchaseCreditMemo;
+using NN.POS.API.App.Queries.Purchases;
+using NN.POS.Common.Pagination;
 using NN.POS.Model.Dtos.Purchases.PurchaseCreditMemo;
 
 namespace NN.POS.API.Controllers.V1;
@@ -16,5 +18,11 @@ public class PurchaseCreditMemoController(IMediator mediator) : BaseApiControlle
             return Ok();
         }
         return BadRequest(data);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<PurchaseCreditMemoDto>>> GetPage([FromQuery] GetPurchaseCreditMemoPageQuery q)
+    {
+        return Ok(await mediator.Send(q));
     }
 }
