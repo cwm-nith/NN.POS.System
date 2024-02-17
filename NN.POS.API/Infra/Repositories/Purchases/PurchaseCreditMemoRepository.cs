@@ -25,6 +25,9 @@ using NN.POS.API.Infra.Tables.Inventories;
 using NN.POS.API.Infra.Tables.OutGoingPayments;
 using NN.POS.API.Infra.Tables.DocumentInvoicing;
 using NN.POS.API.Infra.Tables.Purchases.PurchaseAP;
+using NN.POS.API.Core.Exceptions.Purchases;
+using NN.POS.Common.Pagination;
+using NN.POS.API.App.Queries.Purchases;
 
 namespace NN.POS.API.Infra.Repositories.Purchases;
 
@@ -33,12 +36,10 @@ public class PurchaseCreditMemoRepository(
     IReadDbRepository<PurchaseCreditMemoTable> readDbRepository,
     IWriteDbRepository<PurchaseCreditMemoTable> writeDbRepository,
     ICurrencyRepository currencyRepository,
-    IWarehouseDetailRepository wsdRepo,
     IWarehouseSummaryRepository whsRepo,
     IInventoryAuditRepository invAuditRepo,
     IPriceListDetailRepository priceListRepo,
     IItemMasterDataRepository itemRepo,
-    IDocumentInvoicingRepository documentInvoicingRepository,
     IDocumentInvoicePrefixingRepository documentInvoicePrefixingRepository,
     IOutGoingPaymentSupplierRepository outGoingPaymentSupplierRepo,
     IPurchaseAPRepository purchaseAPRepo) : IPurchaseCreditMemoRepository
@@ -200,77 +201,77 @@ public class PurchaseCreditMemoRepository(
         });
     }
 
-    //public async Task<PurchaseCreditMemoDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
-    //{
-    //    var context = readDbRepository.Context;
-    //    var data = await (from po in context.PurchaseCreditMemos!
-    //            .Include(i => i.PurchaseCreditMemoDetails)
-    //            .Where(i => i.Status == PurchaseStatus.Open && i.Id == id)
-    //                      join br in context.Branches! on po.BranchId equals br.Id
-    //                      join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
-    //                      join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
-    //                      join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
-    //                      join ws in context.Warehouses! on po.WarehouseId equals ws.Id
-    //                      join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
-    //                      join user in context.Users! on po.UserId equals user.Id
-    //                      select po.ToDto(
-    //                          br.Name,
-    //                          supplier.ToString(),
-    //                          sysCcy.Name,
-    //                          localCcy.Name,
-    //                          ws.Name,
-    //                          purCcy.Name,
-    //                          user.Name)).FirstOrDefaultAsync(cancellationToken);
-    //    return data ?? throw new PurchaseCreditMemoNotFoundException(id);
-    //}
+    public async Task<PurchaseCreditMemoDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var context = readDbRepository.Context;
+        var data = await (from po in context.PurchaseCreditMemos!
+                .Include(i => i.PurchaseCreditMemoDetails)
+                .Where(i => i.Status == PurchaseStatus.Open && i.Id == id)
+                          join br in context.Branches! on po.BranchId equals br.Id
+                          join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
+                          join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
+                          join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
+                          join ws in context.Warehouses! on po.WarehouseId equals ws.Id
+                          join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
+                          join user in context.Users! on po.UserId equals user.Id
+                          select po.ToDto(
+                              br.Name,
+                              supplier.ToString(),
+                              sysCcy.Name,
+                              localCcy.Name,
+                              ws.Name,
+                              purCcy.Name,
+                              user.Name)).FirstOrDefaultAsync(cancellationToken);
+        return data ?? throw new PurchaseCreditMemoNotFoundException(id);
+    }
 
-    //public async Task<PurchaseCreditMemoDto> GetByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default)
-    //{
-    //    var context = readDbRepository.Context;
-    //    var data = await (from po in context.PurchaseCreditMemo!
-    //            .Include(i => i.PurchaseCreditMemoDetails)
-    //            .Where(i => i.Status == PurchaseStatus.Open && i.InvoiceNo == invoiceNo)
-    //                      join br in context.Branches! on po.BranchId equals br.Id
-    //                      join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
-    //                      join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
-    //                      join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
-    //                      join ws in context.Warehouses! on po.WarehouseId equals ws.Id
-    //                      join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
-    //                      join user in context.Users! on po.UserId equals user.Id
-    //                      select po.ToDto(
-    //                          br.Name, supplier.ToString(), sysCcy.Name, localCcy.Name,
-    //                          ws.Name, purCcy.Name, user.Name)).FirstOrDefaultAsync(cancellationToken);
-    //    return data ?? throw new PurchaseCreditMemoNotFoundException(invoiceNo);
-    //}
+    public async Task<PurchaseCreditMemoDto> GetByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default)
+    {
+        var context = readDbRepository.Context;
+        var data = await (from po in context.PurchaseCreditMemos!
+                .Include(i => i.PurchaseCreditMemoDetails)
+                .Where(i => i.Status == PurchaseStatus.Open && i.InvoiceNo == invoiceNo)
+                          join br in context.Branches! on po.BranchId equals br.Id
+                          join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
+                          join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
+                          join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
+                          join ws in context.Warehouses! on po.WarehouseId equals ws.Id
+                          join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
+                          join user in context.Users! on po.UserId equals user.Id
+                          select po.ToDto(
+                              br.Name, supplier.ToString(), sysCcy.Name, localCcy.Name,
+                              ws.Name, purCcy.Name, user.Name)).FirstOrDefaultAsync(cancellationToken);
+        return data ?? throw new PurchaseCreditMemoNotFoundException(invoiceNo);
+    }
 
-    //public async Task<PagedResult<PurchaseCreditMemoDto>> GetPageAsync(GetPurchaseCreditMemoPageQuery query, CancellationToken cancellationToken = default)
-    //{
-    //    var context = readDbRepository.Context;
+    public async Task<PagedResult<PurchaseCreditMemoDto>> GetPageAsync(GetPurchaseCreditMemoPageQuery query, CancellationToken cancellationToken = default)
+    {
+        var context = readDbRepository.Context;
 
-    //    var data = await (from po in context.PurchaseCreditMemo!
-    //    .Include(i => i.PurchaseCreditMemoDetails)
-    //            .Where(i =>
-    //        (query.PurchaseStatus == null || i.Status == query.PurchaseStatus) &&
-    //        (query.FromDate == null || query.ToDate == null || i.PostingDate >= query.FromDate && i.PostingDate <= query.ToDate) &&
-    //        EF.Functions.Like(i.InvoiceNo, $"%{query.Search}%"))
+        var data = await (from po in context.PurchaseCreditMemos!
+        .Include(i => i.PurchaseCreditMemoDetails)
+                .Where(i =>
+            (query.PurchaseStatus == null || i.Status == query.PurchaseStatus) &&
+            (query.FromDate == null || query.ToDate == null || i.PostingDate >= query.FromDate && i.PostingDate <= query.ToDate) &&
+            EF.Functions.Like(i.InvoiceNo, $"%{query.Search}%"))
 
-    //                      join br in context.Branches! on po.BranchId equals br.Id
-    //                      join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
-    //                      join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
-    //                      join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
-    //                      join ws in context.Warehouses! on po.WarehouseId equals ws.Id
-    //                      join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
-    //                      join user in context.Users! on po.UserId equals user.Id
-    //                      select po.ToDto(
-    //                          br.Name,
-    //                          supplier.ToString(),
-    //                          sysCcy.Name,
-    //                          localCcy.Name,
-    //                          ws.Name,
-    //                          purCcy.Name,
-    //                          user.Name)).PaginateAsync(query, cancellationToken);
-    //    return data;
-    //}
+                          join br in context.Branches! on po.BranchId equals br.Id
+                          join supplier in context.BusinessPartners! on po.SupplyId equals supplier.Id
+                          join sysCcy in context.Currencies! on po.SysCcyId equals sysCcy.Id
+                          join localCcy in context.Currencies! on po.LocalCcyId equals localCcy.Id
+                          join ws in context.Warehouses! on po.WarehouseId equals ws.Id
+                          join purCcy in context.Currencies! on po.PurCcyId equals purCcy.Id
+                          join user in context.Users! on po.UserId equals user.Id
+                          select po.ToDto(
+                              br.Name,
+                              supplier.ToString(),
+                              sysCcy.Name,
+                              localCcy.Name,
+                              ws.Name,
+                              purCcy.Name,
+                              user.Name)).PaginateAsync(query, cancellationToken);
+        return data;
+    }
 
     private async Task<PurchaseCreditMemoTable> CreatePurchaseCreditMemoInternalAsync(
         DataDbContext context,
