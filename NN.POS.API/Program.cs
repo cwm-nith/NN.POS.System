@@ -8,8 +8,18 @@ var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentCla
 
 try
 {
+    logger.Info("Application is starting");
+
     var builder = WebApplication.CreateBuilder(args);
 
+    var env = builder.Environment.EnvironmentName;
+
+    logger.Info("Application is on {Env} Environment", env);
+
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Host.UseNLog(new NLogAspNetCoreOptions() { RemoveLoggerFactoryFilter = true });
+    
     builder.Services.AddControllers().AddNewtonsoftJson();
 
     builder.Services.AddInfrastructure(builder.Configuration)
