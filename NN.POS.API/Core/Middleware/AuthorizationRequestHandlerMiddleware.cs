@@ -5,11 +5,11 @@ public sealed class AuthorizationRequestHandlerMiddleware(RequestDelegate next, 
 {
     public Task Invoke(HttpContext context)
     {
-        var path = context.Request.Path.Value;
-        if (path != null && path.Contains("api/webhook/"))
-        {
-            return next(context);
-        }
+        //var path = context.Request.Path.Value;
+        //if (path != null && path.Contains("api/webhook/"))
+        //{
+        //    return next(context);
+        //}
 
         var clientHeader = context.Request.Headers["X-Client"].ToString();
         AppDataSetting.ClientHeaders.TryGetValue(clientHeader, out var client);

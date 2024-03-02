@@ -1,32 +1,49 @@
+using NLog;
+using NLog.Web;
 using NN.POS.API.App;
 using NN.POS.API.Core;
 using NN.POS.API.Infra;
 
-var builder = WebApplication.CreateBuilder(args);
+var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddInfrastructure(builder.Configuration)
-    .AddRegistrationMediatR();
-var app = builder.Build();
+    builder.Services.AddControllers().AddNewtonsoftJson();
 
-var settings = app.Services.GetService<AppSettings>();
-if(settings?.Swagger.IsEnable ?? false) app.UseCustomSwagger();
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+    builder.Services.AddInfrastructure(builder.Configuration)
+        .AddRegistrationMediatR();
+    var app = builder.Build();
 
-app.UseCors(i => 
-        i.AllowCredentials()
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .SetIsOriginAllowed(_ => true)
-    );
+    var settings = app.Services.GetService<AppSettings>();
+    if (settings?.Swagger.IsEnable ?? false) app.UseCustomSwagger();
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
 
-app.UseAuthentication();
-app.UseAuthorization();
+    app.UseCors(i =>
+            i.AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .SetIsOriginAllowed(_ => true)
+        );
 
-app.UseInfrastructure();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-app.MapControllers();
+    app.UseInfrastructure();
 
-app.Run();
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception exception)
+{
+    // NLog: catch setup errors
+    logger.Error(exception, "Stopped program because of exception");
+    throw;
+}
+finally
+{
+    LogManager.Shutdown();
+}

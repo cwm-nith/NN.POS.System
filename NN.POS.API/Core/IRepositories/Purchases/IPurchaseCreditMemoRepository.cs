@@ -5,7 +5,7 @@ using NN.POS.Model.Enums;
 
 namespace NN.POS.API.Core.IRepositories.Purchases;
 
-public interface IPurchaseCreditMemoRepository
+public interface IPurchaseCreditMemoRepository : IRepository
 {
     Task CreateAsync(PurchaseCreditMemoDto body, PurchaseType purchaseType, CancellationToken cancellationToken = default);
     Task<PurchaseCreditMemoDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);

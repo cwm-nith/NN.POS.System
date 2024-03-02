@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using NN.POS.Model.Dtos.Purchases.PurchaseAP;
 using NN.POS.Model.Dtos.Purchases.PurchaseCreditMemo;
 
 namespace NN.POS.API.App.Queries.Purchases;
