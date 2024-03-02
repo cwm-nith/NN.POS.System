@@ -26,5 +26,5 @@ public class CreatePurchaseOrderDto : IBaseDto
     public decimal AppliedAmount { get; set; }
     public decimal ReturnAmount { get; set; }
     public PurchaseStatus Status { get; set; }
-    public List<CreatePurchaseCreditMemoDetailDto> PurchaseOrderDetails { get; set; } = [];
+    public List<CreatePurchaseOrderDetailDto> PurchaseOrderDetails { get; set; } = [];
 }

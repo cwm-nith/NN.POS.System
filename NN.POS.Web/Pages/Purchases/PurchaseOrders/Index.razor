@@ -436,7 +436,7 @@
         await _form?.Validate()!;
         if (_form.IsValid)
         {
-            _purModel.PurchaseOrderDetails = _items.Select(i => new CreatePurchaseCreditMemoDetailDto
+            _purModel.PurchaseOrderDetails = _items.Select(i => new CreatePurchaseOrderDetailDto
                 {
                     DiscountType = i.DiscountType,
                     DiscountValue = i.DiscountValue,

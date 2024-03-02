@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[user_roles](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[user_id] [int] NOT NULL,
 	[role_id] [int] NOT NULL,
+	[created_at] [datetime] NOT NULL,
  CONSTRAINT [PK_user_roles] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
