@@ -631,7 +631,7 @@
 
     private void DeleteItem(PurchaseItemDto item)
     {
-        _items = _items.Where(i => i.Id != item.Id && i.UomId != item.UomId).ToList();
+        _items.Remove(item);
     }
 
     private void CalculationCost(PurchaseItemDto item, decimal value)
