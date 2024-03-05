@@ -8,3 +8,9 @@ public class ItemOutOfStockOrNotYetPurchaseDto
     public decimal OrderQty { get; set; }
     public decimal Committed { get; set; }
 }
+
+public class ItemOutOfStockOrNotYetPurchaseMasterDto
+{
+    public List<ItemOutOfStockOrNotYetPurchaseDto> ItemReturns { get; set; } = [];
+    public List<ItemOutOfStockOrNotYetPurchaseDto> ItemNotYetPurchaseReturns { get; set; } = [];
+}

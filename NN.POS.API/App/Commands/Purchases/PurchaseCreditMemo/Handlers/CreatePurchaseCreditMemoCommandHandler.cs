@@ -14,9 +14,9 @@ public class CreatePurchaseCreditMemoCommandHandler(
     IUnitOfMeasureDefineRepository udRepo,
     IWarehouseSummaryRepository wsRepo,
     IWarehouseDetailRepository wdRepo,
-    IUnitOfMeasureRepository uomRepo) : IRequestHandler<CreatePurchaseCreditMemoCommand, object>
+    IUnitOfMeasureRepository uomRepo) : IRequestHandler<CreatePurchaseCreditMemoCommand, ItemOutOfStockOrNotYetPurchaseMasterDto?>
 {
-    public async Task<object> Handle(CreatePurchaseCreditMemoCommand request, CancellationToken cancellationToken)
+    public async Task<ItemOutOfStockOrNotYetPurchaseMasterDto?> Handle(CreatePurchaseCreditMemoCommand request, CancellationToken cancellationToken)
     {
         var r = request.Dto;
         var dto = new PurchaseCreditMemoDto
@@ -76,7 +76,7 @@ public class CreatePurchaseCreditMemoCommandHandler(
         {
             var itemMaster = await itemRepo.GetByIdAsync(item.ItemId, cancellationToken);
             var gd = await udRepo.GetAsync(i => i.GroupUomId == itemMaster.UomGroupId && i.AltUomId == item.UomId, cancellationToken);
-            if(gd is not null)
+            if (gd is not null)
             {
                 var checkItem = itemReturns.Find(i => i.ItemId == item.ItemId);
                 if (checkItem == null)
@@ -123,14 +123,14 @@ public class CreatePurchaseCreditMemoCommandHandler(
 
         if (itemReturns.Count > 0)
         {
-            return new
+            return new ItemOutOfStockOrNotYetPurchaseMasterDto
             {
-                itemReturns,
-                itemNotYetPurchaseReturns
+                ItemReturns = itemReturns,
+                ItemNotYetPurchaseReturns = itemNotYetPurchaseReturns
             };
         }
 
         await repository.CreateAsync(dto, r.Type, cancellationToken);
-        return null!;
+        return null;
     }
 }
