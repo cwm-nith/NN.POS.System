@@ -499,23 +499,23 @@
                 var optionsItemOutOfStock = new DialogOptions { CloseButton = true };
 
                 Dialog.Show<ItemOutOfStockDialog>("Items Out Of Stock", parametersItemOutOfStock, optionsItemOutOfStock);
+                return;
             }
             else if (resItem?.ItemNotYetPurchaseReturns.Count > 0)
             {
                 Dialog.Close((DialogReference)loading!);
+                return;
             }
 
-            Console.WriteLine(resStr);
-
-            // _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
-            //     () =>
-            //     {
-            //         NavigationManager.NavigateTo(RouteName.Login);
-            //     },
-            //     () =>
-            //     {
-            //         NavigationManager.Refresh();
-            //     });
+            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
+                () =>
+                {
+                    NavigationManager.NavigateTo(RouteName.Login);
+                },
+                () =>
+                {
+                    NavigationManager.Refresh();
+                });
         }
     }
 
@@ -660,7 +660,7 @@
 
     private void DeleteItem(PurchaseItemDto item)
     {
-        _items = _items.Where(i => i.Id != item.Id && i.UomId != item.UomId).ToList();
+        _items.Remove(item);
     }
 
     private void CalculationCost(PurchaseItemDto item, decimal value)
