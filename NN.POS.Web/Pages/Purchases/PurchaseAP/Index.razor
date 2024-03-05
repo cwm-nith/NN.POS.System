@@ -386,7 +386,7 @@
         NavbarStateService.SetActive(RouteName.PurchasesAP);
         NavbarStateService.SetBreadcrumbItems([
             new BreadcrumbItem("Purchases", null, true),
-            new BreadcrumbItem("Purchase A/P", null, true)
+        new BreadcrumbItem("Purchase A/P", null, true)
         ]);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
@@ -405,6 +405,7 @@
             _barcodeSearch = "";
             _disableAutoFocusBarcodeSearch = true;
         }
+        await Task.CompletedTask;
     }
 
     private async Task GetNextInvoice()

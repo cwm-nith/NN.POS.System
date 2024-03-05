@@ -386,7 +386,7 @@
         NavbarStateService.SetActive(RouteName.PurchasesCreditMemo);
         NavbarStateService.SetBreadcrumbItems([
             new BreadcrumbItem("Purchases", null, true),
-            new BreadcrumbItem("Purchase Credit Memo", null, true)
+    new BreadcrumbItem("Purchase Credit Memo", null, true)
         ]);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
@@ -405,6 +405,7 @@
             _barcodeSearch = "";
             _disableAutoFocusBarcodeSearch = true;
         }
+        await Task.CompletedTask;
     }
 
     private async Task GetNextInvoice()
@@ -475,20 +476,24 @@
 
             var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchaseCreditMemo", requestContent);
 
+            var resStr = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine(resStr);
+
             if (!response.IsSuccessStatusCode && loading is not null)
             {
                 Dialog.Close((DialogReference)loading);
             }
 
-            _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
-                () =>
-                {
-                    NavigationManager.NavigateTo(RouteName.Login);
-                },
-                () =>
-                {
-                    NavigationManager.Refresh();
-                });
+            // _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
+            //     () =>
+            //     {
+            //         NavigationManager.NavigateTo(RouteName.Login);
+            //     },
+            //     () =>
+            //     {
+            //         NavigationManager.Refresh();
+            //     });
         }
     }
 
