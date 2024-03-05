@@ -172,33 +172,33 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Code">@context.Code</MudTd>
-                        <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
-                        <MudTd DataLabel="Name">@context.Name</MudTd>
-                        <MudTd DataLabel="Other">@context.OtherName</MudTd>
-                        <MudTd DataLabel="Qty">
-                            <MudTextField Value="context.Qty"
-                                          For="@(() => context.Qty)"
-                                          Immediate="true"
-                                          Variant="Variant.Outlined"
-                                          Margin="Margin.Dense"
-                                          Style="width: 120px"
-                                          ValueChanged="@((decimal e )=> CalculationQty(context, e))" />
-                        </MudTd>
-                        <MudTd DataLabel="Cost">
-                            <MudTextField Value="context.PurchasePrice"
-                                          Immediate="true"
-                                          Variant="Variant.Outlined"
-                                          Margin="Margin.Dense"
-                                          Style="width: 120px"
-                                          ValueChanged="@((decimal e )=> CalculationCost(context, e))" />
-                        </MudTd>
-                        <MudTd DataLabel="Discount Type">
-                            <MudSelect Value="context.DiscountType"
-                                       Variant="Variant.Outlined"
-                                       Margin="Margin.Dense"
-                                       Style="width: 120px"
-                                       ValueChanged="@((DiscountType v) => ChangeDiscountType(context, v))">
-                                @foreach (DiscountType option in Enum.GetValues(typeof(DiscountType)))
+                    <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Other">@context.OtherName</MudTd>
+                    <MudTd DataLabel="Qty">
+                        <MudTextField Value="context.Qty"
+                                      For="@(() => context.Qty)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Style="width: 120px"
+                                      ValueChanged="@((decimal e )=> CalculationQty(context, e))" />
+                    </MudTd>
+                    <MudTd DataLabel="Cost">
+                        <MudTextField Value="context.PurchasePrice"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Style="width: 120px"
+                                      ValueChanged="@((decimal e )=> CalculationCost(context, e))" />
+                    </MudTd>
+                    <MudTd DataLabel="Discount Type">
+                        <MudSelect Value="context.DiscountType"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   Style="width: 120px"
+                                   ValueChanged="@((DiscountType v) => ChangeDiscountType(context, v))">
+                            @foreach (DiscountType option in Enum.GetValues(typeof(DiscountType)))
                             {
                                 <MudSelectItem Value="option" />
                             }
@@ -213,11 +213,11 @@
                                       ValueChanged="@((decimal v) => CalculateDiscount(context, v))" />
                     </MudTd>
                     <MudTd DataLabel="Total">@context.Total.ToString("N3")</MudTd>
-                        <MudTd DataLabel="Uoms">
-                            <MudSelect @bind-Value="context.UomId"
-                                       Variant="Variant.Outlined"
-                                       Margin="Margin.Dense">
-                                @foreach (var option in context.Uoms)
+                    <MudTd DataLabel="Uoms">
+                        <MudSelect @bind-Value="context.UomId"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense">
+                            @foreach (var option in context.Uoms)
                             {
                                 <MudSelectItem Value="@option.AltUomId">@option.AltUomName</MudSelectItem>
                             }
@@ -476,14 +476,36 @@
 
             var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchaseCreditMemo", requestContent);
 
-            var resStr = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine(resStr);
 
             if (!response.IsSuccessStatusCode && loading is not null)
             {
                 Dialog.Close((DialogReference)loading);
             }
+
+            var resStr = await response.Content.ReadAsStringAsync();
+
+            var resItem = JsonConvert.DeserializeObject<ItemOutOfStockOrNotYetPurchaseMasterDto>(resStr);
+
+            if (resItem?.ItemReturns.Count > 0)
+            {
+                Dialog.Close((DialogReference)loading!);
+                var parametersItemOutOfStock = new DialogParameters<ItemOutOfStockDialog>
+                {
+                    {
+                        x => x.Items, resItem.ItemReturns
+                    }
+                };
+
+                var optionsItemOutOfStock = new DialogOptions { CloseButton = true };
+
+                Dialog.Show<ItemOutOfStockDialog>("Items Out Of Stock", parametersItemOutOfStock, optionsItemOutOfStock);
+            }
+            else if (resItem?.ItemNotYetPurchaseReturns.Count > 0)
+            {
+                Dialog.Close((DialogReference)loading!);
+            }
+
+            Console.WriteLine(resStr);
 
             // _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
             //     () =>
