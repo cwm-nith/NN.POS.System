@@ -504,6 +504,16 @@
             else if (resItem?.ItemNotYetPurchaseReturns.Count > 0)
             {
                 Dialog.Close((DialogReference)loading!);
+                var parametersItemOutOfStock = new DialogParameters<ItemOutOfStockDialog>
+                {
+                    {
+                        x => x.Items, resItem.ItemNotYetPurchaseReturns
+                    }
+                };
+
+                var optionsItemOutOfStock = new DialogOptions { CloseButton = true };
+
+                Dialog.Show<ItemOutOfStockDialog>("Items not yet purchase", parametersItemOutOfStock, optionsItemOutOfStock);
                 return;
             }
 
