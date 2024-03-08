@@ -1,9 +1,12 @@
-﻿@layout UnAuthLayout
-@page "/"
-@page "/login"
-@using NN.POS.Model.Dtos.Users
+﻿@using NN.POS.Model.Dtos.Users
 @using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Validations.Auth
+
+@layout UnAuthLayout
+
+@attribute [Route(RouteName.Home)]
+@attribute [Route(RouteName.Login)]
+
 
 <MudPaper Height="80vh" Width="90%" Class="m-0 p-0">
     <MudContainer MaxWidth="MaxWidth.Large">
