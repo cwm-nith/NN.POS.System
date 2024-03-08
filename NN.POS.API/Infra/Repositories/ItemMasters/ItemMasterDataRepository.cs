@@ -83,11 +83,18 @@ public class ItemMasterDataRepository(
 
     public async Task<PagedResult<ItemMasterDataDto>> GetPageAsync(GetPageItemMasterDataQuery q, CancellationToken cancellationToken = default)
     {
+        var typeFlag = false;
+        var types = q.Types();
+        if (types.Count == 1)
+        {
+            typeFlag = types[0] == ItemMasterDataType.None;
+        }
+
         var itemMaster = await readDbRepository.BrowseAsync(i => 
             !i.IsDeleted &&
             (string.IsNullOrWhiteSpace(q.Search) || EF.Functions.Like(i.Name, $"%{q.Search}%")) &&
             (q.Process == ItemMasterDataProcess.None || i.Process == q.Process) &&
-            (q.Type == ItemMasterDataType.None || i.Type == q.Type) &&
+            (types.Count == 0 || typeFlag || types.Contains(i.Type)) &&
             (q.IsPurchase == null || i.IsPurchase == q.IsPurchase) &&
             (q.IsSale == null || i.IsSale == q.IsSale) &&
             (q.WsId == null || i.WarehouseId == q.WsId), i => i.Name, q, cancellationToken);
