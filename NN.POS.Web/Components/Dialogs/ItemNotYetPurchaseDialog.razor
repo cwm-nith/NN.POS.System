@@ -1,0 +1,49 @@
+﻿@using NN.POS.Model.Dtos.Purchases
+
+@namespace NN.POS.Web.Components.Dialogs
+
+<MudDialog>
+    <DialogContent>
+        <MudTable Items="Items"
+                  Dense="true"
+                  Hover="true"
+                  Striped="true">
+
+            <HeaderContent>
+                <MudTh>Code</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Status</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Code">@context.Code</MudTd>
+                <MudTd DataLabel="Name">@context.ItemName</MudTd>
+                <MudTd DataLabel="Status" Class="text-danger">Item not yet purchase</MudTd>
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+            </LoadingContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(Cancel)">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public List<ItemOutOfStockOrNotYetPurchaseDto> Items { get; set; } = [];
+
+    private string _searchString = "";
+
+    private void Cancel() => MudDialog?.Cancel();
+}
