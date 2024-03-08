@@ -14,9 +14,9 @@ public class CreatePurchaseCreditMemoCommandHandler(
     IUnitOfMeasureDefineRepository udRepo,
     IWarehouseSummaryRepository wsRepo,
     IWarehouseDetailRepository wdRepo,
-    IUnitOfMeasureRepository uomRepo) : IRequestHandler<CreatePurchaseCreditMemoCommand, object>
+    IUnitOfMeasureRepository uomRepo) : IRequestHandler<CreatePurchaseCreditMemoCommand, ItemOutOfStockOrNotYetPurchaseMasterDto?>
 {
-    public async Task<object> Handle(CreatePurchaseCreditMemoCommand request, CancellationToken cancellationToken)
+    public async Task<ItemOutOfStockOrNotYetPurchaseMasterDto?> Handle(CreatePurchaseCreditMemoCommand request, CancellationToken cancellationToken)
     {
         var r = request.Dto;
         var dto = new PurchaseCreditMemoDto
@@ -76,27 +76,48 @@ public class CreatePurchaseCreditMemoCommandHandler(
         {
             var itemMaster = await itemRepo.GetByIdAsync(item.ItemId, cancellationToken);
             var gd = await udRepo.GetAsync(i => i.GroupUomId == itemMaster.UomGroupId && i.AltUomId == item.UomId, cancellationToken);
-            if(gd is not null)
+            if (gd is not null)
             {
                 var checkItem = itemReturns.Find(i => i.ItemId == item.ItemId);
                 if (checkItem == null)
                 {
                     var ws = await wsRepo.GetAsync(dto.WarehouseId, item.ItemId, cancellationToken);
-                    itemReturns.Add(new ItemOutOfStockOrNotYetPurchaseDto
+                    var inStock = (ws?.InStock ?? 0) - (ws?.CommittedStock ?? 0);
+                    var orderQty = item.Qty * gd.Factor;
+                    if (orderQty > inStock)
                     {
-                        Code = itemMaster.Code,
-                        ItemId = item.ItemId,
-                        ItemName = itemMaster.Name + ' ' + itemMaster.InventoryUoMName,
-                        InStock = (ws?.InStock ?? 0) - (ws?.CommittedStock ?? 0),
-                        OrderQty = item.Qty * gd.Factor,
-                        Committed = ws?.CommittedStock ?? 0
-                    });
+                        itemReturns.Add(new ItemOutOfStockOrNotYetPurchaseDto
+                        {
+                            Code = itemMaster.Code,
+                            ItemId = item.ItemId,
+                            ItemName = itemMaster.Name + ' ' + itemMaster.InventoryUoMName,
+                            InStock = inStock,
+                            OrderQty = orderQty,
+                            Committed = ws?.CommittedStock ?? 0
+                        });
+                    }
                 }
                 else
                 {
                     checkItem.OrderQty += item.Qty * gd.Factor;
                 }
+            }
+        }
 
+        if (itemReturns.Count > 0)
+        {
+            return new ItemOutOfStockOrNotYetPurchaseMasterDto
+            {
+                ItemReturns = itemReturns
+            };
+        }
+
+        foreach (var item in dto.PurchaseCreditMemoDetails)
+        {
+            var itemMaster = await itemRepo.GetByIdAsync(item.ItemId, cancellationToken);
+            var gd = await udRepo.GetAsync(i => i.GroupUomId == itemMaster.UomGroupId && i.AltUomId == item.UomId, cancellationToken);
+            if (gd != null)
+            {
                 var itemNotYetPurchase = await wdRepo.GetAsync(
                     w => w.ItemId == item.ItemId
                     && w.UomId == item.UomId
@@ -119,18 +140,15 @@ public class CreatePurchaseCreditMemoCommandHandler(
             }
         }
 
-        itemReturns = itemReturns.Where(i => i.OrderQty > i.InStock).ToList();
-
-        if (itemReturns.Count > 0)
+        if (itemNotYetPurchaseReturns.Count > 0)
         {
-            return new
+            return new ItemOutOfStockOrNotYetPurchaseMasterDto
             {
-                itemReturns,
-                itemNotYetPurchaseReturns
+                ItemNotYetPurchaseReturns = itemNotYetPurchaseReturns
             };
         }
 
         await repository.CreateAsync(dto, r.Type, cancellationToken);
-        return null!;
+        return null;
     }
 }

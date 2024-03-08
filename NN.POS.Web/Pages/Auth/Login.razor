@@ -2,6 +2,7 @@
 @page "/"
 @page "/login"
 @using NN.POS.Model.Dtos.Users
+@using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Validations.Auth
 
 <MudPaper Height="80vh" Width="90%" Class="m-0 p-0">
@@ -74,28 +75,31 @@
         await _form?.Validate()!;
         if (_form.IsValid)
         {
+            var parameters = new DialogParameters<LoadingDialog>();
+
+            var options = new DialogOptions { FullScreen = true, ClassBackground = "dialog-bg-blur" };
+            var loading = await Dialog.ShowAsync<LoadingDialog>("", parameters, options);
+
             var jsonPayload = JsonConvert.SerializeObject(_loginModel);
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
             var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}auth/login", requestContent);
 
+            Dialog.Close((DialogReference)loading);
+
             switch (response.StatusCode)
             {
                 case HttpStatusCode.BadRequest:
                 case HttpStatusCode.Unauthorized:
-                {
                     var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                     _apiErrorMessages = errors?["message"];
                     break;
-                }
                 case HttpStatusCode.OK:
-                {
                     var tokenResponse = await response.Content.ReadFromJsonAsync<UserDto>();
                     await LocalStorageService.SetItemAsync("jat", tokenResponse?.Token);
                     (AuthStateProvider as CustomAuthProvider)?.NotifyAuthState();
                     NavigationManager.NavigateTo(RouteName.Dashboard);
                     break;
-                }
                 default:
                     _apiErrorMessages = "Login Failed Please try after some time";
                     break;

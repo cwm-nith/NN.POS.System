@@ -3,20 +3,21 @@
 @using NN.POS.Model.Dtos.DocumentInvoicings
 @using NN.POS.Model.Dtos.ItemMasters
 @using NN.POS.Model.Dtos.Purchases
-@using NN.POS.Model.Dtos.Purchases.PurchasePO
+@using NN.POS.Model.Dtos.Purchases.PurchaseCreditMemo
 @using NN.POS.Model.Dtos.Warehouses
 @using NN.POS.Model.Enums
 @using NN.POS.Web.Components.Dialogs
 @using NN.POS.Web.Models
-@using NN.POS.Web.Validations.Purchases.PurchasePO
-@attribute [Route(RouteName.PurchasesPO)]
+@using NN.POS.Web.Validations.Purchases.PurchaseCreditMemo
+@attribute [Route(RouteName.PurchasesCreditMemo)]
 
 @implements IDisposable
+
 
 <MudContainer Class="mb-5">
     <MudForm Model="_purModel" Validation="_purValidator.ValidateValue" @ref="_form">
         <MudContainer>
-            <MudText Typo="Typo.h6" Class="pb-4">Purchase PO</MudText>
+            <MudText Typo="Typo.h6" Class="pb-4">Purchase Credit Memo</MudText>
 
             <MudGrid Justify="Justify.SpaceBetween">
                 <MudItem lg="4" sm="4" xs="12">
@@ -154,7 +155,7 @@
                       HorizontalScrollbar="true">
 
                 <ToolBarContent>
-                    <MudText Typo="Typo.h6">Purchase PO Detail</MudText>
+                    <MudText Typo="Typo.h6">Purchase Credit Memo Detail</MudText>
                 </ToolBarContent>
                 <HeaderContent>
                     <MudTh>Code</MudTh>
@@ -171,33 +172,33 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Code">@context.Code</MudTd>
-                        <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
-                        <MudTd DataLabel="Name">@context.Name</MudTd>
-                        <MudTd DataLabel="Other">@context.OtherName</MudTd>
-                        <MudTd DataLabel="Qty">
-                            <MudTextField Value="context.Qty"
-                                          For="@(() => context.Qty)"
-                                          Immediate="true"
-                                          Variant="Variant.Outlined"
-                                          Margin="Margin.Dense"
-                                          Style="width: 120px"
-                                          ValueChanged="@((decimal e )=> CalculationQty(context, e))" />
-                        </MudTd>
-                        <MudTd DataLabel="Cost">
-                            <MudTextField Value="context.PurchasePrice"
-                                          Immediate="true"
-                                          Variant="Variant.Outlined"
-                                          Margin="Margin.Dense"
-                                          Style="width: 120px"
-                                          ValueChanged="@((decimal e )=> CalculationCost(context, e))" />
-                        </MudTd>
-                        <MudTd DataLabel="Discount Type">
-                            <MudSelect Value="context.DiscountType"
-                                       Variant="Variant.Outlined"
-                                       Margin="Margin.Dense"
-                                       Style="width: 120px"
-                                       ValueChanged="@((DiscountType v) => ChangeDiscountType(context, v))">
-                                @foreach (DiscountType option in Enum.GetValues(typeof(DiscountType)))
+                    <MudTd DataLabel="Barcode">@context.Barcode</MudTd>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Other">@context.OtherName</MudTd>
+                    <MudTd DataLabel="Qty">
+                        <MudTextField Value="context.Qty"
+                                      For="@(() => context.Qty)"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Style="width: 120px"
+                                      ValueChanged="@((decimal e )=> CalculationQty(context, e))" />
+                    </MudTd>
+                    <MudTd DataLabel="Cost">
+                        <MudTextField Value="context.PurchasePrice"
+                                      Immediate="true"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Style="width: 120px"
+                                      ValueChanged="@((decimal e )=> CalculationCost(context, e))" />
+                    </MudTd>
+                    <MudTd DataLabel="Discount Type">
+                        <MudSelect Value="context.DiscountType"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   Style="width: 120px"
+                                   ValueChanged="@((DiscountType v) => ChangeDiscountType(context, v))">
+                            @foreach (DiscountType option in Enum.GetValues(typeof(DiscountType)))
                             {
                                 <MudSelectItem Value="option" />
                             }
@@ -212,11 +213,11 @@
                                       ValueChanged="@((decimal v) => CalculateDiscount(context, v))" />
                     </MudTd>
                     <MudTd DataLabel="Total">@context.Total.ToString("N3")</MudTd>
-                        <MudTd DataLabel="Uoms">
-                            <MudSelect @bind-Value="context.UomId"
-                                       Variant="Variant.Outlined"
-                                       Margin="Margin.Dense">
-                                @foreach (var option in context.Uoms)
+                    <MudTd DataLabel="Uoms">
+                        <MudSelect @bind-Value="context.UomId"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense">
+                            @foreach (var option in context.Uoms)
                             {
                                 <MudSelectItem Value="@option.AltUomId">@option.AltUomName</MudSelectItem>
                             }
@@ -336,16 +337,17 @@
 
 
 @code {
-    private readonly CreatePurchasePODto _purModel = new()
+    private readonly CreatePurchaseCreditMemoDto _purModel = new()
         {
             Status = PurchaseStatus.Open,
             DueDate = DateTime.UtcNow,
             DocumentDate = DateTime.UtcNow,
             PostingDate = DateTime.UtcNow,
-            DiscountType = DiscountType.Percentage
+            DiscountType = DiscountType.Percentage,
+            Type = PurchaseType.PurchaseCreditMemo
         };
 
-    private readonly CreatePurchasePOValidation _purValidator = new();
+    private readonly CreatePurchaseCreditMemoValidation _purValidator = new();
 
     private List<PurchaseItemDto> _items = [];
 
@@ -381,10 +383,10 @@
     protected override void OnInitialized()
     {
         NavbarStateService.SetExpend(RouteName.Purchases);
-        NavbarStateService.SetActive(RouteName.PurchasesPO);
+        NavbarStateService.SetActive(RouteName.PurchasesCreditMemo);
         NavbarStateService.SetBreadcrumbItems([
             new BreadcrumbItem("Purchases", null, true),
-            new BreadcrumbItem("Purchase PO", null, true)
+    new BreadcrumbItem("Purchase Credit Memo", null, true)
         ]);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
@@ -403,13 +405,14 @@
             _barcodeSearch = "";
             _disableAutoFocusBarcodeSearch = true;
         }
+        await Task.CompletedTask;
     }
 
     private async Task GetNextInvoice()
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var response = await httpClient.GetAsync($"{Setting.PrefixEndpoint}DocumentInvoicing/get_next_invoice?type={(int)DocumentInvoicingType.PurchasePO}");
+        var response = await httpClient.GetAsync($"{Setting.PrefixEndpoint}DocumentInvoicing/get_next_invoice?type={(int)DocumentInvoicingType.PurchaseCreditMemo}");
 
         if (response.IsSuccessStatusCode)
         {
@@ -438,7 +441,7 @@
 
     private async Task CreatePurchaseOrder()
     {
-        if(_items.Count == 0)
+        if (_items.Count == 0)
         {
             _apiErrorMessages = "Please select some items";
             return;
@@ -450,10 +453,9 @@
             var parameters = new DialogParameters<LoadingDialog>();
 
             var options = new DialogOptions { FullScreen = true, ClassBackground = "dialog-bg-blur" };
+            var loading = await Dialog.ShowAsync<LoadingDialog>("", parameters, options);
 
-            var loadingDialog = await Dialog.ShowAsync<LoadingDialog>("", parameters, options);
-
-            _purModel.PurchasePODetails = _items.Select(i => new CreatePurchasePODetailDto
+            _purModel.PurchaseCreditMemoDetails = _items.Select(i => new CreatePurchaseCreditMemoDetailDto
                 {
                     DiscountType = i.DiscountType,
                     DiscountValue = i.DiscountValue,
@@ -472,11 +474,47 @@
             var requestContent = new StringContent(jsonPayload, Encoding.UTF8, MediaTypeNames.Application.Json);
             var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchasePO", requestContent);
+            var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchaseCreditMemo", requestContent);
 
-            if (!response.IsSuccessStatusCode && loadingDialog is not null)
+
+            if (!response.IsSuccessStatusCode && loading is not null)
             {
-                Dialog.Close((DialogReference)loadingDialog);
+                Dialog.Close((DialogReference)loading);
+            }
+
+            var resStr = await response.Content.ReadAsStringAsync();
+
+            var resItem = JsonConvert.DeserializeObject<ItemOutOfStockOrNotYetPurchaseMasterDto>(resStr);
+
+            if (resItem?.ItemReturns.Count > 0)
+            {
+                Dialog.Close((DialogReference)loading!);
+                var parametersItemOutOfStock = new DialogParameters<ItemOutOfStockDialog>
+                {
+                    {
+                        x => x.Items, resItem.ItemReturns
+                    }
+                };
+
+                var optionsItemOutOfStock = new DialogOptions { CloseButton = true };
+
+                Dialog.Show<ItemOutOfStockDialog>("Items Out Of Stock", parametersItemOutOfStock, optionsItemOutOfStock);
+                return;
+            }
+            else if (resItem?.ItemNotYetPurchaseReturns.Count > 0)
+            {
+                Dialog.Close((DialogReference)loading!);
+                var parametersItemOutOfStock = new DialogParameters<ItemNotYetPurchaseDialog>
+                {
+                    {
+                        x => x.Items, resItem.ItemNotYetPurchaseReturns
+                    }
+                };
+
+                var optionsItemOutOfStock = new DialogOptions { CloseButton = true };
+
+                Dialog.Show<ItemNotYetPurchaseDialog>("Items not yet purchase", parametersItemOutOfStock, optionsItemOutOfStock);
+                return;
             }
 
             _apiErrorMessages = await ErrorApiHelper.GetErrorMessageResponse(response,
@@ -541,9 +579,10 @@
 
                     _ccyName = $"{ccy.Name} {ccy.Symbol}";
                     _purModel.PurCcyId = ccy.Id;
+                    _purModel.PurRate = ccy.ExchangeRate?.SetRate ?? 0;
 
-                    _exchangeRate = $"{ccy.ExchangeRate?.SetRate:N1} {ccy?.Name}({ccy?.Symbol}) = {_baseCurrency?.ExchangeRate?.Rate:N2} {_baseCurrency?.Name}({_baseCurrency?.Symbol})";
-                    _displayCcy = $"{ccy?.Name}({ccy?.Symbol})";
+                    _exchangeRate = $"{ccy.ExchangeRate?.SetRate:N1} {ccy.Name}({ccy.Symbol}) = {_baseCurrency?.ExchangeRate?.Rate:N2} {_baseCurrency?.Name}({_baseCurrency?.Symbol})";
+                    _displayCcy = $"{ccy.Name}({ccy.Symbol})";
                 })
             }
         };

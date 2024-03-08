@@ -386,7 +386,7 @@
         NavbarStateService.SetActive(RouteName.PurchasesAP);
         NavbarStateService.SetBreadcrumbItems([
             new BreadcrumbItem("Purchases", null, true),
-            new BreadcrumbItem("Purchase A/P", null, true)
+        new BreadcrumbItem("Purchase A/P", null, true)
         ]);
         NavbarStateService.OnStateChange += StateHasChanged;
     }
@@ -405,6 +405,7 @@
             _barcodeSearch = "";
             _disableAutoFocusBarcodeSearch = true;
         }
+        await Task.CompletedTask;
     }
 
     private async Task GetNextInvoice()
@@ -633,7 +634,7 @@
 
     private void DeleteItem(PurchaseItemDto item)
     {
-        _items = _items.Where(i => i.Id != item.Id && i.UomId != item.UomId).ToList();
+        _items.Remove(item);
     }
 
     private void CalculationCost(PurchaseItemDto item, decimal value)
