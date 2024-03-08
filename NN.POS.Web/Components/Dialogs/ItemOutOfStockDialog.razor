@@ -44,7 +44,5 @@
     [Parameter]
     public List<ItemOutOfStockOrNotYetPurchaseDto> Items { get; set; } = [];
 
-    private string _searchString = "";
-
     private void Cancel() => MudDialog?.Cancel();
 }
