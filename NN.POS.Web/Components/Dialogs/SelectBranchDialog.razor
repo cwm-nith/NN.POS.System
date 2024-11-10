@@ -4,7 +4,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudTable ServerData="@(new Func<TableState, Task<TableData<BranchDto>>>(ServerReload))"
+        <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<BranchDto>>>(ServerReload))"
                   Dense="true"
                   Hover="true"
                   Striped="true"
@@ -61,17 +61,16 @@
     [Parameter]
     public EventCallback<BranchDto>? OnRefresh { get; set; }
 
-
     private MudTable<BranchDto>? _table;
     private string _searchString = "";
 
-    private async Task<TableData<BranchDto>> ServerReload(TableState state)
+    private async Task<TableData<BranchDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
         var path = $"{Setting.PrefixEndpoint}branch?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
 
-        var data = await httpClient.GetFromJsonAsync<PagedResult<BranchDto>>(path);
+        var data = await httpClient.GetFromJsonAsync<PagedResult<BranchDto>>(path, cancellationToken);
 
         return new TableData<BranchDto>
             {
