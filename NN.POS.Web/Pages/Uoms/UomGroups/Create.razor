@@ -19,7 +19,7 @@
         <MudForm Model="_uomGroupModel" Validation="_uomGroupValidator.ValidateValue" @ref="_form">
             <MudCardContent>
                 <MudContainer Class="text-center">
-                    <MudChip Color="Color.Primary" Class="p-4">
+                    <MudChip T="string" Color="Color.Primary" Class="p-4">
                         <MudText Typo="Typo.h6">Create New Unit of Measure Group</MudText>
                     </MudChip>
                 </MudContainer>
@@ -36,7 +36,7 @@
                 
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
-                    <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Error">
                         @_apiErrorMessages
                     </MudChip>
                 }

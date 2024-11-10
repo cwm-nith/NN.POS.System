@@ -13,7 +13,7 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<BusinessPartnerDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<BusinessPartnerDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"

@@ -16,7 +16,7 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<ItemMasterDataDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<ItemMasterDataDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -118,7 +118,7 @@
         return isExisted;
     }
 
-    private async Task<TableData<ItemMasterDataDto>> ServerReload(TableState state)
+    private async Task<TableData<ItemMasterDataDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
@@ -127,11 +127,7 @@
         types = string.IsNullOrEmpty(types) ? "0" : types;
 
         var path = $"{Setting.PrefixEndpoint}ItemMasterData?Page={state.Page + 1}&Results={state.PageSize}&Process=0&Type={types}&search={_searchString}";
-
-        Console.WriteLine(path);
-
-        var data =
-            await httpClient.GetFromJsonAsync<PagedResult<ItemMasterDataDto>>(path);
+        var data = await httpClient.GetFromJsonAsync<PagedResult<ItemMasterDataDto>>(path, cancellationToken);
 
         return new TableData<ItemMasterDataDto>
             {
@@ -140,7 +136,7 @@
             };
     }
 
-    protected void GoToUpdatePage(int id)
+    private void GoToUpdatePage(int id)
     {
         NavigationManager.NavigateTo($"{RouteName.ItemMasterDataUpdate}/{id}");
     }

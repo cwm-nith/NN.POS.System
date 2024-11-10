@@ -25,12 +25,11 @@ public partial class Index : IDisposable
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<BusinessPartnerDto>> ServerReload(TableState state)
+    private async Task<TableData<BusinessPartnerDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-        var data =
-            await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>($"{Setting.PrefixEndpoint}BusinessPartner?ContactType=1&Page={state.Page + 1}&Results={state.PageSize}");
-
+        var uri = $"{Setting.PrefixEndpoint}BusinessPartner?ContactType=1&Page={state.Page + 1}&Results={state.PageSize}";
+        var data = await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>(uri, cancellationToken);
         return new TableData<BusinessPartnerDto>
         {
             Items = data?.Items,
@@ -38,7 +37,7 @@ public partial class Index : IDisposable
         };
     }
 
-    protected void GoToUpdatePage(int id)
+    private void GoToUpdatePage(int id)
     {
         NavigationManager.NavigateTo($"{RouteName.UpdateSupplier}/{id}");
     }

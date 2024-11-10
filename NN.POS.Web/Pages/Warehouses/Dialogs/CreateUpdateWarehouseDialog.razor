@@ -76,7 +76,7 @@
 
             @if (!string.IsNullOrEmpty(_apiErrorMessages))
             {
-                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                <MudChip T="string" Variant="Variant.Outlined" Color="Color.Error">
                     @_apiErrorMessages
                 </MudChip>
             }

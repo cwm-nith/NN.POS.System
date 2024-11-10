@@ -23,7 +23,7 @@
                     <MudGrid>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_supplierName"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           Adornment="Adornment.End"
@@ -39,7 +39,7 @@
                         </MudItem>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_warehouseName"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           Adornment="Adornment.End"
@@ -56,7 +56,7 @@
 
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_ccyName"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           Adornment="Adornment.End"
@@ -73,7 +73,7 @@
                         </MudItem>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="@_user.UserName"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           ReadOnly="true"
@@ -85,7 +85,7 @@
                     <MudGrid>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="@_purModel.InvoiceNo"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           ReadOnly="true"
@@ -93,7 +93,7 @@
                         </MudItem>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="@_purModel.Status"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           ReadOnly="true"
@@ -102,7 +102,7 @@
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudDatePicker @bind-Date="_purModel.PostingDate"
                                            For="@(() => _purModel.PostingDate)"
-                                           Immediate="true"
+                                           immediate="true"
                                            Label="Posting Date"
                                            Variant="Variant.Outlined"
                                            Margin="Margin.Dense" />
@@ -110,7 +110,7 @@
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudDatePicker @bind-Date="_purModel.DueDate"
                                            For="@(() => _purModel.DueDate)"
-                                           Immediate="true"
+                                           immediate="true"
                                            Label="Due Date"
                                            Variant="Variant.Outlined"
                                            Margin="Margin.Dense" />
@@ -118,7 +118,7 @@
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudDatePicker @bind-Date="_purModel.DocumentDate"
                                            For="@(() => _purModel.DocumentDate)"
-                                           Immediate="true"
+                                           immediate="true"
                                            Label="Document Date"
                                            Variant="Variant.Outlined"
                                            Margin="Margin.Dense" />
@@ -134,14 +134,14 @@
                 <MudItem lg="12" sm="12" xs="12">
                     <MudFocusTrap Disabled="@_disableAutoFocusBarcodeSearch" DefaultFocus="DefaultFocus.FirstChild">
                         <MudTextField @bind-Value="_barcodeSearch"
-                                      Immediate="true"
+                                      immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
                                       Adornment="Adornment.End"
                                       AdornmentIcon="@Icons.Material.Filled.ArrowCircleDown"
                                       OnAdornmentClick="@ChooseItem"
                                       AdornmentAriaLabel="Choose Item"
-                                      Label="Bearcode Search"
+                                      Label="Barcode Search"
                                       OnKeyDown="@BarcodeSearchByPressEnter" />
                     </MudFocusTrap>
                 </MudItem>
@@ -177,7 +177,7 @@
                         <MudTd DataLabel="Qty">
                             <MudTextField Value="context.Qty"
                                           For="@(() => context.Qty)"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           Style="width: 120px"
@@ -185,7 +185,7 @@
                         </MudTd>
                         <MudTd DataLabel="Cost">
                             <MudTextField Value="context.PurchasePrice"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           Style="width: 120px"
@@ -205,7 +205,7 @@
                     </MudTd>
                     <MudTd DataLabel="Discount Value">
                         <MudTextField Value="context.DiscountValue"
-                                      Immediate="true"
+                                      immediate="true"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
                                       Style="width: 120px"
@@ -240,7 +240,7 @@
                     <MudGrid>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_exchangeRate"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           ReadOnly="true"
@@ -248,7 +248,7 @@
                         </MudItem>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_purModel.Remark"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           Lines="2"
@@ -260,7 +260,7 @@
                     <MudGrid>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_purModel.SubTotal"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           ReadOnly="true"
@@ -283,7 +283,7 @@
                                 </MudItem>
                                 <MudItem lg="8" sm="6" xs="6">
                                     <MudTextField Value="_purModel.DiscountValue"
-                                                  Immediate="true"
+                                                  immediate="true"
                                                   Variant="Variant.Outlined"
                                                   Margin="Margin.Dense"
                                                   Label="Discount"
@@ -293,7 +293,7 @@
                         </MudItem>
                         <MudItem lg="12" sm="12" xs="12" Class="py-0">
                             <MudTextField @bind-Value="_purModel.AppliedAmount"
-                                          Immediate="true"
+                                          immediate="true"
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense"
                                           ReadOnly="true"
@@ -306,7 +306,7 @@
             </MudGrid>
             @if (!string.IsNullOrEmpty(_apiErrorMessages))
             {
-                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                <MudChip T="string" Variant="Variant.Outlined" Color="Color.Error">
                     @_apiErrorMessages
                 </MudChip>
             }
@@ -445,7 +445,7 @@
         {
             var parameters = new DialogParameters<LoadingDialog>();
 
-            var options = new DialogOptions { FullScreen = true, ClassBackground = "dialog-bg-blur" };
+            var options = new DialogOptions { FullScreen = true, BackgroundClass = "dialog-bg-blur" };
 
             var loadingDialog = await Dialog.ShowAsync<LoadingDialog>("", parameters, options);
 
@@ -470,7 +470,7 @@
 
             var response = await httpClient.PostAsync($"{Setting.PrefixEndpoint}PurchasePO", requestContent);
 
-            if (!response.IsSuccessStatusCode && loadingDialog is not null)
+            if (!response.IsSuccessStatusCode)
             {
                 Dialog.Close((DialogReference)loadingDialog);
             }
@@ -538,8 +538,8 @@
                     _ccyName = $"{ccy.Name} {ccy.Symbol}";
                     _purModel.PurCcyId = ccy.Id;
 
-                    _exchangeRate = $"{ccy.ExchangeRate?.SetRate:N1} {ccy?.Name}({ccy?.Symbol}) = {_baseCurrency?.ExchangeRate?.Rate:N2} {_baseCurrency?.Name}({_baseCurrency?.Symbol})";
-                    _displayCcy = $"{ccy?.Name}({ccy?.Symbol})";
+                    _exchangeRate = $"{ccy.ExchangeRate?.SetRate:N1} {ccy.Name}({ccy.Symbol}) = {_baseCurrency?.ExchangeRate?.Rate:N2} {_baseCurrency?.Name}({_baseCurrency?.Symbol})";
+                    _displayCcy = $"{ccy.Name}({ccy.Symbol})";
                 })
             }
         };
@@ -582,7 +582,7 @@
                             {
                                 _items = _items.Select(i =>
                                 {
-                                    if (i.Id == purchaseItem?.Id && i.UomId == purchaseItem.UomId)
+                                    if (i.Id == purchaseItem.Id && i.UomId == purchaseItem.UomId)
                                     {
                                         i.Qty++;
                                     }

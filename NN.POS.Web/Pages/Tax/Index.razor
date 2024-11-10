@@ -15,7 +15,7 @@
         </MudButton>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<TaxDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<TaxDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -76,14 +76,11 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<TaxDto>> ServerReload(TableState state)
+    private async Task<TableData<TaxDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-
         var path = $"{Setting.PrefixEndpoint}tax?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
-
-        var data = await httpClient.GetFromJsonAsync<PagedResult<TaxDto>>(path);
-
+        var data = await httpClient.GetFromJsonAsync<PagedResult<TaxDto>>(path, cancellationToken);
         return new TableData<TaxDto>
             {
                 Items = data?.Items,
@@ -91,7 +88,7 @@
             };
     }
 
-    protected void Create()
+    private void Create()
     {
         var parameters = new DialogParameters<CreateUpdateTaxDialog>
         {
@@ -105,7 +102,7 @@
         Dialog.Show<CreateUpdateTaxDialog>("Create", parameters, options);
     }
 
-    protected void Update(TaxDto data)
+    private void Update(TaxDto data)
     {
         var parameters = new DialogParameters<CreateUpdateTaxDialog>
         {

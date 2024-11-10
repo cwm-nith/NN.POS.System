@@ -21,7 +21,7 @@
         <MudForm Model="_customerModel" Validation="_customerValidator.ValidateValue" @ref="_form">
             <MudCardContent>
                 <MudContainer Class="text-center">
-                    <MudChip Color="Color.Primary" Class="p-4">
+                    <MudChip T="string" Color="Color.Primary" Class="p-4">
                         <MudText Typo="Typo.h6">Update Customer</MudText>
                     </MudChip>
                 </MudContainer>
@@ -88,7 +88,7 @@
 
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
-                    <MudChip Class="d-flex justify-center" Color="Color.Error">
+                    <MudChip T="string" Class="d-flex justify-center" Color="Color.Error">
                         <p>@_apiErrorMessages</p>
                     </MudChip>
                 }

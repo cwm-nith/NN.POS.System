@@ -3,7 +3,6 @@
 @using NN.POS.Model.Dtos.Currencies
 @using NN.POS.Model.Dtos.PriceLists
 @using NN.POS.Web.Components.Dialogs
-@using Newtonsoft.Json
 @attribute [Route(RouteName.CompanyCreate)]
 
 <MudContainer Class="p-2">
@@ -20,7 +19,7 @@
         <MudForm Model="_comModel" Validation="_comValidator.ValidateValue" @ref="_form">
             <MudCardContent>
                 <MudContainer Class="text-center">
-                    <MudChip Color="Color.Primary" Class="p-4">
+                    <MudChip T="string" Color="Color.Primary" Class="p-4">
                         <MudText Typo="Typo.h6">Create Company</MudText>
                     </MudChip>
                 </MudContainer>
@@ -97,7 +96,7 @@
                                            @ondragenter="@SetDragClass"
                                            @ondragleave="@ClearDragClass"
                                            @ondragend="@ClearDragClass">
-                                <ButtonTemplate>
+                                <ActivatorContent>
                                     <MudPaper Height="250px"
                                               Outlined="true"
                                               Class="@_dragClass">
@@ -109,7 +108,7 @@
                                                   Style="height: 90%"
                                                   ObjectFit="ObjectFit.Contain" />
                                     </MudPaper>
-                                </ButtonTemplate>
+                                </ActivatorContent>
                             </MudFileUpload>
                         </MudStack>
                     </MudItem>
@@ -138,7 +137,7 @@
 
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
-                    <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Error">
                         @_apiErrorMessages
                     </MudChip>
                 }

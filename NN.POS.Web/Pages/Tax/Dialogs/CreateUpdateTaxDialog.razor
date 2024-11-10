@@ -19,7 +19,7 @@
                 <MudItem lg="6" sm="12" xs="12">
                     <MudDatePicker @bind-Date="_taxModel.EffectiveDate"
                                    For="@(() => _taxModel.EffectiveDate)"
-                                   Immediate="true"
+                                   immediate="true"
                                    Label="Effective Date"
                                    Variant="Variant.Outlined"
                                    Margin="Margin.Dense"/>
@@ -51,7 +51,7 @@
 
             @if (!string.IsNullOrEmpty(_apiErrorMessages))
             {
-                <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                <MudChip T="string" Variant="Variant.Outlined" Color="Color.Error">
                     @_apiErrorMessages
                 </MudChip>
             }

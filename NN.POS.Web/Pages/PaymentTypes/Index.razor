@@ -14,7 +14,7 @@
         </MudButton>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<PaymentTypeDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<PaymentTypeDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -69,14 +69,13 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<PaymentTypeDto>> ServerReload(TableState state)
+    private async Task<TableData<PaymentTypeDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
         var path = $"{Setting.PrefixEndpoint}paymentType?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
 
-        var data = await httpClient.GetFromJsonAsync<PagedResult<PaymentTypeDto>>(path);
-
+        var data = await httpClient.GetFromJsonAsync<PagedResult<PaymentTypeDto>>(path, cancellationToken);
         return new TableData<PaymentTypeDto>
             {
                 Items = data?.Items,

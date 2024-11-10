@@ -18,7 +18,7 @@
         <MudForm Model="_userModel" Validation="_userValidator.ValidateValue" @ref="_form">
             <MudCardContent>
                 <MudContainer Class="text-center">
-                    <MudChip Color="Color.Primary" Class="p-4">
+                    <MudChip T="string" Color="Color.Primary" Class="p-4">
                         <MudText Typo="Typo.h6">Create New User</MudText>
                     </MudChip>
                 </MudContainer>
@@ -65,7 +65,7 @@
                 </MudGrid>
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
-                    <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Error">
                         @_apiErrorMessages
                     </MudChip>
                 }
