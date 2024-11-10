@@ -37,7 +37,7 @@ builder.Services.AddHttpClient(AppConstants.HttpClientName, options =>
 }).AddHttpMessageHandler<CustomHttpHandler>();
 
 builder.Services.AddMudServices();
-builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddBlazoredLocalStorageAsSingleton();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<CustomHttpHandler>();

@@ -7,8 +7,8 @@ public class NavbarStateService : INavbarStateService
     public event Action? OnStateChange;
 
     public string Value { get; private set; } = string.Empty;
-    public string ActiveValue { get; set; } = string.Empty;
-    public List<BreadcrumbItem> BreadcrumbItems { get; set; } = [];
+    public string ActiveValue { get; private set; } = string.Empty;
+    public List<BreadcrumbItem> BreadcrumbItems { get; private set; } = [];
 
     public void SetExpend(string value)
     {

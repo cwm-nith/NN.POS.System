@@ -1,10 +1,18 @@
 @inherits LayoutComponentBase
 
-<MudThemeProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
+<MudThemeProvider DefaultScrollbar="true" @bind-IsDarkMode="@ThemeStateService.IsDark" Theme="@ThemeStateService.Theme"/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudLayout>
+    <MudAppBar Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6" Class="mt-1 text-white">NN POS System</MudText>
+        </MudDrawerHeader>
+        <MudSpacer/>
+        <Theme OnThemeToggle="async () => await ThemeStateService.ToggleThemeMode()"/>
+    </MudAppBar>
     <MudMainContent>
         <MudContainer>
             @Body
@@ -13,5 +21,8 @@
 </MudLayout>
 
 @code {
-    
+    protected override async Task OnInitializedAsync()
+    {
+        await ThemeStateService.LoadIsDarkAsync();
+    }
 }
