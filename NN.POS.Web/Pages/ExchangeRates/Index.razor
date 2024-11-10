@@ -13,7 +13,7 @@
         </MudButton>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<ExchangeRateDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<ExchangeRateDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -76,13 +76,13 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<ExchangeRateDto>> ServerReload(TableState state)
+    private async Task<TableData<ExchangeRateDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
         var path = $"{Setting.PrefixEndpoint}exchangeRate?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
 
-        var data = await httpClient.GetFromJsonAsync<PagedResult<ExchangeRateDto>>(path);
+        var data = await httpClient.GetFromJsonAsync<PagedResult<ExchangeRateDto>>(path, cancellationToken);
 
         return new TableData<ExchangeRateDto>
             {

@@ -15,7 +15,7 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<BusinessPartnerDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<BusinessPartnerDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -69,12 +69,11 @@
         NavbarStateService.OnStateChange += StateHasChanged;
     }
 
-    private async Task<TableData<BusinessPartnerDto>> ServerReload(TableState state)
+    private async Task<TableData<BusinessPartnerDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-        var data =
-            await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>($"{Setting.PrefixEndpoint}BusinessPartner?ContactType=2&Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}");
-
+        var uri = $"{Setting.PrefixEndpoint}BusinessPartner?ContactType=2&Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
+        var data = await httpClient.GetFromJsonAsync<PagedResult<BusinessPartnerDto>>(uri, cancellationToken);
         return new TableData<BusinessPartnerDto>
             {
                 Items = data?.Items,

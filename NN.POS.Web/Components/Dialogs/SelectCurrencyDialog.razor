@@ -4,7 +4,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudTable ServerData="@(new Func<TableState, Task<TableData<CurrencyDto>>>(ServerReload))"
+        <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<CurrencyDto>>>(ServerReload))"
                   Dense="true"
                   Hover="true"
                   Striped="true"
@@ -59,13 +59,13 @@
     private MudTable<CurrencyDto>? _table;
     private string _searchString = "";
 
-    private async Task<TableData<CurrencyDto>> ServerReload(TableState state)
+    private async Task<TableData<CurrencyDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
         var path = $"{Setting.PrefixEndpoint}currency?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
 
-        var data = await httpClient.GetFromJsonAsync<PagedResult<CurrencyDto>>(path);
+        var data = await httpClient.GetFromJsonAsync<PagedResult<CurrencyDto>>(path, cancellationToken);
 
         return new TableData<CurrencyDto>
         {

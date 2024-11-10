@@ -17,7 +17,7 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<UserDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<UserDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -91,16 +91,11 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<UserDto>> ServerReload(TableState state)
+    private async Task<TableData<UserDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-
         var path = $"{Setting.PrefixEndpoint}user?Page={state.Page + 1}&Results={state.PageSize}";
-
-        Console.WriteLine(path);
-
-        var data =
-            await httpClient.GetFromJsonAsync<PagedResult<UserDto>>(path);
+        var data = await httpClient.GetFromJsonAsync<PagedResult<UserDto>>(path, cancellationToken);
 
         return new TableData<UserDto>
             {
@@ -109,7 +104,7 @@
             };
     }
 
-    protected void GoToUpdatePage(int id)
+    private void GoToUpdatePage(int id)
     {
         NavigationManager.NavigateTo($"{RouteName.UpdateUser}/{id}");
     }

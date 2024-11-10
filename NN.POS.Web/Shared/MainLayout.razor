@@ -4,7 +4,6 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(_ => DrawerToggle())" />
@@ -17,7 +16,7 @@
         <AuthorizeView>
             <Authorized>
                 <MudText>Welcome, @UserDisplayName(context.User.Claims)</MudText>
-                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End">
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" edge="Edge.End">
                         <MudMenuItem>Profile</MudMenuItem>
                         <MudMenuItem>My account</MudMenuItem>
                         <MudMenuItem OnClick="@LogOut">Logout</MudMenuItem>

@@ -19,7 +19,7 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<UnitOfMeasureDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<UnitOfMeasureDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -83,17 +83,11 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<UnitOfMeasureDto>> ServerReload(TableState state)
+    private async Task<TableData<UnitOfMeasureDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-
         var path = $"{Setting.PrefixEndpoint}unitOfMeasure?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
-
-        Console.WriteLine(path);
-
-        var data =
-            await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureDto>>(path);
-
+        var data = await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureDto>>(path, cancellationToken);
         return new TableData<UnitOfMeasureDto>
         {
             Items = data?.Items,
@@ -101,7 +95,7 @@
         };
     }
 
-    protected void GoToUpdatePage(UnitOfMeasureDto data)
+    private void GoToUpdatePage(UnitOfMeasureDto data)
     {
         var parameters = new DialogParameters<UpdateUomDialog>
         {

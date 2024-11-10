@@ -16,7 +16,7 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<UnitOfMeasureGroupDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<UnitOfMeasureGroupDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -90,17 +90,11 @@
         NavigationManager.NavigateTo($"{RouteName.UomDefine}/{id}");
     }
 
-    private async Task<TableData<UnitOfMeasureGroupDto>> ServerReload(TableState state)
+    private async Task<TableData<UnitOfMeasureGroupDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-
         var path = $"{Setting.PrefixEndpoint}unitOfMeasure/uom-group?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
-
-        Console.WriteLine(path);
-
-        var data =
-            await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureGroupDto>>(path);
-
+        var data = await httpClient.GetFromJsonAsync<PagedResult<UnitOfMeasureGroupDto>>(path, cancellationToken);
         return new TableData<UnitOfMeasureGroupDto>
             {
                 Items = data?.Items,
@@ -108,7 +102,7 @@
             };
     }
 
-    protected void GoToUpdatePage(UnitOfMeasureGroupDto data)
+    private void GoToUpdatePage(UnitOfMeasureGroupDto data)
     {
         var parameters = new DialogParameters<UpdateUomGroupDialog>
         {

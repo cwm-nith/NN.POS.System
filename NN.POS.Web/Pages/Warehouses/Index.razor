@@ -14,7 +14,7 @@
         </MudButton>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<WarehouseDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<WarehouseDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -82,14 +82,11 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<WarehouseDto>> ServerReload(TableState state)
+    private async Task<TableData<WarehouseDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
-
         var path = $"{Setting.PrefixEndpoint}warehouse?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
-
-        var data = await httpClient.GetFromJsonAsync<PagedResult<WarehouseDto>>(path);
-
+        var data = await httpClient.GetFromJsonAsync<PagedResult<WarehouseDto>>(path, cancellationToken);
         return new TableData<WarehouseDto>
             {
                 Items = data?.Items,
@@ -97,7 +94,7 @@
             };
     }
 
-    protected void Create()
+    private void Create()
     {
         var parameters = new DialogParameters<CreateUpdateWarehouseDialog>
         {
@@ -111,7 +108,7 @@
         Dialog.Show<CreateUpdateWarehouseDialog>("Create", parameters, options);
     }
 
-    protected void Update(WarehouseDto data)
+    private void Update(WarehouseDto data)
     {
         var parameters = new DialogParameters<CreateUpdateWarehouseDialog>
         {

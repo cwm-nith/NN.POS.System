@@ -5,7 +5,7 @@
 
 
 <MudContainer Class="mt-2">
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<PriceListDetailDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<PriceListDetailDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -91,13 +91,13 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<PriceListDetailDto>> ServerReload(TableState state)
+    private async Task<TableData<PriceListDetailDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
         var path = $"{Setting.PrefixEndpoint}priceList/detail?PriceListId={PriceListId}&Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
 
-        var data = await httpClient.GetFromJsonAsync<PagedResult<PriceListDetailDto>>(path);
+        var data = await httpClient.GetFromJsonAsync<PagedResult<PriceListDetailDto>>(path, cancellationToken);
 
         return new TableData<PriceListDetailDto>
             {

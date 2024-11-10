@@ -32,12 +32,12 @@
 
     @if (!string.IsNullOrEmpty(_apiErrorMessages))
     {
-        <MudChip Variant="Variant.Outlined" Color="Color.Error">
+        <MudChip T="string" Variant="Variant.Outlined" Color="Color.Error">
             @_apiErrorMessages
         </MudChip>
     }
 
-    <MudTable T="PriceListDetailDto" Items="@_priceListDetails" Hover="true" @bind-SelectOnRowClick="@_selectOnRowClick">
+    <MudTable T="PriceListDetailDto" Items="@_priceListDetails" Hover="true" @bind-selectonrowclick="@_selectOnRowClick">
         <HeaderContent>
             <MudTh>Item</MudTh>
             <MudTh>Uom</MudTh>

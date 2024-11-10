@@ -4,7 +4,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudTable ServerData="@(new Func<TableState, Task<TableData<CompanyDto>>>(ServerReload))"
+        <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<CompanyDto>>>(ServerReload))"
                   Dense="true"
                   Hover="true"
                   Striped="true"
@@ -75,13 +75,13 @@
     private MudTable<CompanyDto>? _table;
     private string _searchString = "";
 
-    private async Task<TableData<CompanyDto>> ServerReload(TableState state)
+    private async Task<TableData<CompanyDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
         var path = $"{Setting.PrefixEndpoint}company?Page={state.Page + 1}&Results={state.PageSize}&search={_searchString}";
 
-        var data = await httpClient.GetFromJsonAsync<PagedResult<CompanyDto>>(path);
+        var data = await httpClient.GetFromJsonAsync<PagedResult<CompanyDto>>(path, cancellationToken);
 
         return new TableData<CompanyDto>
             {

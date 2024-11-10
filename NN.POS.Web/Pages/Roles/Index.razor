@@ -15,7 +15,7 @@
         </MudLink>
     </MudPaper>
 
-    <MudTable ServerData="@(new Func<TableState, Task<TableData<RoleDto>>>(ServerReload))"
+    <MudTable ServerData="@(new Func<TableState, CancellationToken, Task<TableData<RoleDto>>>(ServerReload))"
               Dense="true"
               Hover="true"
               Striped="true"
@@ -76,17 +76,12 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task<TableData<RoleDto>> ServerReload(TableState state)
+    private async Task<TableData<RoleDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
         var path = $"{Setting.PrefixEndpoint}role?Page={state.Page + 1}&Results={state.PageSize}";
-
-        Console.WriteLine(path);
-
-        var data =
-            await httpClient.GetFromJsonAsync<PagedResult<RoleDto>>(path);
-
+        var data = await httpClient.GetFromJsonAsync<PagedResult<RoleDto>>(path, cancellationToken);
         return new TableData<RoleDto>
             {
                 Items = data?.Items,

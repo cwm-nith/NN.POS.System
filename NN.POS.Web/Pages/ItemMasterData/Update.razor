@@ -20,7 +20,7 @@
             </MudButton>
         </MudLink>
         <MudContainer Class="text-center">
-            <MudChip Color="Color.Primary" Class="p-4">
+            <MudChip T="string" Color="Color.Primary" Class="p-4">
                 <MudText Typo="Typo.body1">Update Item</MudText>
             </MudChip>
         </MudContainer>
@@ -233,7 +233,7 @@
 
                 @if (!string.IsNullOrEmpty(_apiErrorMessages))
                 {
-                    <MudChip Variant="Variant.Outlined" Color="Color.Error">
+                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Error">
                         @_apiErrorMessages
                     </MudChip>
                 }
