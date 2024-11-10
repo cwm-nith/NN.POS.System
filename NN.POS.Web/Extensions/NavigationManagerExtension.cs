@@ -6,7 +6,7 @@ public static class NavigationManagerExtension
 {
     public static string? GetSection(this NavigationManager navMan, int index = 0)
     {
-        // get the absolute path with out the base path
+        // get the absolute path without the base path
         var currentUri = navMan.Uri.Remove(0, navMan.BaseUri.Length - 1);
         var firstElement = currentUri
             .Split("/", StringSplitOptions.RemoveEmptyEntries)[index];

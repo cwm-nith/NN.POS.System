@@ -53,7 +53,7 @@
                 <MudTd DataLabel="Type">@context.Type.ToEnumString()</MudTd>
                 <MudTd DataLabel="Image">
                     <MudAvatar>
-                        <MudImage Src="@($"{Setting.ApiUrl}/contents/item-master/images/{context.Image}")" />
+                        <MudImage Src="@($"{Setting.ApiUrl}/contents/item-master/images/{@context.Image}")" />
                     </MudAvatar>
                 </MudTd>
                 <MudTd DataLabel="Actions">

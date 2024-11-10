@@ -42,7 +42,7 @@
             <MudTd DataLabel="Id">@context.Id</MudTd>
                 <MudTd DataLabel="Logo">
                     <MudAvatar>
-                        <MudImage Src="@($"{Setting.ApiUrl}/contents/company/{context.Logo}")" Alt="@context.Name"></MudImage>
+                        <MudImage Src="@($"{Setting.ApiUrl}/contents/company/{@context.Logo}")" Alt="@context.Name"></MudImage>
                     </MudAvatar>
                 </MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
@@ -100,7 +100,7 @@
             };
     }
 
-    protected void UpdatePage(int id)
+    private void UpdatePage(int id)
     {
         NavigationManager.NavigateTo($"{RouteName.CompanyUpdate}/{id}");
     }
