@@ -394,15 +394,11 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private async Task BarcodeSearchByPressEnter(KeyboardEventArgs e)
+    private void BarcodeSearchByPressEnter(KeyboardEventArgs e)
     {
-        Console.WriteLine(e.Code);
-
-        if (e.Code is "Enter" or "NumpadEnter")
-        {
-            _barcodeSearch = "";
-            _disableAutoFocusBarcodeSearch = true;
-        }
+        if (e.Code is not ("Enter" or "NumpadEnter")) return;
+        _barcodeSearch = "";
+        _disableAutoFocusBarcodeSearch = true;
     }
 
     private async Task GetNextInvoice()

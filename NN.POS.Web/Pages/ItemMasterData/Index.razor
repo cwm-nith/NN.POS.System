@@ -77,7 +77,7 @@
 @code {
     private MudTable<ItemMasterDataDto>? _table;
     private string _searchString = "";
-    private List<string> itemTypes = ["0"];
+    private List<string> _itemTypes = ["0"];
 
     protected override void OnInitialized()
     {
@@ -98,14 +98,14 @@
 
         if (strType != "0")
         {
-            itemTypes.Remove("0");
-            var isExisted = itemTypes.Contains(strType);
-            if (isExisted) itemTypes.Remove(strType);
-            else itemTypes.Add(strType);
+            _itemTypes.Remove("0");
+            var isExisted = _itemTypes.Contains(strType);
+            if (isExisted) _itemTypes.Remove(strType);
+            else _itemTypes.Add(strType);
         }
         else
         {
-            itemTypes = [strType];
+            _itemTypes = [strType];
         }
         _table?.ReloadServerData();
     }
@@ -114,7 +114,7 @@
     {
         var intType = (int)type.ToEnum<ItemMasterDataType>();
         var strType = intType.ToString();
-        var isExisted = itemTypes.Contains(strType);
+        var isExisted = _itemTypes.Contains(strType);
         return isExisted;
     }
 
@@ -122,7 +122,7 @@
     {
         var httpClient = HttpClientFactory.CreateClient(AppConstants.HttpClientName);
 
-        var types = string.Join(",", itemTypes);
+        var types = string.Join(",", _itemTypes);
 
         types = string.IsNullOrEmpty(types) ? "0" : types;
 
