@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider/>
+<MudThemeProvider DefaultScrollbar="true" @bind-IsDarkMode="@ThemeStateService.IsDark" Theme="@ThemeStateService.Theme"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
@@ -17,32 +17,38 @@
         <AuthorizeView>
             <Authorized>
                 <MudText>Welcome, @UserDisplayName(context.User.Claims)</MudText>
-                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" edge="Edge.End">
-                        <MudMenuItem>Profile</MudMenuItem>
-                        <MudMenuItem>My account</MudMenuItem>
-                        <MudMenuItem OnClick="@LogOut">Logout</MudMenuItem>
-                    </MudMenu>
-                </Authorized>
-            </AuthorizeView>
-        </MudAppBar>
-        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-            <AuthorizeView>
-                <NotAuthorized>
-                    <LoginRedirect />
-                </NotAuthorized>
-                <Authorized>
-                    <NavMenu />
-                </Authorized>
-            </AuthorizeView>
-        </MudDrawer>
-        <MudMainContent>
-            <MudBreadcrumbs Items="@NavbarStateService.BreadcrumbItems" Separator=">"></MudBreadcrumbs>
-            @Body
+                <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" edge="Edge.End">
+                    <MudMenuItem>Profile</MudMenuItem>
+                    <MudMenuItem>My account</MudMenuItem>
+                    <MudMenuItem OnClick="@LogOut">Logout</MudMenuItem>
+                </MudMenu>
+            </Authorized>
+        </AuthorizeView>
+        <Theme OnThemeToggle="async () => await ThemeStateService.ToggleThemeMode()"/>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <AuthorizeView>
+            <NotAuthorized>
+                <LoginRedirect />
+            </NotAuthorized>
+            <Authorized>
+                <NavMenu />
+            </Authorized>
+        </AuthorizeView>
+    </MudDrawer>
+    <MudMainContent>
+        <MudBreadcrumbs Items="@NavbarStateService.BreadcrumbItems" Separator=">"></MudBreadcrumbs>
+        @Body
     </MudMainContent>
 </MudLayout>
 
 @code {
-
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await ThemeStateService.LoadIsDarkAsync();
+    }
+    
     private void ToDashboard()
     {
         NavigationManager.NavigateTo(RouteName.Dashboard);

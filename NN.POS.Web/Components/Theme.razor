@@ -1,0 +1,23 @@
+@namespace NN.POS.Web.Components
+@if (ThemeStateService.IsDark)
+{
+    <MudIconButton
+        Icon="@Icons.Material.Filled.LightMode"
+        Color="Color.Primary"
+        aria-label="Light Mode"
+        OnClick="OnThemeToggle"/>
+}
+else
+{
+    <MudIconButton
+        Icon="@Icons.Material.Filled.DarkMode"
+        aria-label="Dark Mode"
+        Style="color: #e0e0e0"
+        OnClick="OnThemeToggle"/>
+}
+
+@code
+{
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnThemeToggle { get; set; }
+}
