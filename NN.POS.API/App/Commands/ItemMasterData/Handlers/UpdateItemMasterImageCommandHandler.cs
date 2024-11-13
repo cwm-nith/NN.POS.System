@@ -16,7 +16,6 @@ public class UpdateItemMasterImageCommandHandler(IWebHostEnvironment environment
             {
                 throw new FileNotFoundException(filePath);
             }
-
             await using Stream fileStream = new FileStream(filePath, FileMode.Create);
             await r.File.CopyToAsync(fileStream, cancellationToken);
         }
