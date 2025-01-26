@@ -335,7 +335,6 @@
     </MudForm>
 </MudContainer>
 
-
 @code {
     private readonly CreatePurchaseCreditMemoDto _purModel = new()
         {
@@ -529,7 +528,7 @@
         }
     }
 
-    private void ChooseSupplier()
+    private async Task ChooseSupplier()
     {
         var parameters = new DialogParameters<SelectSupplierDialog>
         {
@@ -545,10 +544,10 @@
 
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
 
-        Dialog.Show<SelectSupplierDialog>("Suppliers", parameters, options);
+        await Dialog.ShowAsync<SelectSupplierDialog>("Suppliers", parameters, options);
     }
 
-    private void ChooseWarehouse()
+    private async Task ChooseWarehouse()
     {
         var parameters = new DialogParameters<SelectWarehouseDialog>
         {
@@ -564,10 +563,10 @@
 
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
 
-        Dialog.Show<SelectWarehouseDialog>("Warehouses", parameters, options);
+        await Dialog.ShowAsync<SelectWarehouseDialog>("Warehouses", parameters, options);
     }
 
-    private void ChooseCcy()
+    private async Task ChooseCcy()
     {
         var parameters = new DialogParameters<SelectCurrencyDialog>
         {
@@ -589,9 +588,9 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectCurrencyDialog>("Purchase Currency", parameters, options);
+        await Dialog.ShowAsync<SelectCurrencyDialog>("Purchase Currency", parameters, options);
     }
-    private void ChooseItem()
+    private async Task ChooseItem()
     {
         var parameters = new DialogParameters<SelectItemMasterDataDialog>
         {
@@ -665,7 +664,7 @@
 
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
 
-        Dialog.Show<SelectItemMasterDataDialog>("Purchase Items", parameters, options);
+        await Dialog.ShowAsync<SelectItemMasterDataDialog>("Purchase Items", parameters, options);
     }
 
     private void DeleteItem(PurchaseItemDto item)

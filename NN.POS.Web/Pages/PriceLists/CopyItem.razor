@@ -153,7 +153,7 @@
         }
     }
 
-    private void ChoosePriceList()
+    private async Task ChoosePriceList()
     {
         var parameters = new DialogParameters<SelectPriceListDialog>
         {
@@ -179,7 +179,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectPriceListDialog>("Price List Copy From", parameters, options);
+        await Dialog.ShowAsync<SelectPriceListDialog>("Price List Copy From", parameters, options);
 
     }
 }

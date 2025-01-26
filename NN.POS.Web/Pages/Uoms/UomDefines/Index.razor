@@ -191,7 +191,7 @@
         NavbarStateService.OnStateChange -= StateHasChanged;
     }
 
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<UnitOfMeasureDefineDto>>
             {
@@ -206,7 +206,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<UnitOfMeasureDefineDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<UnitOfMeasureDefineDto>>("Delete", parameters, options);
     }
 
     private async Task UpdateAsync(int id)
@@ -283,7 +283,7 @@
         }
     }
 
-    protected void SelectUomList(bool isBaseUom)
+    private async Task SelectUomList(bool isBaseUom)
     {
         var parameters = new DialogParameters<SelectUomDialog>
         {
@@ -309,6 +309,6 @@
 
         var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
 
-        Dialog.Show<SelectUomDialog>("Select Uom", parameters, options);
+        await Dialog.ShowAsync<SelectUomDialog>("Select Uom", parameters, options);
     }
 }

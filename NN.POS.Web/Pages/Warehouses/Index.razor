@@ -94,7 +94,7 @@
             };
     }
 
-    private void Create()
+    private async Task Create()
     {
         var parameters = new DialogParameters<CreateUpdateWarehouseDialog>
         {
@@ -105,10 +105,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateWarehouseDialog>("Create", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateWarehouseDialog>("Create", parameters, options);
     }
 
-    private void Update(WarehouseDto data)
+    private async Task Update(WarehouseDto data)
     {
         var parameters = new DialogParameters<CreateUpdateWarehouseDialog>
         {
@@ -122,10 +122,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateWarehouseDialog>("Update", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateWarehouseDialog>("Update", parameters, options);
     }
 
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<WarehouseDto>>
             {
@@ -139,7 +139,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<WarehouseDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<WarehouseDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

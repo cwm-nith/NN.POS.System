@@ -109,7 +109,7 @@
         NavigationManager.NavigateTo($"{RouteName.UpdateUser}/{id}");
     }
 
-    private void DeleteUser(int id)
+    private async Task DeleteUser(int id)
     {
         var parameters = new DialogParameters<DeleteDialog>
         {
@@ -123,7 +123,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

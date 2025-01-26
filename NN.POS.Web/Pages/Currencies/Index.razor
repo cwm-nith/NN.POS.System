@@ -87,7 +87,7 @@
             };
     }
 
-    protected void Create()
+    private async Task Create()
     {
         var parameters = new DialogParameters<CreateUpdateCurrencyDialog>
         {
@@ -98,10 +98,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateCurrencyDialog>("Create", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateCurrencyDialog>("Create", parameters, options);
     }
 
-    protected void Update(CurrencyDto data)
+    private async Task Update(CurrencyDto data)
     {
         var parameters = new DialogParameters<CreateUpdateCurrencyDialog>
         {
@@ -115,10 +115,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateCurrencyDialog>("Update", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateCurrencyDialog>("Update", parameters, options);
     }
 
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<CurrencyDto>>
             {
@@ -132,7 +132,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<CurrencyDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<CurrencyDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

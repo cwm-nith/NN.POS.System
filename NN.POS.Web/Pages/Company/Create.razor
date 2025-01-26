@@ -241,7 +241,7 @@
     private void ClearDragClass()
         => _dragClass = DefaultDragClass;
 
-    private void ChoosePriceList()
+    private async Task ChoosePriceList()
     {
         var parameters = new DialogParameters<SelectPriceListDialog>
         {
@@ -257,10 +257,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectPriceListDialog>("Price List", parameters, options);
+        await Dialog.ShowAsync<SelectPriceListDialog>("Price List", parameters, options);
     }
 
-    private void ChooseSysCcy()
+    private async Task ChooseSysCcy()
     {
         var parameters = new DialogParameters<SelectCurrencyDialog>
         {
@@ -276,10 +276,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectCurrencyDialog>("System Currency", parameters, options);
+        await Dialog.ShowAsync<SelectCurrencyDialog>("System Currency", parameters, options);
     }
 
-    private void ChooseLocalCcy()
+    private async Task ChooseLocalCcy()
     {
         var parameters = new DialogParameters<SelectCurrencyDialog>
         {
@@ -295,6 +295,6 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectCurrencyDialog>("Local Currency", parameters, options);
+        await Dialog.ShowAsync<SelectCurrencyDialog>("Local Currency", parameters, options);
     }
 }

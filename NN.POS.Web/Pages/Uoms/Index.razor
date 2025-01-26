@@ -95,7 +95,7 @@
         };
     }
 
-    private void GoToUpdatePage(UnitOfMeasureDto data)
+    private async Task GoToUpdatePage(UnitOfMeasureDto data)
     {
         var parameters = new DialogParameters<UpdateUomDialog>
         {
@@ -109,10 +109,10 @@
 
         var options = new DialogOptions { CloseButton = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true};
 
-        Dialog.Show<UpdateUomDialog>("Update", parameters, options);
+        await Dialog.ShowAsync<UpdateUomDialog>("Update", parameters, options);
     }
 
-    private void DeleteUom(int id)
+    private async Task DeleteUom(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<UnitOfMeasureDto>>
         {
@@ -126,7 +126,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<UnitOfMeasureDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<UnitOfMeasureDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

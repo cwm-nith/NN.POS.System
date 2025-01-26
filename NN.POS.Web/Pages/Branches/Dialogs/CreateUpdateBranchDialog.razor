@@ -70,7 +70,7 @@
 
 @code {
     [CascadingParameter]
-    private MudDialogInstance? MudDialog { get; set; }
+    private IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter] 
     public BranchDto Data { get; set; } = new();
@@ -135,7 +135,7 @@
 
     }
 
-    private void ChooseCompany()
+    private async Task ChooseCompany()
     {
         var parameters = new DialogParameters<SelectCompanyDialog>
         {
@@ -151,7 +151,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectCompanyDialog>("Company", parameters, options);
+        await Dialog.ShowAsync<SelectCompanyDialog>("Company", parameters, options);
     }
 
     private void Cancel() => MudDialog?.Cancel();

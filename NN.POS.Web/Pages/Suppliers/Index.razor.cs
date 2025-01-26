@@ -42,7 +42,7 @@ public partial class Index : IDisposable
         NavigationManager.NavigateTo($"{RouteName.UpdateSupplier}/{id}");
     }
 
-    private void DeleteSupplier(int id)
+    private async Task DeleteSupplier(int id)
     {
         var parameters = new DialogParameters<DeleteDialog>
         {
@@ -56,7 +56,7 @@ public partial class Index : IDisposable
 
         var options = new DialogOptions() { CloseButton = true};
 
-        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

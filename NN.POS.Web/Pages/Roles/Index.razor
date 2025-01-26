@@ -94,7 +94,7 @@
         NavigationManager.NavigateTo($"{RouteName.UpdateRole}/{id}");
     }
 
-    private void DeleteRole(int id)
+    private async Task DeleteRole(int id)
     {
         var parameters = new DialogParameters<DeleteDialog>
         {
@@ -108,7 +108,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

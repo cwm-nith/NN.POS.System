@@ -60,7 +60,7 @@
 
 @code {
     [CascadingParameter]
-    private MudDialogInstance? MudDialog { get; set; }
+    private IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter] 
     public ExchangeRateDto Data { get; set; } = new();
@@ -132,7 +132,7 @@
 
     }
 
-    private void ChooseCurrency()
+    private async Task ChooseCurrency()
     {
         var parameters = new DialogParameters<SelectCurrencyDialog>
         {
@@ -148,7 +148,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectCurrencyDialog>("Currency", parameters, options);
+        await Dialog.ShowAsync<SelectCurrencyDialog>("Currency", parameters, options);
 
     }
 

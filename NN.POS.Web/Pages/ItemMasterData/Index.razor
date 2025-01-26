@@ -141,7 +141,7 @@
         NavigationManager.NavigateTo($"{RouteName.ItemMasterDataUpdate}/{id}");
     }
 
-    private void DeleteRole(int id)
+    private async Task DeleteRole(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<ItemMasterDataDto>>
         {
@@ -155,7 +155,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<ItemMasterDataDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<ItemMasterDataDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

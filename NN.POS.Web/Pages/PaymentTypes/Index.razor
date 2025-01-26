@@ -83,7 +83,7 @@
             };
     }
 
-    protected void Create()
+    private async Task Create()
     {
         var parameters = new DialogParameters<CreateUpdatePaymentTypeDialog>
         {
@@ -94,10 +94,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdatePaymentTypeDialog>("Create", parameters, options);
+        await Dialog.ShowAsync<CreateUpdatePaymentTypeDialog>("Create", parameters, options);
     }
 
-    protected void Update(PaymentTypeDto data)
+    private async Task Update(PaymentTypeDto data)
     {
         var parameters = new DialogParameters<CreateUpdatePaymentTypeDialog>
         {
@@ -111,10 +111,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdatePaymentTypeDialog>("Update", parameters, options);
+        await Dialog.ShowAsync<CreateUpdatePaymentTypeDialog>("Update", parameters, options);
     }
 
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<PaymentTypeDto>>
             {
@@ -128,7 +128,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<PaymentTypeDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<PaymentTypeDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

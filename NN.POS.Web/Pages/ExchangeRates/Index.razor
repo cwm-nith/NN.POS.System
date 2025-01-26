@@ -91,7 +91,7 @@
             };
     }
 
-    protected void Create()
+    private async Task Create()
     {
         var parameters = new DialogParameters<CreateUpdateExchangeRateDialog>
         {
@@ -102,10 +102,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateExchangeRateDialog>("Create", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateExchangeRateDialog>("Create", parameters, options);
     }
 
-    protected void Update(ExchangeRateDto data)
+    private async Task Update(ExchangeRateDto data)
     {
         var parameters = new DialogParameters<CreateUpdateExchangeRateDialog>
         {
@@ -119,10 +119,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateExchangeRateDialog>("Update", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateExchangeRateDialog>("Update", parameters, options);
     }
 
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<ExchangeRateDto>>
             {
@@ -136,7 +136,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<ExchangeRateDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<ExchangeRateDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

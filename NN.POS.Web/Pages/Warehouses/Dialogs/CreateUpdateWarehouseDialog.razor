@@ -92,7 +92,7 @@
 
 @code {
     [CascadingParameter]
-    private MudDialogInstance? MudDialog { get; set; }
+    private IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter]
     public WarehouseDto Data { get; set; } = new();
@@ -118,9 +118,8 @@
             };
         base.OnParametersSet();
     }
-
-
-    private void ChooseBranch()
+    
+    private async Task ChooseBranch()
     {
         var parameters = new DialogParameters<SelectBranchDialog>
             {
@@ -139,7 +138,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectBranchDialog>("Branch", parameters, options);
+        await Dialog.ShowAsync<SelectBranchDialog>("Branch", parameters, options);
 
     }
 

@@ -359,7 +359,7 @@
         }
     }
 
-    private void ChooseWarehouse()
+    private async Task ChooseWarehouse()
     {
         var parameters = new DialogParameters<SelectWarehouseDialog>
         {
@@ -375,10 +375,10 @@
 
         var options = new DialogOptions { CloseButton = true};
 
-        Dialog.Show<SelectWarehouseDialog>("Warehouse", parameters, options);
+        await Dialog.ShowAsync<SelectWarehouseDialog>("Warehouse", parameters, options);
     }
 
-    private void ChooseGroupUom()
+    private async Task ChooseGroupUom()
     {
         var parameters = new DialogParameters<SelectGroupUomDialog>
         {
@@ -394,10 +394,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectGroupUomDialog>("Unit Of Measure Group", parameters, options);
+        await Dialog.ShowAsync<SelectGroupUomDialog>("Unit Of Measure Group", parameters, options);
     }
 
-    private void ChoosePriceList()
+    private async Task ChoosePriceList()
     {
         var parameters = new DialogParameters<SelectPriceListDialog>
         {
@@ -413,10 +413,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectPriceListDialog>("Price List", parameters, options);
+        await Dialog.ShowAsync<SelectPriceListDialog>("Price List", parameters, options);
     }
 
-    private void ChooseBaseUom()
+    private async Task ChooseBaseUom()
     {
         var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
@@ -435,10 +435,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomByGroupIdDialog>("Base Uom", parameters, options);
+        await Dialog.ShowAsync<SelectUomByGroupIdDialog>("Base Uom", parameters, options);
     }
 
-    private void ChooseSaleUom()
+    private async Task ChooseSaleUom()
     {
         var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
@@ -457,10 +457,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomByGroupIdDialog>("Sale Uom", parameters, options);
+        await Dialog.ShowAsync<SelectUomByGroupIdDialog>("Sale Uom", parameters, options);
     }
 
-    private void ChoosePurchaseUom()
+    private async Task ChoosePurchaseUom()
     {
         var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
@@ -479,10 +479,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomByGroupIdDialog>("Purchase Uom", parameters, options);
+        await Dialog.ShowAsync<SelectUomByGroupIdDialog>("Purchase Uom", parameters, options);
     }
 
-    private void ChooseInventoryUom()
+    private async Task ChooseInventoryUom()
     {
         var parameters = new DialogParameters<SelectUomByGroupIdDialog>
         {
@@ -501,10 +501,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<SelectUomByGroupIdDialog>("Inventory Uom", parameters, options);
+        await Dialog.ShowAsync<SelectUomByGroupIdDialog>("Inventory Uom", parameters, options);
     }
 
-    private void ChooseItemGroup()
+    private async Task ChooseItemGroup()
     {
         var parameters = new DialogParameters<SelectItemMasterDataDialog>
         {
@@ -523,6 +523,6 @@
 
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
 
-        Dialog.Show<SelectItemMasterDataDialog>("Item Group", parameters, options);
+        await Dialog.ShowAsync<SelectItemMasterDataDialog>("Item Group", parameters, options);
     }
 }

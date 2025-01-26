@@ -91,7 +91,7 @@
             };
     }
 
-    protected void Create()
+    private async Task Create()
     {
         var parameters = new DialogParameters<CreateUpdatePriceListDialog>
         {
@@ -102,10 +102,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdatePriceListDialog>("Create", parameters, options);
+        await Dialog.ShowAsync<CreateUpdatePriceListDialog>("Create", parameters, options);
     }
 
-    protected void Update(PriceListDto data)
+    private async Task Update(PriceListDto data)
     {
         var parameters = new DialogParameters<CreateUpdatePriceListDialog>
         {
@@ -119,10 +119,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdatePriceListDialog>("Update", parameters, options);
+        await Dialog.ShowAsync<CreateUpdatePriceListDialog>("Update", parameters, options);
     }
 
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<PriceListDto>>
             {
@@ -136,7 +136,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<PriceListDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<PriceListDto>>("Delete", parameters, options);
     }
 
     private void SetPriceList(int plId)

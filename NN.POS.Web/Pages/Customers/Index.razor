@@ -81,12 +81,12 @@
             };
     }
 
-    protected void GoToUpdatePage(int id)
+    private void GoToUpdatePage(int id)
     {
         NavigationManager.NavigateTo($"{RouteName.UpdateCustomer}/{id}");
     }
 
-    private void DeleteCustomer(int id)
+    private async Task DeleteCustomer(int id)
     {
         var parameters = new DialogParameters<DeleteDialog>
         {
@@ -100,7 +100,7 @@
 
         var options = new DialogOptions() { CloseButton = true };
 
-        Dialog.Show<DeleteDialog>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

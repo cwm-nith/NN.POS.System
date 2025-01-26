@@ -88,7 +88,7 @@
             };
     }
 
-    private void Create()
+    private async Task Create()
     {
         var parameters = new DialogParameters<CreateUpdateTaxDialog>
         {
@@ -99,10 +99,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateTaxDialog>("Create", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateTaxDialog>("Create", parameters, options);
     }
 
-    private void Update(TaxDto data)
+    private async Task Update(TaxDto data)
     {
         var parameters = new DialogParameters<CreateUpdateTaxDialog>
         {
@@ -116,10 +116,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateTaxDialog>("Update", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateTaxDialog>("Update", parameters, options);
     }
 
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<TaxDto>>
             {
@@ -133,7 +133,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<TaxDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<TaxDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)

@@ -92,7 +92,7 @@
             };
     }
 
-    protected void Create()
+    private async Task Create()
     {
         var parameters = new DialogParameters<CreateUpdateBranchDialog>
         {
@@ -103,10 +103,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateBranchDialog>("Create", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateBranchDialog>("Create", parameters, options);
     }
 
-    protected void Update(BranchDto data)
+    private async Task Update(BranchDto data)
     {
         var parameters = new DialogParameters<CreateUpdateBranchDialog>
         {
@@ -120,10 +120,10 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<CreateUpdateBranchDialog>("Update", parameters, options);
+        await Dialog.ShowAsync<CreateUpdateBranchDialog>("Update", parameters, options);
     }
 
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         var parameters = new DialogParameters<DeleteDialog<BranchDto>>
             {
@@ -137,7 +137,7 @@
 
         var options = new DialogOptions { CloseButton = true };
 
-        Dialog.Show<DeleteDialog<BranchDto>>("Delete", parameters, options);
+        await Dialog.ShowAsync<DeleteDialog<BranchDto>>("Delete", parameters, options);
     }
 
     private void OnSearch(string text)
